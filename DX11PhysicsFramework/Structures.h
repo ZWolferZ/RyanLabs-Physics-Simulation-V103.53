@@ -2,8 +2,10 @@
 #include <cstring>
 #include <d3d11.h>
 #include <directxmath.h>
+#include<string>
 
 using namespace DirectX;
+using namespace std;
 
 struct SurfaceInfo
 {
@@ -35,6 +37,24 @@ struct ConstantBuffer
 	XMFLOAT3 EyePosW;
 	float HasTexture;
 };
+
+struct Geometry
+{
+	ID3D11Buffer* vertexBuffer;
+	ID3D11Buffer* indexBuffer;
+	int numberOfIndices;
+
+	UINT vertexBufferStride;
+	UINT vertexBufferOffset;
+};
+
+struct Material
+{
+	XMFLOAT4 diffuse;
+	XMFLOAT4 ambient;
+	XMFLOAT4 specular;
+};
+
 
 struct SimpleVertex
 {

@@ -514,9 +514,9 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 	noSpecMaterial.specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	GameObject* gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial);
-	gameObject->SetPosition(0.0f, 0.0f, 0.0f);
-	gameObject->SetScale(15.0f, 15.0f, 15.0f);
-	gameObject->SetRotation(XMConvertToRadians(90.0f), 0.0f, 0.0f);
+	gameObject->GetTranform()->SetPosition(0.0f, 0.0f, 0.0f);
+	gameObject->GetTranform()->SetScale(15.0f, 15.0f, 15.0f);
+	gameObject->GetTranform()->SetRotation(XMConvertToRadians(90.0f), 0.0f, 0.0f);
 	gameObject->SetTextureRV(_GroundTextureRV);
 
 	_gameObjects.push_back(gameObject);
@@ -524,16 +524,16 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 	for (auto i = 0; i < 4; i++)
 	{
 		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial);
-		gameObject->SetScale(1.0f, 1.0f, 1.0f);
-		gameObject->SetPosition(-2.0f + (i * 2.5f), 1.0f, 10.0f);
+		gameObject->GetTranform()->SetScale(1.0f, 1.0f, 1.0f);
+		gameObject->GetTranform()->SetPosition(-2.0f + (i * 2.5f), 1.0f, 10.0f);
 		gameObject->SetTextureRV(_StoneTextureRV);
 
 		_gameObjects.push_back(gameObject);
 	}
 
 	gameObject = new GameObject("Donut", herculesGeometry, shinyMaterial);
-	gameObject->SetScale(1.0f, 1.0f, 1.0f);
-	gameObject->SetPosition(-5.0f, 0.5f, 10.0f);
+	gameObject->GetTranform()->SetScale(1.0f, 1.0f, 1.0f);
+	gameObject->GetTranform()->SetPosition(-5.0f, 0.5f, 10.0f);
 	gameObject->SetTextureRV(_StoneTextureRV);
 	_gameObjects.push_back(gameObject);
 
@@ -594,21 +594,21 @@ void DX11PhysicsFramework::Update()
 	simpleCount += deltaTime;
 
 	// Move gameobjects
-	if (GetAsyncKeyState('1'))
+	if (GetAsyncKeyState('1') & 0xFFFF)
 	{
-		_gameObjects[1]->Move(XMFLOAT3(0, 0, -0.02f));
+		_gameObjects[1]->GetTranform()->Move(XMFLOAT3(0, 0, -5.0f * deltaTime));
 	}
-	if (GetAsyncKeyState('2'))
+	if (GetAsyncKeyState('2') & 0xFFFF)
 	{
-		_gameObjects[1]->Move(XMFLOAT3(0, 0, 0.02f));
+		_gameObjects[1]->GetTranform()->Move(XMFLOAT3(0, 0, 5.0f * deltaTime));
 	}
-	if (GetAsyncKeyState('3'))
+	if (GetAsyncKeyState('3') & 0xFFFF)
 	{
-		_gameObjects[2]->Move(XMFLOAT3(0, 0, -0.02f));
+		_gameObjects[2]->GetTranform()->Move(XMFLOAT3(0, 0, -5.0f * deltaTime));
 	}
-	if (GetAsyncKeyState('4'))
+	if (GetAsyncKeyState('4') & 0xFFFF)
 	{
-		_gameObjects[2]->Move(XMFLOAT3(0, 0, 0.02f));
+		_gameObjects[2]->GetTranform()->Move(XMFLOAT3(0, 0, 5.0f * deltaTime));
 	}
 	// Update camera
 	float angleAroundZ = XMConvertToRadians(_cameraOrbitAngleXZ);
@@ -674,7 +674,7 @@ void DX11PhysicsFramework::Draw()
 		_cbData.surface.SpecularMtrl = material.specular;
 
 		// Set world matrix
-		_cbData.World = XMMatrixTranspose(gameObject->GetWorldMatrix());
+		_cbData.World = XMMatrixTranspose(gameObject->GetTranform()->GetWorldMatrix4X4());
 
 		// Set texture
 		if (gameObject->HasTexture())

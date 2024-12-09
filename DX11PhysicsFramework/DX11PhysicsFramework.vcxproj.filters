@@ -15,29 +15,57 @@
     <Filter Include="Helpers">
       <UniqueIdentifier>{9c796f30-1066-4157-a18b-1202b10ee0ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{cbbca4f7-f801-4dd7-b3f3-054271214ce5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{05bc185c-c137-4bc9-aac7-bcabf9000a9f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DX11PhysicsFramework.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Structures.h" />
     <ClInclude Include="OBJLoader.h">
       <Filter>Helpers</Filter>
     </ClInclude>
     <ClInclude Include="DDSTextureLoader.h">
       <Filter>Helpers</Filter>
     </ClInclude>
+    <ClInclude Include="Structures.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DX11PhysicsFramework.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DX11PhysicsFramework.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Main.cpp" />
     <ClCompile Include="OBJLoader.cpp">
       <Filter>Helpers</Filter>
     </ClCompile>
     <ClCompile Include="DDSTextureLoader.cpp">
       <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DX11PhysicsFramework.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -57,6 +85,7 @@
     <None Include="SimpleShaders.hlsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11PhysicsFramework.rc">

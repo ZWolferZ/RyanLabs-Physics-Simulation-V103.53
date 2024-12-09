@@ -3,10 +3,7 @@
 GameObject::GameObject(string type, Geometry geometry, Material material) : _geometry(geometry), _type(type), _material(material)
 {
 	_parent = nullptr;
-	_position = XMFLOAT3();
-	_rotation = XMFLOAT3();
-	_scale = XMFLOAT3(1.0f, 1.0f, 1.0f);
-
+	_transform = new Transform;
 	_textureRV = nullptr;
 }
 
@@ -18,27 +15,17 @@ GameObject::~GameObject()
 	_geometry.vertexBuffer = nullptr;
 }
 
+
 void GameObject::Update(float dt)
 {
-	// Calculate world matrix
-	XMMATRIX scale = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
-	XMMATRIX rotation = XMMatrixRotationX(_rotation.x) * XMMatrixRotationY(_rotation.y) * XMMatrixRotationZ(_rotation.z);
-	XMMATRIX translation = XMMatrixTranslation(_position.x, _position.y, _position.z);
-
-	XMStoreFloat4x4(&_world, scale * rotation * translation);
+	_transform->Update();
 
 	if (_parent != nullptr)
 	{
-		XMStoreFloat4x4(&_world, this->GetWorldMatrix() * _parent->GetWorldMatrix());
+		XMStoreFloat4x4(&GetTranform()->GetWorldMatrix(), this->GetTranform()->GetWorldMatrix4X4() * _parent->GetTranform()->GetWorldMatrix4X4());
 	}
 }
 
-void GameObject::Move(XMFLOAT3 direction)
-{
-	_position.x += direction.x;
-	_position.y += direction.y;
-	_position.z += direction.z;
-}
 
 void GameObject::Draw(ID3D11DeviceContext * pImmediateContext)
 {
