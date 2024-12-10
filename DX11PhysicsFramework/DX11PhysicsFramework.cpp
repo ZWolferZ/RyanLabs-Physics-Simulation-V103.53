@@ -61,7 +61,7 @@ HRESULT DX11PhysicsFramework::CreateWindowHandle(HINSTANCE hInstance, int nCmdSh
 
 	auto windowName = L"RyanLabs Proprietary Real-Time Physics Framework";
 
-	WNDCLASSW wndClass;
+	WNDCLASSW wndClass = {};
 	wndClass.style = 0;
 	wndClass.lpfnWndProc = WndProc;
 	wndClass.cbClsExtra = 0;
@@ -76,7 +76,7 @@ HRESULT DX11PhysicsFramework::CreateWindowHandle(HINSTANCE hInstance, int nCmdSh
 	RegisterClassW(&wndClass);
 
 	_windowHandle = CreateWindowExW(0, windowName, windowName, WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT,
-		CW_USEDEFAULT, _WindowWidth, _WindowHeight, nullptr, nullptr, hInstance, nullptr);
+		CW_USEDEFAULT, WindowWidth, WindowHeight, nullptr, nullptr, hInstance, nullptr);
 
 	return S_OK;
 }
@@ -393,18 +393,18 @@ HRESULT DX11PhysicsFramework::InitPipelineStates()
 	ZeroMemory(&cmdesc, sizeof(D3D11_RASTERIZER_DESC));
 	cmdesc.FillMode = D3D11_FILL_SOLID;
 	cmdesc.CullMode = D3D11_CULL_NONE;
-	hr = _device->CreateRasterizerState(&cmdesc, &_RSCullNone);
+	hr = _device->CreateRasterizerState(&cmdesc, &RSCullNone);
 
 	ZeroMemory(&cmdesc, sizeof(D3D11_RASTERIZER_DESC));
 	cmdesc.FillMode = D3D11_FILL_SOLID;
 	cmdesc.CullMode = D3D11_CULL_BACK;
 	cmdesc.FrontCounterClockwise = true;
-	hr = _device->CreateRasterizerState(&cmdesc, &_CCWcullMode);
+	hr = _device->CreateRasterizerState(&cmdesc, &CCWcullMode);
 
 	cmdesc.FrontCounterClockwise = false;
-	hr = _device->CreateRasterizerState(&cmdesc, &_CWcullMode);
+	hr = _device->CreateRasterizerState(&cmdesc, &CWcullMode);
 
-	_immediateContext->RSSetState(_CWcullMode);
+	_immediateContext->RSSetState(CWcullMode);
 
 	D3D11_DEPTH_STENCIL_DESC dssDesc;
 	ZeroMemory(&dssDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
@@ -412,9 +412,9 @@ HRESULT DX11PhysicsFramework::InitPipelineStates()
 	dssDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	dssDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
-	_device->CreateDepthStencilState(&dssDesc, &_DSLessEqual);
+	_device->CreateDepthStencilState(&dssDesc, &DSLessEqual);
 
-	_immediateContext->OMSetDepthStencilState(_DSLessEqual, 0);
+	_immediateContext->OMSetDepthStencilState(DSLessEqual, 0);
 
 	D3D11_SAMPLER_DESC bilinearSamplerdesc = {};
 	bilinearSamplerdesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -440,15 +440,15 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 	constantBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	constantBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-	_viewport = { 0.0f, 0.0f, static_cast<float>(_WindowWidth), static_cast<float>(_WindowHeight), 0.0f, 1.0f };
+	_viewport = { 0.0f, 0.0f, static_cast<float>(WindowWidth), static_cast<float>(WindowHeight), 0.0f, 1.0f };
 	_immediateContext->RSSetViewports(1, &_viewport);
 
 	hr = _device->CreateBuffer(&constantBufferDesc, nullptr, &_constantBuffer);
 	if (FAILED(hr)) { return hr; }
 
-	hr = CreateDDSTextureFromFile(_device, L"Resources\\Textures\\stone.dds", nullptr, &_StoneTextureRV);
-	hr = CreateDDSTextureFromFile(_device, L"Resources\\Textures\\floor.dds", nullptr, &_GroundTextureRV);
-	hr = CreateDDSTextureFromFile(_device, L"Resources\\Textures\\Selected.dds", nullptr, &_SelectedTexture);
+	hr = CreateDDSTextureFromFile(_device, L"Resources\\Textures\\stone.dds", nullptr, &StoneTextureRV);
+	hr = CreateDDSTextureFromFile(_device, L"Resources\\Textures\\floor.dds", nullptr, &GroundTextureRV);
+	hr = CreateDDSTextureFromFile(_device, L"Resources\\Textures\\Selected.dds", nullptr, &SelectedTexture);
 	if (FAILED(hr)) { return hr; }
 
 	// Setup Camera
@@ -487,7 +487,7 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 	noSpecMaterial.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	noSpecMaterial.specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	auto gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial, _GroundTextureRV,
+	auto gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial, GroundTextureRV,
 		XMFLOAT3(0.0f, 0.0f, 0.0f),
 		XMFLOAT3(15.0f, 15.0f, 15.0f), XMFLOAT3(XMConvertToRadians(90.0f), 0.0f, 0.0f));
 
@@ -495,14 +495,14 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 
 	for (auto i = 0; i < 4; i++)
 	{
-		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, _StoneTextureRV,
+		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, StoneTextureRV,
 			XMFLOAT3(-2.0f + (i * 2.5f), 1.0f, 10.0f),
 			XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
 
 		_gameObjects.push_back(gameObject);
 	}
 
-	gameObject = new GameObject("Donut", "Resources\\OBJ\\donut.obj", shinyMaterial, _StoneTextureRV, *_device,
+	gameObject = new GameObject("Donut", "Resources\\OBJ\\donut.obj", shinyMaterial, StoneTextureRV, *_device,
 		XMFLOAT3(-5.0f, 0.5f, 10.0f),
 		XMFLOAT3(1.0f, 1.0f, 1.0f),
 		XMFLOAT3(0.0f, 0.0f, 0.0f));
@@ -527,7 +527,7 @@ void DX11PhysicsFramework::LoadSceneCameraVariables()
 	file >> m_sceneCameraVariables;
 
 	//Camera
-	float aspect = _WindowWidth / _WindowHeight;
+	float aspect = WindowWidth / WindowHeight;
 
 	//////////////////////////////////////
 
@@ -626,8 +626,8 @@ DX11PhysicsFramework::~DX11PhysicsFramework()
 	if (_depthBufferView)_depthBufferView->Release();
 	if (_depthStencilBuffer)_depthStencilBuffer->Release();
 	if (_swapChain)_swapChain->Release();
-	if (_CWcullMode)_CWcullMode->Release();
-	if (_CCWcullMode)_CCWcullMode->Release();
+	if (CWcullMode)CWcullMode->Release();
+	if (CCWcullMode)CCWcullMode->Release();
 	if (_vertexShader)_vertexShader->Release();
 	if (_inputLayout)_inputLayout->Release();
 	if (_pixelShader)_pixelShader->Release();
@@ -640,13 +640,13 @@ DX11PhysicsFramework::~DX11PhysicsFramework()
 	if (_objMeshData.IndexBuffer) _objMeshData.IndexBuffer->Release();
 	if (_objMeshData.VertexBuffer)_objMeshData.VertexBuffer->Release();
 
-	if (_DSLessEqual) _DSLessEqual->Release();
-	if (_RSCullNone) _RSCullNone->Release();
+	if (DSLessEqual) DSLessEqual->Release();
+	if (RSCullNone) RSCullNone->Release();
 
 	if (_samplerLinear)_samplerLinear->Release();
-	if (_StoneTextureRV)_StoneTextureRV->Release();
-	if (_GroundTextureRV)_GroundTextureRV->Release();
-	if (_SelectedTexture)_SelectedTexture->Release();
+	if (StoneTextureRV)StoneTextureRV->Release();
+	if (GroundTextureRV)GroundTextureRV->Release();
+	if (SelectedTexture)SelectedTexture->Release();
 
 	if (_dxgiDevice)_dxgiDevice->Release();
 	if (_dxgiFactory)_dxgiFactory->Release();
@@ -728,59 +728,59 @@ void DX11PhysicsFramework::Update()
 	if (objectSelected[0] == true)
 	{
 		BasicObjectMovement(deltaTime, 0);
-		_gameObjects[0]->GetAppearance()->SetTextureRV(_SelectedTexture);
+		_gameObjects[0]->GetAppearance()->SetTextureRV(SelectedTexture);
 	}
 	else
 	{
-		_gameObjects[0]->GetAppearance()->SetTextureRV(_GroundTextureRV);
+		_gameObjects[0]->GetAppearance()->SetTextureRV(GroundTextureRV);
 	}
 	if (objectSelected[1] == true)
 	{
 		BasicObjectMovement(deltaTime, 1);
-		_gameObjects[1]->GetAppearance()->SetTextureRV(_SelectedTexture);
+		_gameObjects[1]->GetAppearance()->SetTextureRV(SelectedTexture);
 	}
 	else
 	{
-		_gameObjects[1]->GetAppearance()->SetTextureRV(_StoneTextureRV);
+		_gameObjects[1]->GetAppearance()->SetTextureRV(StoneTextureRV);
 	}
 
 	if (objectSelected[2] == true)
 	{
 		BasicObjectMovement(deltaTime, 2);
-		_gameObjects[2]->GetAppearance()->SetTextureRV(_SelectedTexture);
+		_gameObjects[2]->GetAppearance()->SetTextureRV(SelectedTexture);
 	}
 	else
 	{
-		_gameObjects[2]->GetAppearance()->SetTextureRV(_StoneTextureRV);
+		_gameObjects[2]->GetAppearance()->SetTextureRV(StoneTextureRV);
 	}
 	if (objectSelected[3] == true)
 	{
 		BasicObjectMovement(deltaTime, 3);
-		_gameObjects[3]->GetAppearance()->SetTextureRV(_SelectedTexture);
+		_gameObjects[3]->GetAppearance()->SetTextureRV(SelectedTexture);
 	}
 	else
 	{
-		_gameObjects[3]->GetAppearance()->SetTextureRV(_StoneTextureRV);
+		_gameObjects[3]->GetAppearance()->SetTextureRV(StoneTextureRV);
 	}
 
 	if (objectSelected[4] == true)
 	{
 		BasicObjectMovement(deltaTime, 4);
-		_gameObjects[4]->GetAppearance()->SetTextureRV(_SelectedTexture);
+		_gameObjects[4]->GetAppearance()->SetTextureRV(SelectedTexture);
 	}
 	else
 	{
-		_gameObjects[4]->GetAppearance()->SetTextureRV(_StoneTextureRV);
+		_gameObjects[4]->GetAppearance()->SetTextureRV(StoneTextureRV);
 	}
 
 	if (objectSelected[5] == true)
 	{
 		BasicObjectMovement(deltaTime, 5);
-		_gameObjects[5]->GetAppearance()->SetTextureRV(_SelectedTexture);
+		_gameObjects[5]->GetAppearance()->SetTextureRV(SelectedTexture);
 	}
 	else
 	{
-		_gameObjects[5]->GetAppearance()->SetTextureRV(_StoneTextureRV);
+		_gameObjects[5]->GetAppearance()->SetTextureRV(StoneTextureRV);
 	}
 
 	// Update camera

@@ -67,6 +67,7 @@ public:
 #pragma endregion
 
 	XMFLOAT3 m_startingPosition;
+
 private:
 #pragma region Private Methods
 	// Update the view camera matrix
@@ -87,8 +88,8 @@ private:
 	XMMATRIX m_projectionMatrix;
 
 	nlohmann::json m_cameraStartingVectors;
-	float const _cameraSpeed = 10.0f;
-	float const _cameraRotationSpeed = 1.0f;
+	const float _cameraSpeed = 10.0f;
+	const float _cameraRotationSpeed = 1.0f;
 
 	XMVECTOR m_startforwardVector;
 	XMVECTOR m_startupVector;

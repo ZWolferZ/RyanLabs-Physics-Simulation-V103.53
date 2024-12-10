@@ -1,69 +1,60 @@
 #pragma once
-
-#include <windows.h>
-#include <d3d11_1.h>
-#include <d3dcompiler.h>
-#include <directxmath.h>
-#include <directxcolors.h>
-#include "DDSTextureLoader.h"
-#include "resource.h"
-#include "Camera.h"
 #include "Structures.h"
-#include <vector>
+#include "Camera.h"
 #include "GameObject.h"
 
 using namespace DirectX;
 
 class DX11PhysicsFramework
 {
-	int _WindowWidth = 1920;
-	int _WindowHeight = 1080;
+	int WindowWidth = 1920;
+	int WindowHeight = 1080;
 
-	HWND _windowHandle;
+	HWND _windowHandle = nullptr;;
 
 	ID3D11DeviceContext* _immediateContext = nullptr;
-	ID3D11Device* _device;
+	ID3D11Device* _device = nullptr;
 	IDXGIDevice* _dxgiDevice = nullptr;
 	IDXGIFactory2* _dxgiFactory = nullptr;
 	ID3D11RenderTargetView* _frameBufferView = nullptr;
-	IDXGISwapChain1* _swapChain;
-	D3D11_VIEWPORT _viewport;
+	IDXGISwapChain1* _swapChain = nullptr;
+	D3D11_VIEWPORT _viewport = {};
 
-	ID3D11VertexShader* _vertexShader;
-	ID3D11InputLayout* _inputLayout;
-	ID3D11PixelShader* _pixelShader;
-	ID3D11Buffer* _constantBuffer;
-	ID3D11Buffer* _cubeVertexBuffer;
-	ID3D11Buffer* _cubeIndexBuffer;
+	ID3D11VertexShader* _vertexShader = nullptr;
+	ID3D11InputLayout* _inputLayout = nullptr;
+	ID3D11PixelShader* _pixelShader = nullptr;;
+	ID3D11Buffer* _constantBuffer = nullptr;;
+	ID3D11Buffer* _cubeVertexBuffer = nullptr;;
+	ID3D11Buffer* _cubeIndexBuffer = nullptr;;
 
-	ID3D11Buffer* _planeVertexBuffer;
-	ID3D11Buffer* _planeIndexBuffer;
+	ID3D11Buffer* _planeVertexBuffer = nullptr;;
+	ID3D11Buffer* _planeIndexBuffer = nullptr;;
 
 	ID3D11DepthStencilView* _depthBufferView = nullptr;
 	ID3D11Texture2D* _depthStencilBuffer = nullptr;
 
-	ID3D11ShaderResourceView* _StoneTextureRV = nullptr;
-	ID3D11ShaderResourceView* _GroundTextureRV = nullptr;
-	ID3D11ShaderResourceView* _SelectedTexture = nullptr;
+	ID3D11ShaderResourceView* StoneTextureRV = nullptr;
+	ID3D11ShaderResourceView* GroundTextureRV = nullptr;
+	ID3D11ShaderResourceView* SelectedTexture = nullptr;
 
 	ID3D11SamplerState* _samplerLinear = nullptr;
 
-	Light basicLight;
+	Light basicLight = {};
 
-	MeshData _objMeshData;
-	vector<GameObject*> _gameObjects;
+	MeshData _objMeshData = {};
+	vector<GameObject*> _gameObjects = {};
 	int _gameObjectSize = 0;
 
 	Camera* _camera = nullptr;
-	nlohmann::json m_sceneCameraVariables;
+	nlohmann::json m_sceneCameraVariables = nullptr;
 
-	ConstantBuffer _cbData;
+	ConstantBuffer _cbData = {};
 
-	ID3D11DepthStencilState* _DSLessEqual;
-	ID3D11RasterizerState* _RSCullNone;
+	ID3D11DepthStencilState* DSLessEqual = nullptr;
+	ID3D11RasterizerState* RSCullNone = nullptr;;
 
-	ID3D11RasterizerState* _CCWcullMode; //Counter Clockwise
-	ID3D11RasterizerState* _CWcullMode; //Clockwise
+	ID3D11RasterizerState* CCWcullMode = nullptr; //Counter Clockwise
+	ID3D11RasterizerState* CWcullMode = nullptr; //Clockwise
 
 	HRESULT CreateWindowHandle(HINSTANCE hInstance, int nCmdShow);
 	HRESULT CreateD3DDevice();

@@ -10,6 +10,7 @@ Transform::Transform(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 scale)
 	_originRotation = rotation;
 	_originScale = scale;
 	dirtyMatrix = false;
+
 	_world = nullptr;
 }
 

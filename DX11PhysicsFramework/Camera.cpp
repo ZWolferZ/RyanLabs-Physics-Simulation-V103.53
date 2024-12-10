@@ -29,6 +29,7 @@ void Camera::SetProjectionValues(float fov, float aspectRatio, float nearZ, floa
 	// Set the projection matrix
 	m_projectionMatrix = XMMatrixPerspectiveFovLH(fovRadians, aspectRatio, nearZ, farZ);
 }
+
 void Camera::HandleMovement(float deltaTime)
 {
 	if (GetAsyncKeyState(87) & 0xFFFF) // W

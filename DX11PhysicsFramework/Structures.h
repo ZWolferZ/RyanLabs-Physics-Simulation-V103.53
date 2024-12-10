@@ -7,6 +7,13 @@
 #include <iostream>
 #include <fstream>
 #include <thread>
+#include <windows.h>
+#include <d3d11_1.h>
+#include <vector>
+#include <directxcolors.h>
+#include "DDSTextureLoader.h"
+#include "resource.h"
+#include <d3dcompiler.h>
 
 using namespace DirectX;
 using namespace std;
