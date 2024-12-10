@@ -46,7 +46,7 @@ class DX11PhysicsFramework
 
 	ID3D11ShaderResourceView* _StoneTextureRV = nullptr;
 	ID3D11ShaderResourceView* _GroundTextureRV = nullptr;
-	ID3D11ShaderResourceView* _HerculesTextureRV = nullptr;
+	ID3D11ShaderResourceView* _SelectedTexture = nullptr;
 
 	ID3D11SamplerState* _samplerLinear = nullptr;
 
@@ -54,6 +54,7 @@ class DX11PhysicsFramework
 
 	MeshData _objMeshData;
 	vector<GameObject*> _gameObjects;
+	int _gameObjectSize = 0;
 
 	Camera* _camera = nullptr;
 	float _cameraOrbitRadius = 7.0f;
@@ -77,6 +78,8 @@ class DX11PhysicsFramework
 	HRESULT InitVertexIndexBuffers();
 	HRESULT InitPipelineStates();
 	HRESULT InitRunTimeData();
+
+	void BasicObjectMovement(float deltaTime, int objectSelected);
 
 public:
 	~DX11PhysicsFramework();

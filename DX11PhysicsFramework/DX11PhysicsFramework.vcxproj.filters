@@ -44,6 +44,7 @@
     <ClInclude Include="Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Appearance.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OBJLoader.cpp">
@@ -67,6 +68,7 @@
     <ClCompile Include="Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Appearance.cpp" />
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">

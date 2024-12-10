@@ -4,7 +4,7 @@
 class Transform
 {
 public:
-	Transform();
+	Transform(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 scale);
 
 	void Update();
 
@@ -44,6 +44,9 @@ public:
 	XMFLOAT3 GetRotation() const { return _rotation; }
 
 	void Move(XMFLOAT3 direction);
+	void Rotate(XMFLOAT3 rotation);
+	void Scale(XMFLOAT3 scale);
+	void Reset();
 
 	XMFLOAT4X4* GetWorldMatrix();
 	XMMATRIX GetWorldMatrix4X4();
@@ -52,6 +55,11 @@ private:
 	XMFLOAT3 _position;
 	XMFLOAT3 _scale;
 	XMFLOAT3 _rotation;
+
+	XMFLOAT3 _originPosition;
+	XMFLOAT3 _originScale;
+	XMFLOAT3 _originRotation;
+
 	XMFLOAT4X4* _world;
 	bool dirtyMatrix;
 };

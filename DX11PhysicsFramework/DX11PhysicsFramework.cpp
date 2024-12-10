@@ -83,6 +83,8 @@ HRESULT DX11PhysicsFramework::Initialise(HINSTANCE hInstance, int nShowCmd)
 
 HRESULT DX11PhysicsFramework::CreateWindowHandle(HINSTANCE hInstance, int nCmdShow)
 {
+	nCmdShow = 0;
+
 	auto windowName = L"RyanLabs Proprietary Real-Time Physics Framework";
 
 	WNDCLASSW wndClass;
@@ -189,8 +191,11 @@ HRESULT DX11PhysicsFramework::CreateSwapChainAndFrameBuffer()
 	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
-	_device->CreateTexture2D(&depthBufferDesc, nullptr, &_depthStencilBuffer);
-	_device->CreateDepthStencilView(_depthStencilBuffer, nullptr, &_depthBufferView);
+	if (_depthStencilBuffer == nullptr)
+	{
+		hr = _device->CreateTexture2D(&depthBufferDesc, nullptr, &_depthStencilBuffer);
+		hr = _device->CreateDepthStencilView(_depthStencilBuffer, nullptr, &_depthBufferView);
+	}
 
 	return hr;
 }
@@ -469,6 +474,7 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 
 	hr = CreateDDSTextureFromFile(_device, L"Resources\\Textures\\stone.dds", nullptr, &_StoneTextureRV);
 	hr = CreateDDSTextureFromFile(_device, L"Resources\\Textures\\floor.dds", nullptr, &_GroundTextureRV);
+	hr = CreateDDSTextureFromFile(_device, L"Resources\\Textures\\Selected.dds", nullptr, &_SelectedTexture);
 	if (FAILED(hr)) { return hr; }
 
 	// Setup Camera
@@ -510,27 +516,85 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 	noSpecMaterial.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	noSpecMaterial.specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	auto gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial, XMFLOAT3(0.0f, 0.0f, 0.0f),
+	auto gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial, _GroundTextureRV, XMFLOAT3(0.0f, 0.0f, 0.0f),
 		XMFLOAT3(15.0f, 15.0f, 15.0f), XMFLOAT3(XMConvertToRadians(90.0f), 0.0f, 0.0f));
-	gameObject->SetTextureRV(_GroundTextureRV);
 
 	_gameObjects.push_back(gameObject);
 
 	for (auto i = 0; i < 4; i++)
 	{
-		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, XMFLOAT3(-2.0f + (i * 2.5f), 1.0f, 10.0f),
+		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, _StoneTextureRV, XMFLOAT3(-2.0f + (i * 2.5f), 1.0f, 10.0f),
 			XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
-		gameObject->SetTextureRV(_StoneTextureRV);
 
 		_gameObjects.push_back(gameObject);
 	}
 
-	gameObject = new GameObject("Donut", "Resources\\OBJ\\donut.obj", shinyMaterial, *_device, XMFLOAT3(-5.0f, 0.5f, 10.0f),
-		XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
-	gameObject->SetTextureRV(_StoneTextureRV);
+	gameObject = new GameObject("Donut", "Resources\\OBJ\\donut.obj", shinyMaterial, _StoneTextureRV, *_device,
+		XMFLOAT3(-5.0f, 0.5f, 10.0f),
+		XMFLOAT3(1.0f, 1.0f, 1.0f),
+		XMFLOAT3(0.0f, 0.0f, 0.0f));
 	_gameObjects.push_back(gameObject);
 
+	_gameObjectSize = _gameObjects.size();
+
 	return S_OK;
+}
+
+void DX11PhysicsFramework::BasicObjectMovement(float deltaTime, int objectSelected)
+{
+	if (GetAsyncKeyState(VK_NUMPAD5) & 0xFFFF)
+	{
+		_gameObjects[objectSelected]->GetTransform()->Move(XMFLOAT3(0, 0, -5.0f * deltaTime));
+	}
+	if (GetAsyncKeyState(VK_NUMPAD8) & 0xFFFF)
+	{
+		_gameObjects[objectSelected]->GetTransform()->Move(XMFLOAT3(0, 0, 5.0f * deltaTime));
+	}
+	if (GetAsyncKeyState(VK_NUMPAD4) & 0xFFFF)
+	{
+		_gameObjects[objectSelected]->GetTransform()->Move(XMFLOAT3(-5.0f * deltaTime, 0, 0));
+	}
+	if (GetAsyncKeyState(VK_NUMPAD6) & 0xFFFF)
+	{
+		_gameObjects[objectSelected]->GetTransform()->Move(XMFLOAT3(5.0f * deltaTime, 0, 0));
+	}
+
+	if (GetAsyncKeyState(VK_NUMPAD7) & 0xFFFF)
+	{
+		_gameObjects[objectSelected]->GetTransform()->Move(XMFLOAT3(0, 5.0f * deltaTime, 0));
+	}
+	if (GetAsyncKeyState(VK_NUMPAD9) & 0xFFFF)
+	{
+		_gameObjects[objectSelected]->GetTransform()->Move(XMFLOAT3(0, -5.0f * deltaTime, 0));
+	}
+
+	if (GetAsyncKeyState(VK_NUMPAD1) & 0xFFFF)
+	{
+		_gameObjects[objectSelected]->GetTransform()->Rotate(XMFLOAT3(5.0f * deltaTime, 0, 0));
+	}
+
+	if (GetAsyncKeyState(VK_NUMPAD2) & 0xFFFF)
+	{
+		_gameObjects[objectSelected]->GetTransform()->Rotate(XMFLOAT3(0, 0, -5.0f * deltaTime));
+	}
+	if (GetAsyncKeyState(VK_NUMPAD3) & 0xFFFF)
+	{
+		_gameObjects[objectSelected]->GetTransform()->Rotate(XMFLOAT3(0, 0, 5.0f * deltaTime));
+	}
+	if (GetAsyncKeyState(VK_ADD) & 0xFFFF)
+	{
+		_gameObjects[objectSelected]->GetTransform()->Scale(XMFLOAT3(1.0f * deltaTime, 1.0f * deltaTime, 1.0f * deltaTime));
+	}
+
+	if (GetAsyncKeyState(VK_SUBTRACT) & 0xFFFF)
+	{
+		_gameObjects[objectSelected]->GetTransform()->Scale(XMFLOAT3(-1.0f * deltaTime, -1.0f * deltaTime, -1.0f * deltaTime));
+	}
+
+	if (GetAsyncKeyState(VK_NUMPAD0) & 0xFFFF)
+	{
+		_gameObjects[objectSelected]->GetTransform()->Reset();
+	}
 }
 
 DX11PhysicsFramework::~DX11PhysicsFramework()
@@ -567,7 +631,7 @@ DX11PhysicsFramework::~DX11PhysicsFramework()
 	if (_samplerLinear)_samplerLinear->Release();
 	if (_StoneTextureRV)_StoneTextureRV->Release();
 	if (_GroundTextureRV)_GroundTextureRV->Release();
-	if (_HerculesTextureRV)_HerculesTextureRV->Release();
+	if (_SelectedTexture)_SelectedTexture->Release();
 
 	if (_dxgiDevice)_dxgiDevice->Release();
 	if (_dxgiFactory)_dxgiFactory->Release();
@@ -586,26 +650,119 @@ void DX11PhysicsFramework::Update()
 	static float simpleCount = 0.0f;
 	simpleCount += deltaTime;
 
+	static bool objectSelected[6] = { false };
+
 	// Move gameobjects
-	if (GetAsyncKeyState('1') & 0xFFFF)
+	if (GetAsyncKeyState('0') & 0x0001)
 	{
-		_gameObjects[1]->GetTranform()->Move(XMFLOAT3(0, 0, -5.0f * deltaTime));
+		if (objectSelected[0] == false)
+		{
+			for (bool& i : objectSelected) { i = false; }
+			objectSelected[0] = true;
+		}
 	}
-	if (GetAsyncKeyState('2') & 0xFFFF)
+	if (GetAsyncKeyState('1') & 0x0001)
 	{
-		_gameObjects[1]->GetTranform()->Move(XMFLOAT3(0, 0, 5.0f * deltaTime));
+		if (objectSelected[1] == false)
+		{
+			for (bool& i : objectSelected) { i = false; }
+			objectSelected[1] = true;
+		}
 	}
-	if (GetAsyncKeyState('3') & 0xFFFF)
+
+	if (GetAsyncKeyState('2') & 0x0001)
 	{
-		_gameObjects[2]->GetTranform()->Move(XMFLOAT3(0, 0, -5.0f * deltaTime));
+		if (objectSelected[2] == false)
+		{
+			for (bool& i : objectSelected) { i = false; }
+			objectSelected[2] = true;
+		}
 	}
-	if (GetAsyncKeyState('4') & 0xFFFF)
+	if (GetAsyncKeyState('3') & 0x0001)
 	{
-		_gameObjects[2]->GetTranform()->Move(XMFLOAT3(0, 0, 5.0f * deltaTime));
+		if (objectSelected[3] == false)
+		{
+			for (bool& i : objectSelected) { i = false; }
+			objectSelected[3] = true;
+		}
+	}
+	if (GetAsyncKeyState('4') & 0x0001)
+	{
+		if (objectSelected[4] == false)
+		{
+			for (bool& i : objectSelected) { i = false; }
+			objectSelected[4] = true;
+		}
+	}
+	if (GetAsyncKeyState('5') & 0x0001)
+	{
+		if (objectSelected[5] == false)
+		{
+			for (bool& i : objectSelected) { i = false; }
+			objectSelected[5] = true;
+		}
 	}
 	if (GetAsyncKeyState(VK_ESCAPE) & 0x0001)
 	{
 		PostQuitMessage(0);
+	}
+
+	if (objectSelected[0] == true)
+	{
+		BasicObjectMovement(deltaTime, 0);
+		_gameObjects[0]->GetAppearance()->SetTextureRV(_SelectedTexture);
+	}
+	else
+	{
+		_gameObjects[0]->GetAppearance()->SetTextureRV(_GroundTextureRV);
+	}
+	if (objectSelected[1] == true)
+	{
+		BasicObjectMovement(deltaTime, 1);
+		_gameObjects[1]->GetAppearance()->SetTextureRV(_SelectedTexture);
+	}
+	else
+	{
+		_gameObjects[1]->GetAppearance()->SetTextureRV(_StoneTextureRV);
+	}
+
+	if (objectSelected[2] == true)
+	{
+		BasicObjectMovement(deltaTime, 2);
+		_gameObjects[2]->GetAppearance()->SetTextureRV(_SelectedTexture);
+	}
+	else
+	{
+		_gameObjects[2]->GetAppearance()->SetTextureRV(_StoneTextureRV);
+	}
+	if (objectSelected[3] == true)
+	{
+		BasicObjectMovement(deltaTime, 3);
+		_gameObjects[3]->GetAppearance()->SetTextureRV(_SelectedTexture);
+	}
+	else
+	{
+		_gameObjects[3]->GetAppearance()->SetTextureRV(_StoneTextureRV);
+	}
+
+	if (objectSelected[4] == true)
+	{
+		BasicObjectMovement(deltaTime, 4);
+		_gameObjects[4]->GetAppearance()->SetTextureRV(_SelectedTexture);
+	}
+	else
+	{
+		_gameObjects[4]->GetAppearance()->SetTextureRV(_StoneTextureRV);
+	}
+
+	if (objectSelected[5] == true)
+	{
+		BasicObjectMovement(deltaTime, 5);
+		_gameObjects[5]->GetAppearance()->SetTextureRV(_SelectedTexture);
+	}
+	else
+	{
+		_gameObjects[5]->GetAppearance()->SetTextureRV(_StoneTextureRV);
 	}
 
 	// Update camera
@@ -633,7 +790,7 @@ void DX11PhysicsFramework::Draw()
 	//
 	// Clear buffers
 	//
-	float ClearColor[4] = { 0.25f, 0.25f, 0.75f, 1.0f }; // red,green,blue,alpha
+	float ClearColor[4] = { 0.25f, 0.55f, 1.0f, 1.0f }; // red,green,blue,alpha
 	_immediateContext->OMSetRenderTargets(1, &_frameBufferView, _depthBufferView);
 	_immediateContext->ClearRenderTargetView(_frameBufferView, ClearColor);
 	_immediateContext->ClearDepthStencilView(_depthBufferView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -664,7 +821,7 @@ void DX11PhysicsFramework::Draw()
 	for (auto gameObject : _gameObjects)
 	{
 		// Get render material
-		Material material = gameObject->GetMaterial();
+		Material material = gameObject->GetAppearance()->GetMaterial();
 
 		// Copy material to shader
 		_cbData.surface.AmbientMtrl = material.ambient;
@@ -672,12 +829,12 @@ void DX11PhysicsFramework::Draw()
 		_cbData.surface.SpecularMtrl = material.specular;
 
 		// Set world matrix
-		_cbData.World = XMMatrixTranspose(gameObject->GetTranform()->GetWorldMatrix4X4());
+		_cbData.World = XMMatrixTranspose(gameObject->GetTransform()->GetWorldMatrix4X4());
 
 		// Set texture
-		if (gameObject->HasTexture())
+		if (gameObject->GetAppearance()->_hasTexture)
 		{
-			_immediateContext->PSSetShaderResources(0, 1, gameObject->GetTextureRV());
+			_immediateContext->PSSetShaderResources(0, 1, gameObject->GetAppearance()->GetTextureRV());
 			_cbData.HasTexture = 1.0f;
 		}
 		else
@@ -692,7 +849,7 @@ void DX11PhysicsFramework::Draw()
 		_immediateContext->Unmap(_constantBuffer, 0);
 
 		// Draw object
-		gameObject->Draw(_immediateContext);
+		gameObject->GetAppearance()->Draw(_immediateContext);
 	}
 
 	//
