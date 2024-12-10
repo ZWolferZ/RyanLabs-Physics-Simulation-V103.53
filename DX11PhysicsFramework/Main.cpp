@@ -26,7 +26,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 			if (msg.message >= WM_KEYFIRST && msg.message <= WM_KEYLAST)
 			{
-				handled = application.HandleKeyboard(msg);
+				handled = true;
 			}
 			else if (WM_QUIT == msg.message)
 				break;

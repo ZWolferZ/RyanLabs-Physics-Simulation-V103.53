@@ -1,52 +1,269 @@
+// Include{s}
 #include "Camera.h"
 
-Camera::Camera(XMFLOAT3 position, XMFLOAT3 at, XMFLOAT3 up, FLOAT windowWidth, FLOAT windowHeight, FLOAT nearDepth,
-	FLOAT farDepth)
-	: _eye(position), _at(at), _up(up), _windowWidth(windowWidth), _windowHeight(windowHeight), _nearDepth(nearDepth),
-	_farDepth(farDepth)
+#pragma region Constructor
+Camera::Camera()
 {
-	Update();
+	// Multithreading this function is just too cool not to do.
+	std::thread loadStartingVectorsThread(&Camera::LoadStartingVectors, this);
+
+	// Set the base camera position and rotation
+	m_position = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	m_rotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
+
+	m_PositionVector = XMLoadFloat3(&m_position);
+	m_RotationVector = XMLoadFloat3(&m_rotation);
+
+	// Wait for the thread to finish
+	loadStartingVectorsThread.join();
+
+	// Apply the starting vectors to the camera
+	UpdateViewMatrix();
 }
 
-Camera::~Camera()
+void Camera::SetProjectionValues(float fov, float aspectRatio, float nearZ, float farZ)
 {
+	// Convert fov to radians
+	float fovRadians = (fov / 360.0f) * XM_2PI;
+
+	// Set the projection matrix
+	m_projectionMatrix = XMMatrixPerspectiveFovLH(fovRadians, aspectRatio, nearZ, farZ);
+}
+void Camera::HandleMovement(float deltaTime)
+{
+	if (GetAsyncKeyState(87) & 0xFFFF) // W
+	{
+		AddToPosition((GetForwardVector() * _cameraSpeed) * deltaTime);
+	}
+	if (GetAsyncKeyState(83) & 0xFFFF) // S
+	{
+		AddToPosition((GetBackVector() * _cameraSpeed) * deltaTime);
+	}
+	if (GetAsyncKeyState(65) & 0xFFFF) // A
+	{
+		AddToPosition((GetLeftVector() * _cameraSpeed) * deltaTime);
+	}
+	if (GetAsyncKeyState(68) & 0xFFFF) // D
+	{
+		AddToPosition((GetRightVector() * _cameraSpeed) * deltaTime);
+	}
+	if (GetAsyncKeyState(81) & 0xFFFF) // Q
+	{
+		AddToPosition(0.0f, _cameraSpeed * deltaTime, 0.0f);
+	}
+	if (GetAsyncKeyState(69) & 0xFFFF) // E
+	{
+		AddToPosition(0, -_cameraSpeed * deltaTime, 0);
+	}
+	if (GetAsyncKeyState(82) & 0xFFFF)
+	{
+		SetPosition(m_startingPosition.x, m_startingPosition.y, m_startingPosition.z);
+		SetRotation(0, 0, 0);
+	}
+
+	// Rotate the camera with the arrow keys
+	if (GetAsyncKeyState(VK_UP) & 0xFFFF)
+	{
+		AddToRotation(-_cameraRotationSpeed * deltaTime, 0.0f, 0.0f);
+	}
+	if (GetAsyncKeyState(VK_DOWN) & 0xFFFF)
+	{
+		AddToRotation(_cameraRotationSpeed * deltaTime, 0.0f, 0.0f);
+	}
+	if (GetAsyncKeyState(VK_LEFT) & 0xFFFF)
+	{
+		AddToRotation(0.0f, -_cameraRotationSpeed * deltaTime, 0.0f);
+	}
+	if (GetAsyncKeyState(VK_RIGHT) & 0xFFFF)
+	{
+		AddToRotation(0.0f, _cameraRotationSpeed * deltaTime, 0.0f);
+	}
+}
+#pragma endregion
+
+#pragma region Private Methods
+void Camera::UpdateViewMatrix()
+{
+	// Calculate the rotation matrix
+	XMMATRIX camRotationMatrix = XMMatrixRotationRollPitchYaw(m_rotation.x, m_rotation.y,
+		m_rotation.z);
+
+	// Transform the vectors with the rotation matrix
+	XMVECTOR camTarget = XMVector3TransformCoord(m_startforwardVector, camRotationMatrix);
+
+	// Apply the position to the camera target
+	camTarget += m_PositionVector;
+
+	// Calculate the up direction
+	XMVECTOR upDirection = XMVector3TransformCoord(m_startupVector, camRotationMatrix);
+
+	// Create the view matrix
+	m_viewMatrix = XMMatrixLookAtLH(m_PositionVector, camTarget, upDirection);
+	XMMATRIX vecRotationMatrix = XMMatrixRotationRollPitchYaw(0.0f, m_rotation.y, 0.0f);
+
+	// Transform the vectors with the rotation matrix
+	m_forwardVector = XMVector3TransformCoord(m_startforwardVector, vecRotationMatrix);
+	m_backVector = XMVector3TransformCoord(m_startbackVector, vecRotationMatrix);
+	m_leftVector = XMVector3TransformCoord(m_startleftVector, vecRotationMatrix);
+	m_rightVector = XMVector3TransformCoord(m_startrightVector, vecRotationMatrix);
 }
 
-void Camera::Update()
+void Camera::LoadStartingVectors()
 {
-	// Initialize the view matrix
+	// Load the starting camera vectors from a JSON file
+	std::ifstream file("JSON Files\\Starting Camera Vectors.json");
 
-	auto eye = XMFLOAT4(_eye.x, _eye.y, _eye.z, 1.0f);
-	auto at = XMFLOAT4(_at.x, _at.y, _at.z, 1.0f);
-	auto up = XMFLOAT4(_up.x, _up.y, _up.z, 0.0f);
+	// Check if the file is open
+	if (!file.is_open())
+	{
+		std::cerr << "Failed to open JSON file." << std::endl;
+	}
 
-	XMVECTOR EyeVector = XMLoadFloat4(&eye);
-	XMVECTOR AtVector = XMLoadFloat4(&at);
-	XMVECTOR UpVector = XMLoadFloat4(&up);
+	file >> m_cameraStartingVectors;
 
-	XMStoreFloat4x4(&_view, XMMatrixLookAtLH(EyeVector, AtVector, UpVector));
+	// Set the starting vectors using the JSON file values
+	m_startforwardVector = XMVectorSet(
+		m_cameraStartingVectors["StartingCameraVectors"]["ForwardVector"]["x"].get<float>(),
+		m_cameraStartingVectors["StartingCameraVectors"]["ForwardVector"]["y"].get<float>(),
+		m_cameraStartingVectors["StartingCameraVectors"]["ForwardVector"]["z"].get<float>(),
+		m_cameraStartingVectors["StartingCameraVectors"]["ForwardVector"]["w"].get<float>()
+	);
 
-	// Initialize the projection matrix
-	XMStoreFloat4x4(&_projection,
-		XMMatrixPerspectiveFovLH(0.25f * XM_PI, _windowWidth / _windowHeight, _nearDepth, _farDepth));
+	m_startupVector = XMVectorSet(
+		m_cameraStartingVectors["StartingCameraVectors"]["UpVector"]["x"].get<float>(),
+		m_cameraStartingVectors["StartingCameraVectors"]["UpVector"]["y"].get<float>(),
+		m_cameraStartingVectors["StartingCameraVectors"]["UpVector"]["z"].get<float>(),
+		m_cameraStartingVectors["StartingCameraVectors"]["UpVector"]["w"].get<float>()
+	);
+
+	m_startrightVector = XMVectorSet(
+		m_cameraStartingVectors["StartingCameraVectors"]["RightVector"]["x"].get<float>(),
+		m_cameraStartingVectors["StartingCameraVectors"]["RightVector"]["y"].get<float>(),
+		m_cameraStartingVectors["StartingCameraVectors"]["RightVector"]["z"].get<float>(),
+		m_cameraStartingVectors["StartingCameraVectors"]["RightVector"]["w"].get<float>()
+	);
+
+	m_startleftVector = XMVectorSet(
+		m_cameraStartingVectors["StartingCameraVectors"]["LeftVector"]["x"].get<float>(),
+		m_cameraStartingVectors["StartingCameraVectors"]["LeftVector"]["y"].get<float>(),
+		m_cameraStartingVectors["StartingCameraVectors"]["LeftVector"]["z"].get<float>(),
+		m_cameraStartingVectors["StartingCameraVectors"]["LeftVector"]["w"].get<float>()
+	);
+
+	m_startbackVector = XMVectorSet(
+		m_cameraStartingVectors["StartingCameraVectors"]["BackVector"]["x"].get<float>(),
+		m_cameraStartingVectors["StartingCameraVectors"]["BackVector"]["y"].get<float>(),
+		m_cameraStartingVectors["StartingCameraVectors"]["BackVector"]["z"].get<float>(),
+		m_cameraStartingVectors["StartingCameraVectors"]["BackVector"]["w"].get<float>()
+	);
+
+	// Close the file
+	file.close();
+}
+#pragma endregion
+
+#pragma region Setters
+void Camera::SetPosition(float x, float y, float z)
+{
+	// Set the camera position
+	m_position = XMFLOAT3(x, y, z);
+	m_PositionVector = XMLoadFloat3(&m_position);
+
+	// Update the view matrix
+	UpdateViewMatrix();
 }
 
-void Camera::Reshape(FLOAT windowWidth, FLOAT windowHeight, FLOAT nearDepth, FLOAT farDepth)
+void Camera::AddToPosition(XMVECTOR position)
 {
-	_windowWidth = windowWidth;
-	_windowHeight = windowHeight;
-	_nearDepth = nearDepth;
-	_farDepth = farDepth;
+	// Add to the camera position using an XMVECTOR
+	m_PositionVector += position;
+	XMStoreFloat3(&m_position, m_PositionVector);
+
+	// Update the view matrix
+	UpdateViewMatrix();
 }
 
-XMFLOAT4X4 Camera::GetViewProjection() const
+void Camera::AddToPosition(float x, float y, float z)
 {
-	XMMATRIX view = XMLoadFloat4x4(&_view);
-	XMMATRIX projection = XMLoadFloat4x4(&_projection);
+	// Add to the camera position using x, y, z values
+	m_position.x += x;
+	m_position.y += y;
+	m_position.z += z;
 
-	XMFLOAT4X4 viewProj;
+	// Update the position vector
+	m_PositionVector = XMLoadFloat3(&m_position);
 
-	XMStoreFloat4x4(&viewProj, view * projection);
-
-	return viewProj;
+	// Update the view matrix
+	UpdateViewMatrix();
 }
+
+void Camera::SetRotation(float x, float y, float z)
+{
+	// Set the camera rotation using x, y, z values
+	m_rotation = XMFLOAT3(x, y, z);
+
+	// Update the rotation vector
+	m_RotationVector = XMLoadFloat3(&m_rotation);
+
+	// Update the view matrix
+	UpdateViewMatrix();
+}
+
+void Camera::AddToRotation(float x, float y, float z)
+{
+	// Add to the camera rotation using x, y, z values
+	m_rotation.x += x;
+	m_rotation.y += y;
+	m_rotation.z += z;
+
+	// Update the rotation vector
+	m_RotationVector = XMLoadFloat3(&m_rotation);
+
+	// Update the view matrix
+	UpdateViewMatrix();
+}
+#pragma endregion
+
+#pragma region Getters
+// Getters for member variables
+
+XMMATRIX Camera::GetViewMatrix() const
+{
+	return m_viewMatrix;
+}
+
+XMMATRIX Camera::GetProjectionMatrix() const
+{
+	return m_projectionMatrix;
+}
+
+XMFLOAT3 Camera::GetPosition() const
+{
+	return m_position;
+}
+
+XMFLOAT3 Camera::GetRotation() const
+{
+	return m_rotation;
+}
+
+XMVECTOR Camera::GetForwardVector() const
+{
+	return m_forwardVector;
+}
+
+XMVECTOR Camera::GetLeftVector() const
+{
+	return m_leftVector;
+}
+
+XMVECTOR Camera::GetRightVector() const
+{
+	return m_rightVector;
+}
+
+XMVECTOR Camera::GetBackVector() const
+{
+	return m_backVector;
+}
+#pragma endregion

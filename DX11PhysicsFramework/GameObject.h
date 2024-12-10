@@ -6,9 +6,11 @@
 class GameObject
 {
 public:
-	GameObject(const string& type, const string& meshpath, const Material& material, ID3D11ShaderResourceView* textureRV, ID3D11Device& device,
+	GameObject(const string& type, const string& meshpath, const Material& material,
+		ID3D11ShaderResourceView* textureRV, ID3D11Device& device,
 		XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation);
-	GameObject(const string& type, const Geometry& geometry, const Material& material, ID3D11ShaderResourceView* textureRV, XMFLOAT3 position,
+	GameObject(const string& type, const Geometry& geometry, const Material& material,
+		ID3D11ShaderResourceView* textureRV, XMFLOAT3 position,
 		XMFLOAT3 scale, XMFLOAT3 rotation);
 
 	~GameObject();

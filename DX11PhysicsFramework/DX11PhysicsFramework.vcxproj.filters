@@ -21,6 +21,9 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{05bc185c-c137-4bc9-aac7-bcabf9000a9f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="JSON Files">
+      <UniqueIdentifier>{9ace8d84-ed57-4432-8ae9-2a62bb8d0890}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OBJLoader.h">
@@ -44,7 +47,9 @@
     <ClInclude Include="Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Appearance.h" />
+    <ClInclude Include="Appearance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OBJLoader.cpp">
@@ -68,7 +73,9 @@
     <ClCompile Include="Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Appearance.cpp" />
+    <ClCompile Include="Appearance.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CLInclude Include="resource.h">
@@ -88,6 +95,12 @@
       <Filter>Shaders</Filter>
     </None>
     <None Include="packages.config" />
+    <None Include="JSON Files\Scene Camera Variables.json">
+      <Filter>JSON Files</Filter>
+    </None>
+    <None Include="JSON Files\Starting Camera Vectors.json">
+      <Filter>JSON Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11PhysicsFramework.rc">

@@ -19,38 +19,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
-	return 0;
-}
 
-bool DX11PhysicsFramework::HandleKeyboard(MSG msg)
-{
-	XMFLOAT3 cameraPosition = _camera->GetPosition();
+	// YOU WILL BE MAXIMIZED
+	ShowWindow(hWnd, SW_MAXIMIZE);
+	ShowCursor(FALSE);
 
-	switch (msg.wParam)
-	{
-	case VK_UP:
-		_cameraOrbitRadius = max(_cameraOrbitRadiusMin, _cameraOrbitRadius - (_cameraSpeed * 0.2f));
-		return true;
-		break;
-
-	case VK_DOWN:
-		_cameraOrbitRadius = min(_cameraOrbitRadiusMax, _cameraOrbitRadius + (_cameraSpeed * 0.2f));
-		return true;
-		break;
-
-	case VK_RIGHT:
-		_cameraOrbitAngleXZ -= _cameraSpeed;
-		return true;
-		break;
-
-	case VK_LEFT:
-		_cameraOrbitAngleXZ += _cameraSpeed;
-		return true;
-		break;
-	default: break;
-	}
-
-	return false;
+	return message;
 }
 
 HRESULT DX11PhysicsFramework::Initialise(HINSTANCE hInstance, int nShowCmd)
@@ -478,12 +452,9 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 	if (FAILED(hr)) { return hr; }
 
 	// Setup Camera
-	auto eye = XMFLOAT3(0.0f, 2.0f, -1.0f);
-	auto at = XMFLOAT3(0.0f, 2.0f, 0.0f);
-	auto up = XMFLOAT3(0.0f, 1.0f, 0.0f);
+	_camera = new Camera();
 
-	_camera = new Camera(eye, at, up, static_cast<float>(_WindowWidth), static_cast<float>(_WindowHeight), 0.01f,
-		200.0f);
+	LoadSceneCameraVariables();
 
 	// Setup the scene's light
 	basicLight.AmbientLight = XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
@@ -516,14 +487,16 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 	noSpecMaterial.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	noSpecMaterial.specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	auto gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial, _GroundTextureRV, XMFLOAT3(0.0f, 0.0f, 0.0f),
+	auto gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial, _GroundTextureRV,
+		XMFLOAT3(0.0f, 0.0f, 0.0f),
 		XMFLOAT3(15.0f, 15.0f, 15.0f), XMFLOAT3(XMConvertToRadians(90.0f), 0.0f, 0.0f));
 
 	_gameObjects.push_back(gameObject);
 
 	for (auto i = 0; i < 4; i++)
 	{
-		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, _StoneTextureRV, XMFLOAT3(-2.0f + (i * 2.5f), 1.0f, 10.0f),
+		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, _StoneTextureRV,
+			XMFLOAT3(-2.0f + (i * 2.5f), 1.0f, 10.0f),
 			XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
 
 		_gameObjects.push_back(gameObject);
@@ -538,6 +511,46 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 	_gameObjectSize = _gameObjects.size();
 
 	return S_OK;
+}
+
+void DX11PhysicsFramework::LoadSceneCameraVariables()
+{
+	std::ifstream file("JSON Files\\Scene Camera Variables.json");
+
+	// Check if the file is open
+	if (!file.is_open())
+	{
+		std::cerr << "Failed to open JSON file." << std::endl;
+	}
+
+	// Load the JSON file
+	file >> m_sceneCameraVariables;
+
+	//Camera
+	float aspect = _WindowWidth / _WindowHeight;
+
+	//////////////////////////////////////
+
+	_camera->SetPosition(
+		m_sceneCameraVariables["SceneCameraVariables"]["DebugCamera"]["Position"]["x"].get<float>(),
+		m_sceneCameraVariables["SceneCameraVariables"]["DebugCamera"]["Position"]["y"].get<float>(),
+		m_sceneCameraVariables["SceneCameraVariables"]["DebugCamera"]["Position"]["z"].get<
+		float>());
+
+	_camera->SetRotation(
+		m_sceneCameraVariables["SceneCameraVariables"]["DebugCamera"]["Rotation"]["x"].get<float>(),
+		m_sceneCameraVariables["SceneCameraVariables"]["DebugCamera"]["Rotation"]["y"].get<float>(),
+		m_sceneCameraVariables["SceneCameraVariables"]["DebugCamera"]["Rotation"]["z"].get<
+		float>());
+
+	_camera->SetProjectionValues(
+		m_sceneCameraVariables["SceneCameraVariables"]["DebugCamera"]["ProjectionValues"]["fov"].get<float>(), aspect,
+		m_sceneCameraVariables["SceneCameraVariables"]["DebugCamera"]["ProjectionValues"]["near"].get<float>(),
+		m_sceneCameraVariables["SceneCameraVariables"]["DebugCamera"]["ProjectionValues"]["far"].get<float>());
+
+	_camera->m_startingPosition = _camera->GetPosition();
+	// Close the file
+	file.close();
 }
 
 void DX11PhysicsFramework::BasicObjectMovement(float deltaTime, int objectSelected)
@@ -583,12 +596,14 @@ void DX11PhysicsFramework::BasicObjectMovement(float deltaTime, int objectSelect
 	}
 	if (GetAsyncKeyState(VK_ADD) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Scale(XMFLOAT3(1.0f * deltaTime, 1.0f * deltaTime, 1.0f * deltaTime));
+		_gameObjects[objectSelected]->GetTransform()->Scale(
+			XMFLOAT3(1.0f * deltaTime, 1.0f * deltaTime, 1.0f * deltaTime));
 	}
 
 	if (GetAsyncKeyState(VK_SUBTRACT) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Scale(XMFLOAT3(-1.0f * deltaTime, -1.0f * deltaTime, -1.0f * deltaTime));
+		_gameObjects[objectSelected]->GetTransform()->Scale(
+			XMFLOAT3(-1.0f * deltaTime, -1.0f * deltaTime, -1.0f * deltaTime));
 	}
 
 	if (GetAsyncKeyState(VK_NUMPAD0) & 0xFFFF)
@@ -651,6 +666,9 @@ void DX11PhysicsFramework::Update()
 	simpleCount += deltaTime;
 
 	static bool objectSelected[6] = { false };
+
+	// Update camera
+	_camera->HandleMovement(deltaTime);
 
 	// Move gameobjects
 	if (GetAsyncKeyState('0') & 0x0001)
@@ -766,17 +784,6 @@ void DX11PhysicsFramework::Update()
 	}
 
 	// Update camera
-	float angleAroundZ = XMConvertToRadians(_cameraOrbitAngleXZ);
-
-	float x = _cameraOrbitRadius * cos(angleAroundZ);
-	float z = _cameraOrbitRadius * sin(angleAroundZ);
-
-	XMFLOAT3 cameraPos = _camera->GetPosition();
-	cameraPos.x = x;
-	cameraPos.z = z;
-
-	_camera->SetPosition(cameraPos);
-	_camera->Update();
 
 	// Update objects
 	for (auto gameObject : _gameObjects)
@@ -805,14 +812,15 @@ void DX11PhysicsFramework::Draw()
 	_immediateContext->PSSetConstantBuffers(0, 1, &_constantBuffer);
 	_immediateContext->PSSetSamplers(0, 1, &_samplerLinear);
 
-	XMFLOAT4X4 tempView = _camera->GetView();
-	XMFLOAT4X4 tempProjection = _camera->GetProjection();
+	XMFLOAT4X4 view;
 
-	XMMATRIX view = XMLoadFloat4x4(&tempView);
-	XMMATRIX projection = XMLoadFloat4x4(&tempProjection);
+	XMFLOAT4X4 projection;
 
-	_cbData.View = XMMatrixTranspose(view);
-	_cbData.Projection = XMMatrixTranspose(projection);
+	XMStoreFloat4x4(&view, _camera->GetViewMatrix());
+	XMStoreFloat4x4(&projection, _camera->GetProjectionMatrix());
+
+	_cbData.View = XMMatrixTranspose(XMLoadFloat4x4(&view));
+	_cbData.Projection = XMMatrixTranspose(XMLoadFloat4x4(&projection));
 
 	_cbData.light = basicLight;
 	_cbData.EyePosW = _camera->GetPosition();

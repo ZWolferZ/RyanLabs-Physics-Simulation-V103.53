@@ -9,17 +9,15 @@
 #include "resource.h"
 #include "Camera.h"
 #include "Structures.h"
-
 #include <vector>
-
 #include "GameObject.h"
 
 using namespace DirectX;
 
 class DX11PhysicsFramework
 {
-	int _WindowWidth = 1280;
-	int _WindowHeight = 768;
+	int _WindowWidth = 1920;
+	int _WindowHeight = 1080;
 
 	HWND _windowHandle;
 
@@ -57,11 +55,7 @@ class DX11PhysicsFramework
 	int _gameObjectSize = 0;
 
 	Camera* _camera = nullptr;
-	float _cameraOrbitRadius = 7.0f;
-	float _cameraOrbitRadiusMin = 2.0f;
-	float _cameraOrbitRadiusMax = 50.0f;
-	float _cameraOrbitAngleXZ = -90.0f;
-	float _cameraSpeed = 2.0f;
+	nlohmann::json m_sceneCameraVariables;
 
 	ConstantBuffer _cbData;
 
@@ -78,6 +72,7 @@ class DX11PhysicsFramework
 	HRESULT InitVertexIndexBuffers();
 	HRESULT InitPipelineStates();
 	HRESULT InitRunTimeData();
+	void LoadSceneCameraVariables();
 
 	void BasicObjectMovement(float deltaTime, int objectSelected);
 
@@ -86,7 +81,6 @@ public:
 
 	HRESULT Initialise(HINSTANCE hInstance, int nCmdShow);
 
-	bool HandleKeyboard(MSG msg);
 	void Update();
 	void Draw();
 };

@@ -380,6 +380,8 @@
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="JSON Files\Scene Camera Variables.json" />
+    <None Include="JSON Files\Starting Camera Vectors.json" />
     <None Include="packages.config" />
     <None Include="SimpleShaders.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>

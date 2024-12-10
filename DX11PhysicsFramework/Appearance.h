@@ -1,6 +1,7 @@
 #pragma once
 #include "Structures.h"
 #include "OBJLoader.h"
+
 class Appearance
 {
 public:

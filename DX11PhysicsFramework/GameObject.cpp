@@ -1,6 +1,7 @@
 #include "GameObject.h"
 
-GameObject::GameObject(const string& type, const string& meshpath, const Material& material, ID3D11ShaderResourceView* textureRV, ID3D11Device& device,
+GameObject::GameObject(const string& type, const string& meshpath, const Material& material,
+	ID3D11ShaderResourceView* textureRV, ID3D11Device& device,
 	XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation) : _type(type)
 
 {
@@ -9,7 +10,8 @@ GameObject::GameObject(const string& type, const string& meshpath, const Materia
 	_appearance = new Appearance(meshpath, device, textureRV, material);
 }
 
-GameObject::GameObject(const string& type, const Geometry& geometry, const Material& material, ID3D11ShaderResourceView* textureRV, XMFLOAT3 position,
+GameObject::GameObject(const string& type, const Geometry& geometry, const Material& material,
+	ID3D11ShaderResourceView* textureRV, XMFLOAT3 position,
 	XMFLOAT3 scale, XMFLOAT3 rotation) : _type(type)
 {
 	_parent = nullptr;
