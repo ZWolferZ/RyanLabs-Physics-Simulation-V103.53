@@ -27,7 +27,11 @@ struct Light
 	float3 LightVecW;
 };
 
-cbuffer ConstantBuffer : register( b0 )
+cbuffer
+
+ConstantBuffer: 
+
+register (b0)
 {
 	matrix World;
 	matrix View;
@@ -50,7 +54,7 @@ struct VS_INPUT
 //--------------------------------------------------------------------------------------
 struct VS_OUTPUT
 {
-    float4 PosH : SV_POSITION;
+	float4 PosH : SV_POSITION;
 	float3 NormW : NORMAL;
 
 	float3 PosW : POSITION;
@@ -62,7 +66,7 @@ struct VS_OUTPUT
 //--------------------------------------------------------------------------------------
 VS_OUTPUT VS_main(VS_INPUT input)
 {
-    VS_OUTPUT output = (VS_OUTPUT)0;
+	VS_OUTPUT output = (VS_OUTPUT)0;
 
 	float4 posW = mul(input.PosL, World);
 	output.PosW = posW.xyz;
@@ -74,7 +78,7 @@ VS_OUTPUT VS_main(VS_INPUT input)
 	float3 normalW = mul(float4(input.NormL, 0.0f), World).xyz;
 	output.NormW = normalize(normalW);
 
-    return output;
+	return output;
 }
 
 //--------------------------------------------------------------------------------------
@@ -89,9 +93,9 @@ float4 PS_main(VS_OUTPUT input) : SV_Target
 	// Get texture data from file
 	float4 textureColour = txDiffuse.Sample(samLinear, input.Tex);
 
-	float4 ambient = float4(0.0f, 0.0f, 0.0f,0.0f);
-    float4 diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
-    float4 specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	float4 diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	float4 specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	float3 lightLecNorm = normalize(light.LightVecW);
 	// Compute Colour
@@ -103,7 +107,7 @@ float4 PS_main(VS_OUTPUT input) : SV_Target
 	float specularAmount = pow(saturate(dot(r, toEye)), light.SpecularPower);
 
 	// Determine the diffuse light intensity that strikes the vertex.
-    float diffuseAmount = saturate(dot(lightLecNorm, normalW));
+	float diffuseAmount = saturate(dot(lightLecNorm, normalW));
 
 	// Only display specular when there is diffuse
 	if (diffuseAmount <= 0.0f)
@@ -116,18 +120,18 @@ float4 PS_main(VS_OUTPUT input) : SV_Target
 
 	if (HasTexture == 1.0f)
 	{
-        specular += specularAmount * (surface.SpecularMtrl * light.SpecularLight);
-        diffuse += diffuseAmount * (textureColour * light.DiffuseLight);
-        ambient += (textureColour * light.AmbientLight);
-		
+		specular += specularAmount * (surface.SpecularMtrl * light.SpecularLight);
+		diffuse += diffuseAmount * (textureColour * light.DiffuseLight);
+		ambient += (textureColour * light.AmbientLight);
+
 		finalColour = ambient + diffuse + specular;
-    }
+	}
 	else
 	{
-        specular += specularAmount * (surface.SpecularMtrl * light.SpecularLight);
-        diffuse += diffuseAmount * (surface.DiffuseMtrl * light.DiffuseLight);
-        ambient += (surface.AmbientMtrl * light.AmbientLight);
-		
+		specular += specularAmount * (surface.SpecularMtrl * light.SpecularLight);
+		diffuse += diffuseAmount * (surface.DiffuseMtrl * light.DiffuseLight);
+		ambient += (surface.AmbientMtrl * light.AmbientLight);
+
 		finalColour.rgb = ambient + diffuse + specular;
 	}
 

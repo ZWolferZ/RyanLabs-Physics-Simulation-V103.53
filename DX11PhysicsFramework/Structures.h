@@ -42,7 +42,7 @@ struct Geometry
 {
 	ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* indexBuffer;
-	int numberOfIndices;
+	UINT numberOfIndices;
 
 	UINT vertexBufferStride;
 	UINT vertexBufferOffset;
@@ -55,7 +55,6 @@ struct Material
 	XMFLOAT4 specular;
 };
 
-
 struct SimpleVertex
 {
 	XMFLOAT3 Pos;
@@ -64,7 +63,7 @@ struct SimpleVertex
 
 	bool operator<(const SimpleVertex other) const
 	{
-		return memcmp((void*)this, (void*)&other, sizeof(SimpleVertex)) > 0;
+		return memcmp(this, &other, sizeof(SimpleVertex)) > 0;
 	};
 };
 

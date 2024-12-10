@@ -9,7 +9,6 @@
 #include "resource.h"
 #include "Camera.h"
 #include "Structures.h"
-#include "OBJLoader.h"
 
 #include <vector>
 
@@ -19,8 +18,6 @@ using namespace DirectX;
 
 class DX11PhysicsFramework
 {
-private:
-
 	int _WindowWidth = 1280;
 	int _WindowHeight = 768;
 
@@ -58,7 +55,7 @@ private:
 	MeshData _objMeshData;
 	vector<GameObject*> _gameObjects;
 
-	Camera * _camera = nullptr;
+	Camera* _camera = nullptr;
 	float _cameraOrbitRadius = 7.0f;
 	float _cameraOrbitRadiusMin = 2.0f;
 	float _cameraOrbitRadiusMax = 50.0f;
@@ -73,7 +70,6 @@ private:
 	ID3D11RasterizerState* _CCWcullMode; //Counter Clockwise
 	ID3D11RasterizerState* _CWcullMode; //Clockwise
 
-private:
 	HRESULT CreateWindowHandle(HINSTANCE hInstance, int nCmdShow);
 	HRESULT CreateD3DDevice();
 	HRESULT CreateSwapChainAndFrameBuffer();
@@ -91,4 +87,3 @@ public:
 	void Update();
 	void Draw();
 };
-

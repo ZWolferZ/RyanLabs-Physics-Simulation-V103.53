@@ -9,8 +9,7 @@ using namespace DirectX;
 
 class Camera
 {
-private:
-	XMFLOAT3 _eye; 
+	XMFLOAT3 _eye;
 	XMFLOAT3 _at;
 	XMFLOAT3 _up;
 
@@ -23,7 +22,8 @@ private:
 	XMFLOAT4X4 _projection;
 
 public:
-	Camera(XMFLOAT3 position, XMFLOAT3 at, XMFLOAT3 up, FLOAT windowWidth, FLOAT windowHeight, FLOAT nearDepth, FLOAT farDepth);
+	Camera(XMFLOAT3 position, XMFLOAT3 at, XMFLOAT3 up, FLOAT windowWidth, FLOAT windowHeight, FLOAT nearDepth,
+		FLOAT farDepth);
 	~Camera();
 
 	void Update();
@@ -43,4 +43,3 @@ public:
 
 	void Reshape(FLOAT windowWidth, FLOAT windowHeight, FLOAT nearDepth, FLOAT farDepth);
 };
-
