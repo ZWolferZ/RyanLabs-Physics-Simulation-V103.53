@@ -14,6 +14,8 @@
 #include "DDSTextureLoader.h"
 #include "resource.h"
 #include <d3dcompiler.h>
+#include "Vector.h" // My own vector library!
+#include "Debug.h"
 
 using namespace DirectX;
 using namespace std;

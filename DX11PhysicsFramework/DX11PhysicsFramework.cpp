@@ -488,24 +488,24 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 	noSpecMaterial.specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 
 	auto gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial, GroundTextureRV,
-		XMFLOAT3(0.0f, 0.0f, 0.0f),
-		XMFLOAT3(15.0f, 15.0f, 15.0f), XMFLOAT3(XMConvertToRadians(90.0f), 0.0f, 0.0f));
+		Vector(0.0f, 0.0f, 0.0f),
+		Vector(15.0f, 15.0f, 15.0f), Vector(XMConvertToRadians(90.0f), 0.0f, 0.0f));
 
 	_gameObjects.push_back(gameObject);
 
 	for (auto i = 0; i < 4; i++)
 	{
 		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, StoneTextureRV,
-			XMFLOAT3(-2.0f + (i * 2.5f), 1.0f, 10.0f),
-			XMFLOAT3(1.0f, 1.0f, 1.0f), XMFLOAT3(0.0f, 0.0f, 0.0f));
+			Vector(-2.0f + (i * 2.5f), 1.0f, 10.0f),
+			Vector(1.0f, 1.0f, 1.0f), Vector(0.0f, 0.0f, 0.0f));
 
 		_gameObjects.push_back(gameObject);
 	}
 
 	gameObject = new GameObject("Donut", "Resources\\OBJ\\donut.obj", shinyMaterial, StoneTextureRV, *_device,
-		XMFLOAT3(-5.0f, 0.5f, 10.0f),
-		XMFLOAT3(1.0f, 1.0f, 1.0f),
-		XMFLOAT3(0.0f, 0.0f, 0.0f));
+		Vector(-5.0f, 0.5f, 10.0f),
+		Vector(1.0f, 1.0f, 1.0f),
+		Vector(0.0f, 0.0f, 0.0f));
 	_gameObjects.push_back(gameObject);
 
 	_gameObjectSize = _gameObjects.size();
@@ -557,56 +557,56 @@ void DX11PhysicsFramework::BasicObjectMovement(float deltaTime, int objectSelect
 {
 	if (GetAsyncKeyState(VK_NUMPAD5) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Move(XMFLOAT3(0, 0, -5.0f * deltaTime));
+		_gameObjects[objectSelected]->GetTransform()->Move(Vector(0, 0, -5.0f * deltaTime));
 	}
 	if (GetAsyncKeyState(VK_NUMPAD8) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Move(XMFLOAT3(0, 0, 5.0f * deltaTime));
+		_gameObjects[objectSelected]->GetTransform()->Move(Vector(0, 0, 5.0f * deltaTime));
 	}
 	if (GetAsyncKeyState(VK_NUMPAD4) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Move(XMFLOAT3(-5.0f * deltaTime, 0, 0));
+		_gameObjects[objectSelected]->GetTransform()->Move(Vector(-5.0f * deltaTime, 0, 0));
 	}
 	if (GetAsyncKeyState(VK_NUMPAD6) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Move(XMFLOAT3(5.0f * deltaTime, 0, 0));
+		_gameObjects[objectSelected]->GetTransform()->Move(Vector(5.0f * deltaTime, 0, 0));
 	}
 
 	if (GetAsyncKeyState(VK_NUMPAD7) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Move(XMFLOAT3(0, 5.0f * deltaTime, 0));
+		_gameObjects[objectSelected]->GetTransform()->Move(Vector(0, 5.0f * deltaTime, 0));
 	}
 	if (GetAsyncKeyState(VK_NUMPAD9) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Move(XMFLOAT3(0, -5.0f * deltaTime, 0));
+		_gameObjects[objectSelected]->GetTransform()->Move(Vector(0, -5.0f * deltaTime, 0));
 	}
 
 	if (GetAsyncKeyState(VK_NUMPAD1) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Rotate(XMFLOAT3(5.0f * deltaTime, 0, 0));
+		_gameObjects[objectSelected]->GetTransform()->Rotate(Vector(5.0f * deltaTime, 0, 0));
 	}
 
 	if (GetAsyncKeyState(VK_NUMPAD2) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Rotate(XMFLOAT3(0, 0, -5.0f * deltaTime));
+		_gameObjects[objectSelected]->GetTransform()->Rotate(Vector(0, 0, -5.0f * deltaTime));
 	}
 	if (GetAsyncKeyState(VK_NUMPAD3) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Rotate(XMFLOAT3(0, 0, 5.0f * deltaTime));
+		_gameObjects[objectSelected]->GetTransform()->Rotate(Vector(0, 0, 5.0f * deltaTime));
 	}
 	if (GetAsyncKeyState(VK_ADD) & 0xFFFF)
 	{
 		_gameObjects[objectSelected]->GetTransform()->Scale(
-			XMFLOAT3(1.0f * deltaTime, 1.0f * deltaTime, 1.0f * deltaTime));
+			Vector(1.0f * deltaTime, 1.0f * deltaTime, 1.0f * deltaTime));
 	}
 
 	if (GetAsyncKeyState(VK_SUBTRACT) & 0xFFFF)
 	{
 		_gameObjects[objectSelected]->GetTransform()->Scale(
-			XMFLOAT3(-1.0f * deltaTime, -1.0f * deltaTime, -1.0f * deltaTime));
+			Vector(-1.0f * deltaTime, -1.0f * deltaTime, -1.0f * deltaTime));
 	}
 
-	if (GetAsyncKeyState(VK_NUMPAD0) & 0xFFFF)
+	if (GetAsyncKeyState(VK_NUMPAD0) & 0x0001)
 	{
 		_gameObjects[objectSelected]->GetTransform()->Reset();
 	}
@@ -677,6 +677,7 @@ void DX11PhysicsFramework::Update()
 		{
 			for (bool& i : objectSelected) { i = false; }
 			objectSelected[0] = true;
+			Debug::Debug_WriteString("Object 0 Selected");
 		}
 	}
 	if (GetAsyncKeyState('1') & 0x0001)
@@ -685,6 +686,7 @@ void DX11PhysicsFramework::Update()
 		{
 			for (bool& i : objectSelected) { i = false; }
 			objectSelected[1] = true;
+			Debug::Debug_WriteString("Object 2 Selected");
 		}
 	}
 
@@ -694,6 +696,7 @@ void DX11PhysicsFramework::Update()
 		{
 			for (bool& i : objectSelected) { i = false; }
 			objectSelected[2] = true;
+			Debug::Debug_WriteString("Object 3 Selected");
 		}
 	}
 	if (GetAsyncKeyState('3') & 0x0001)
@@ -702,6 +705,7 @@ void DX11PhysicsFramework::Update()
 		{
 			for (bool& i : objectSelected) { i = false; }
 			objectSelected[3] = true;
+			Debug::Debug_WriteString("Object 4 Selected");
 		}
 	}
 	if (GetAsyncKeyState('4') & 0x0001)
@@ -710,6 +714,7 @@ void DX11PhysicsFramework::Update()
 		{
 			for (bool& i : objectSelected) { i = false; }
 			objectSelected[4] = true;
+			Debug::Debug_WriteString("Object 5 Selected");
 		}
 	}
 	if (GetAsyncKeyState('5') & 0x0001)
@@ -718,7 +723,14 @@ void DX11PhysicsFramework::Update()
 		{
 			for (bool& i : objectSelected) { i = false; }
 			objectSelected[5] = true;
+			Debug::Debug_WriteString("Object 6 Selected");
 		}
+	}
+
+	if (GetAsyncKeyState(VK_MULTIPLY) & 0x0001)
+	{
+		for (bool& i : objectSelected) { i = false; }
+		Debug::Debug_WriteString("Object Deselected");
 	}
 	if (GetAsyncKeyState(VK_ESCAPE) & 0x0001)
 	{

@@ -56,10 +56,12 @@ void Camera::HandleMovement(float deltaTime)
 	{
 		AddToPosition(0, -_cameraSpeed * deltaTime, 0);
 	}
-	if (GetAsyncKeyState(82) & 0xFFFF)
+	if (GetAsyncKeyState(82) & 0x0001) // R
 	{
 		SetPosition(m_startingPosition.x, m_startingPosition.y, m_startingPosition.z);
 		SetRotation(0, 0, 0);
+
+		Debug::Debug_WriteString("Camera Reset");
 	}
 
 	// Rotate the camera with the arrow keys
@@ -170,6 +172,8 @@ void Camera::SetPosition(float x, float y, float z)
 	m_position = XMFLOAT3(x, y, z);
 	m_PositionVector = XMLoadFloat3(&m_position);
 
+	Debug::Debug_WriteVector("Camera", "Position", m_position);
+
 	// Update the view matrix
 	UpdateViewMatrix();
 }
@@ -179,6 +183,8 @@ void Camera::AddToPosition(XMVECTOR position)
 	// Add to the camera position using an XMVECTOR
 	m_PositionVector += position;
 	XMStoreFloat3(&m_position, m_PositionVector);
+
+	Debug::Debug_WriteVector("Camera", "Position", m_position);
 
 	// Update the view matrix
 	UpdateViewMatrix();
@@ -194,6 +200,8 @@ void Camera::AddToPosition(float x, float y, float z)
 	// Update the position vector
 	m_PositionVector = XMLoadFloat3(&m_position);
 
+	Debug::Debug_WriteVector("Camera", "Position", m_position);
+
 	// Update the view matrix
 	UpdateViewMatrix();
 }
@@ -205,6 +213,8 @@ void Camera::SetRotation(float x, float y, float z)
 
 	// Update the rotation vector
 	m_RotationVector = XMLoadFloat3(&m_rotation);
+
+	Debug::Debug_WriteVector("Camera", "Rotation", m_rotation);
 
 	// Update the view matrix
 	UpdateViewMatrix();
@@ -219,6 +229,8 @@ void Camera::AddToRotation(float x, float y, float z)
 
 	// Update the rotation vector
 	m_RotationVector = XMLoadFloat3(&m_rotation);
+
+	Debug::Debug_WriteVector("Camera", "Rotation", m_rotation);
 
 	// Update the view matrix
 	UpdateViewMatrix();

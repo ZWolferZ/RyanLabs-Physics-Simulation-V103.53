@@ -2,20 +2,20 @@
 
 GameObject::GameObject(const string& type, const string& meshpath, const Material& material,
 	ID3D11ShaderResourceView* textureRV, ID3D11Device& device,
-	XMFLOAT3 position, XMFLOAT3 scale, XMFLOAT3 rotation) : _type(type)
+	const Vector& position, const Vector& scale, const Vector& rotation) : _type(type)
 
 {
 	_parent = nullptr;
-	_transform = new Transform(position, rotation, scale);
+	_transform = new Transform(position, rotation, scale, type);
 	_appearance = new Appearance(meshpath, device, textureRV, material);
 }
 
 GameObject::GameObject(const string& type, const Geometry& geometry, const Material& material,
-	ID3D11ShaderResourceView* textureRV, XMFLOAT3 position,
-	XMFLOAT3 scale, XMFLOAT3 rotation) : _type(type)
+	ID3D11ShaderResourceView* textureRV, const Vector& position,
+	const Vector& scale, const Vector& rotation) : _type(type)
 {
 	_parent = nullptr;
-	_transform = new Transform(position, rotation, scale);
+	_transform = new Transform(position, rotation, scale, type);
 	_appearance = new Appearance(geometry, textureRV, material);
 }
 

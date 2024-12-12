@@ -4,61 +4,63 @@
 class Transform
 {
 public:
-	Transform(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 scale);
+	Transform(const Vector& position, const Vector& rotation, const Vector& scale, const std::string& objectType);
 
-	void Update();
+	void Update() const;
 
 	// Setters and Getters for position/rotation/scale
 
-	void SetPositon(XMFLOAT3 newposition) { _position = newposition; }
+	void SetPositon(const Vector& newposition) { _position = newposition; }
 
-	void SetPosition(float x, float y, float z)
+	void SetPosition(const float x, const float y, const float z)
 	{
 		_position.x = x;
 		_position.y = y;
 		_position.z = z;
 	}
 
-	XMFLOAT3 GetPosition() const { return _position; }
+	Vector GetPosition() const { return _position; }
 
-	void SetScale(XMFLOAT3 scale) { _scale = scale; }
+	void SetScale(const Vector& scale) { _scale = scale; }
 
-	void SetScale(float x, float y, float z)
+	void SetScale(const float x, const float y, const float z)
 	{
 		_scale.x = x;
 		_scale.y = y;
 		_scale.z = z;
 	}
 
-	XMFLOAT3 GetScale() const { return _scale; }
+	Vector GetScale() const { return _scale; }
 
-	void SetRotation(XMFLOAT3 rotation) { _rotation = rotation; }
+	void SetRotation(const Vector& rotation) { _rotation = rotation; }
 
-	void SetRotation(float x, float y, float z)
+	void SetRotation(const float x, const float y, const float z)
 	{
 		_rotation.x = x;
 		_rotation.y = y;
 		_rotation.z = z;
 	}
 
-	XMFLOAT3 GetRotation() const { return _rotation; }
+	Vector GetRotation() const { return _rotation; }
 
-	void Move(XMFLOAT3 direction);
-	void Rotate(XMFLOAT3 rotation);
-	void Scale(XMFLOAT3 scale);
+	void Move(const Vector& direction);
+	void Rotate(const Vector& rotation);
+	void Scale(const Vector& scale);
 	void Reset();
 
 	XMFLOAT4X4* GetWorldMatrix();
 	XMMATRIX GetWorldMatrix4X4();
 
 private:
-	XMFLOAT3 _position;
-	XMFLOAT3 _scale;
-	XMFLOAT3 _rotation;
+	Vector _position;
+	Vector _scale;
+	Vector _rotation;
 
-	XMFLOAT3 _originPosition;
-	XMFLOAT3 _originScale;
-	XMFLOAT3 _originRotation;
+	Vector _originPosition;
+	Vector _originScale;
+	Vector _originRotation;
+
+	std::string _objectType;
 
 	XMFLOAT4X4* _world;
 	bool dirtyMatrix;

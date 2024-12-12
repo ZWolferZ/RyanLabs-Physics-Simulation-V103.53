@@ -1,6 +1,6 @@
 #include "Transform.h"
 
-Transform::Transform(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 scale)
+Transform::Transform(const Vector& position, const Vector& rotation, const Vector& scale, const std::string& objectType)
 {
 	_position = position;
 	_rotation = rotation;
@@ -11,28 +11,27 @@ Transform::Transform(XMFLOAT3 position, XMFLOAT3 rotation, XMFLOAT3 scale)
 	_originScale = scale;
 	dirtyMatrix = false;
 
+	_objectType = objectType;
+
 	_world = nullptr;
 }
 
-void Transform::Move(XMFLOAT3 direction)
+void Transform::Move(const Vector& direction)
 {
-	_position.x += direction.x;
-	_position.y += direction.y;
-	_position.z += direction.z;
+	_position += direction;
+	Debug::Debug_WriteVector(_objectType, "Position", _position);
 }
 
-void Transform::Rotate(XMFLOAT3 rotation)
+void Transform::Rotate(const Vector& rotation)
 {
-	_rotation.x += rotation.x;
-	_rotation.y += rotation.y;
-	_rotation.z += rotation.z;
+	_rotation += rotation;
+	Debug::Debug_WriteVector(_objectType, "Rotation", _rotation);
 }
 
-void Transform::Scale(XMFLOAT3 scale)
+void Transform::Scale(const Vector& scale)
 {
-	_scale.x += scale.x;
-	_scale.y += scale.y;
-	_scale.z += scale.z;
+	_scale += scale;
+	Debug::Debug_WriteVector(_objectType, "Scale", _scale);
 }
 
 void Transform::Reset()
@@ -40,6 +39,8 @@ void Transform::Reset()
 	_position = _originPosition;
 	_rotation = _originRotation;
 	_scale = _originScale;
+
+	Debug::Debug_WriteString(_objectType + " Reset");
 }
 
 XMMATRIX Transform::GetWorldMatrix4X4()
@@ -63,7 +64,7 @@ XMFLOAT4X4* Transform::GetWorldMatrix()
 	return _world;
 }
 
-void Transform::Update()
+void Transform::Update() const
 {
 	if (!dirtyMatrix) return;
 

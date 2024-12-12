@@ -390,6 +390,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Appearance.h" />
+    <ClInclude Include="Debug.h" />
     <ClInclude Include="DX11PhysicsFramework.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DDSTextureLoader.h" />
@@ -398,6 +399,7 @@
     <CLInclude Include="resource.h" />
     <ClInclude Include="Structures.h" />
     <ClInclude Include="Transform.h" />
+    <ClInclude Include="Vector.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Resources\floor.dds" />

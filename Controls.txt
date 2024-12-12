@@ -1,0 +1,18 @@
+Artefact for GDEV50025 - Ryan Moakes - m015485n - 23015485 
+PROJECT FOR EDUCATIONAL PURPOSES ONLY, NOT FOR COMMERICAL USE:
+
+WASD - Move Camera
+
+Arrow Keys - Rotate Camera
+
+Nums 0 1 2 3 4 5 - Select Object
+
+Numpad 8 4 5 6 - Move Selected Object around
+
+Numpad 7 9 - Move Selected Object UP/DOWN
+
+Numpad 1 2 3 - Rotate Selected Object
+
+Numpad Plus Minus - Scale Selected Object
+
+Numpad * - Deselect Current Object
