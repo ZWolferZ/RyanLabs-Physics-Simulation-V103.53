@@ -12,11 +12,11 @@ class DX11PhysicsFramework
 	int WindowWidth = 1920;
 	int WindowHeight = 1080;
 
-	float _objectMoveSpeed = 5.0f;
-	float _objectRotateSpeed = 2.5f;
-	float _objectScaleSpeed = 2.0f;
+	float _objectMoveSpeed = 1.0f;
+	float _objectRotateSpeed = 0.5f;
+	float _objectScaleSpeed = 0.2f;
 
-	Timer* _frameTimer;
+	Timer* _frameTimer = nullptr;
 
 	HWND _windowHandle = nullptr;
 

@@ -7,14 +7,11 @@ class Timer
 {
 public:
 	Timer();
-	
 
-	float GetDeltaTime();
+	float GetDeltaTime() const;
 	void Tick();
 
 private:
 
-	steady_clock::time_point lastFrame; 
-
+	steady_clock::time_point lastFrame;
 };
-

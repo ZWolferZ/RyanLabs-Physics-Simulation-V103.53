@@ -562,7 +562,7 @@ void DX11PhysicsFramework::BasicObjectMovement(float deltaTime, int objectSelect
 {
 	if (GetAsyncKeyState(VK_NUMPAD5) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Move(Vector(0.0f, 0.0f, -1.0f), deltaTime, _objectMoveSpeed);
+		_gameObjects[objectSelected]->GetTransform()->Move(Vector(0.0f, 0.0f, -1.0f), FPS60, _objectMoveSpeed);
 	}
 	if (GetAsyncKeyState(VK_NUMPAD8) & 0xFFFF)
 	{
@@ -688,8 +688,6 @@ void DX11PhysicsFramework::Update() const
 		// Update camera
 		_camera->HandleMovement(FPS60);
 
-		//_gameObjects[1]->GetPhysicsModel()->SetVelocity(Vector(0, 0, 0));
-
 		// Move gameobjects
 		if (GetAsyncKeyState('0') & 0x0001)
 		{
@@ -797,7 +795,7 @@ void DX11PhysicsFramework::Update() const
 
 		if (objectSelected[4] == true)
 		{
-			BasicObjectMovement(FAKEdeltaTime, 4);
+			BasicObjectMovement(FPS60, 4);
 			_gameObjects[4]->GetAppearance()->SetTextureRV(SelectedTexture);
 		}
 		else
@@ -818,7 +816,7 @@ void DX11PhysicsFramework::Update() const
 		// Update camera
 
 		// Update objects
-		for (auto gameObject : _gameObjects)
+		for (const auto gameObject : _gameObjects)
 		{
 			gameObject->Update(FPS60);
 		}
@@ -826,6 +824,10 @@ void DX11PhysicsFramework::Update() const
 		accumulator -= FPS60;
 		_frameTimer->Tick();
 	}
+}
+
+int math(int a, int b) {
+	return a + b;
 }
 
 void DX11PhysicsFramework::Draw()

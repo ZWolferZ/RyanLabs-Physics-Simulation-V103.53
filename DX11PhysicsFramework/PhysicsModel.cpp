@@ -9,9 +9,7 @@ void PhysicsModel::Update(float deltaTime)
 {
 	Vector position = _transform->GetPosition();
 
-	Vector trueAcceleration = _acceleration;
-
-	_velocity += trueAcceleration;
+	_velocity += _acceleration;
 
 	position += _velocity * deltaTime;
 
