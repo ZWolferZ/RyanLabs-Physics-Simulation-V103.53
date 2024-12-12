@@ -5,7 +5,7 @@ PhysicsModel::PhysicsModel(Transform* transform)
 	_transform = transform;
 }
 
-void PhysicsModel::Update(float deltatime)
+void PhysicsModel::Update(float deltaTime)
 {
 	Vector position = _transform->GetPosition();
 
@@ -13,10 +13,9 @@ void PhysicsModel::Update(float deltatime)
 
 	_velocity += trueAcceleration;
 
-	position += _velocity * deltatime;
+	position += _velocity * deltaTime;
 
 	_transform->SetPosition(position);
-
 }
 
 Vector PhysicsModel::GetVelocity()
@@ -24,17 +23,17 @@ Vector PhysicsModel::GetVelocity()
 	return _velocity;
 }
 
-Vector PhysicsModel::SetVelocity(Vector newVelocity)
+Vector PhysicsModel::SetVelocity(const Vector& newVelocity)
 {
 	return _velocity = newVelocity;
 }
 
-Vector PhysicsModel::GetAccerlation()
+Vector PhysicsModel::GetAcceleration()
 {
 	return _acceleration;
 }
 
-Vector PhysicsModel::SetAccerlation(Vector newAccerlation)
+Vector PhysicsModel::SetAcceleration(const Vector& newAcceleration)
 {
-	return _acceleration = newAccerlation;
+	return _acceleration = newAcceleration;
 }

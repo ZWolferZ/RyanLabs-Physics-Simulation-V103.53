@@ -3,7 +3,7 @@
 #include "Camera.h"
 #include "GameObject.h"
 
-constexpr auto FPS60 = 1.0/60.0f;
+constexpr auto FPS60 = 1.0 / 60.0f;
 
 using namespace DirectX;
 
@@ -80,6 +80,6 @@ public:
 
 	HRESULT Initialise(HINSTANCE hInstance, int nCmdShow);
 
-	void Update();
+	void Update() const;
 	void Draw();
 };

@@ -512,9 +512,8 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 
 	_frameTimer = new Timer();
 
-	_gameObjects[1]->GetPhysicsModel()->SetVelocity(Vector(0, 1, 0));
-	_gameObjects[1]->GetPhysicsModel()->SetAccerlation(Vector(0, 0, 0.001f));
-
+	//_gameObjects[1]->GetPhysicsModel()->SetVelocity(Vector(0, 1, 0));
+	//_gameObjects[1]->GetPhysicsModel()->SetAcceleration(Vector(0, 0, 0.01f));
 
 	return S_OK;
 }
@@ -645,7 +644,7 @@ DX11PhysicsFramework::~DX11PhysicsFramework()
 	if (_planeIndexBuffer)_planeIndexBuffer->Release();
 	if (_objMeshData.IndexBuffer) _objMeshData.IndexBuffer->Release();
 	if (_objMeshData.VertexBuffer)_objMeshData.VertexBuffer->Release();
-	if (_frameTimer) delete _frameTimer;
+	delete _frameTimer;
 	if (DSLessEqual) DSLessEqual->Release();
 	if (RSCullNone) RSCullNone->Release();
 
@@ -659,15 +658,15 @@ DX11PhysicsFramework::~DX11PhysicsFramework()
 	if (_device)_device->Release();
 }
 
-void DX11PhysicsFramework::Update()
+void DX11PhysicsFramework::Update() const
 {
-	static float accumlator = 0;
-	
-	accumlator += _frameTimer->GetDeltaTime();
+	static float accumulator = 0;
+
+	accumulator += _frameTimer->GetDeltaTime();
 
 #ifdef _DEBUG
-	if (accumlator > 1.0f) // assume we've come back from breakpoint
-		accumlator  = FPS60;
+	if (accumulator > 1.0f) // assume we've come back from breakpoint
+		accumulator = FPS60;
 #endif
 
 	//Static initializes this value only once
@@ -682,15 +681,14 @@ void DX11PhysicsFramework::Update()
 
 	static bool objectSelected[6] = { false };
 
-	while (accumlator >= FPS60)
+	while (accumulator >= FPS60)
 	{
-		Debug::Debug_WriteString(std::to_string(accumlator));
+		Debug::Debug_WriteString(std::to_string(accumulator));
 
 		// Update camera
 		_camera->HandleMovement(FPS60);
 
 		//_gameObjects[1]->GetPhysicsModel()->SetVelocity(Vector(0, 0, 0));
-		
 
 		// Move gameobjects
 		if (GetAsyncKeyState('0') & 0x0001)
@@ -825,10 +823,9 @@ void DX11PhysicsFramework::Update()
 			gameObject->Update(FPS60);
 		}
 
-		accumlator -=FPS60;
+		accumulator -= FPS60;
 		_frameTimer->Tick();
 	}
-	
 }
 
 void DX11PhysicsFramework::Draw()

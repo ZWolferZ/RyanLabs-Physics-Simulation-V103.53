@@ -88,8 +88,8 @@ private:
 	XMMATRIX m_projectionMatrix;
 
 	nlohmann::json m_cameraStartingVectors;
-	const float _cameraSpeed = 10.0f;
-	const float _cameraRotationSpeed = 1.0f;
+	const float _cameraSpeed = 1.5f;
+	const float _cameraRotationSpeed = 0.25f;
 
 	XMVECTOR m_startforwardVector;
 	XMVECTOR m_startupVector;
