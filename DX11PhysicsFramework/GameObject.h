@@ -1,7 +1,7 @@
 #pragma once
 #include "Structures.h"
-#include "Transform.h"
 #include "Appearance.h"
+#include"PhysicsModel.h"
 
 class GameObject
 {
@@ -27,6 +27,13 @@ public:
 		return _appearance;
 	}
 
+	PhysicsModel* GetPhysicsModel() const
+	{
+		if (_physicsModel == nullptr) { return nullptr; }
+		return _physicsModel;
+	}
+
+
 	string GetType() const { return _type; }
 
 	void SetParent(GameObject* parent) { _parent = parent; }
@@ -38,7 +45,9 @@ private:
 
 	string _type;
 
-	Transform* _transform;
+	Transform* _transform = nullptr;
 
 	Appearance* _appearance = nullptr;
+
+	PhysicsModel* _physicsModel = nullptr;
 };

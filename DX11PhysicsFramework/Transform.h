@@ -10,7 +10,7 @@ public:
 
 	// Setters and Getters for position/rotation/scale
 
-	void SetPositon(const Vector& newposition) { _position = newposition; }
+	void SetPosition(const Vector& newposition) { _position = newposition; }
 
 	void SetPosition(const float x, const float y, const float z)
 	{
@@ -18,6 +18,8 @@ public:
 		_position.y = y;
 		_position.z = z;
 	}
+
+
 
 	Vector GetPosition() const { return _position; }
 

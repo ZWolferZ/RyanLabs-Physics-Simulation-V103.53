@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <string>
 
+
 class Debug
 {
 public:
@@ -29,5 +30,26 @@ public:
 	{
 		std::string message = string + std::to_string(number) + "\n";
 		OutputDebugStringA(message.c_str());
+	}
+
+	static int VDebugPrintF(const char* format, va_list args)
+	{
+		const UINT32 MAX_CHARS = 1024;
+		static char s_buffer[MAX_CHARS];
+
+		int charsWritten = vsnprintf(s_buffer, MAX_CHARS, format, args);
+		OutputDebugStringA(s_buffer);
+
+		return charsWritten;
+	}
+
+	static int DebugPrintF(const char* format, ...)
+	{
+		va_list argList;
+		va_start(argList, format);
+		int charsWritten = VDebugPrintF(format, argList);
+		va_end(argList);
+
+		return charsWritten;
 	}
 };

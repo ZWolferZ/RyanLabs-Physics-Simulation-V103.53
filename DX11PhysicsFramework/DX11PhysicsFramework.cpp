@@ -510,6 +510,12 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 
 	_gameObjectSize = _gameObjects.size();
 
+	_frameTimer = new Timer();
+
+	_gameObjects[1]->GetPhysicsModel()->SetVelocity(Vector(0, 1, 0));
+	_gameObjects[1]->GetPhysicsModel()->SetAccerlation(Vector(0, 0, 0.001f));
+
+
 	return S_OK;
 }
 
@@ -639,7 +645,7 @@ DX11PhysicsFramework::~DX11PhysicsFramework()
 	if (_planeIndexBuffer)_planeIndexBuffer->Release();
 	if (_objMeshData.IndexBuffer) _objMeshData.IndexBuffer->Release();
 	if (_objMeshData.VertexBuffer)_objMeshData.VertexBuffer->Release();
-
+	if (_frameTimer) delete _frameTimer;
 	if (DSLessEqual) DSLessEqual->Release();
 	if (RSCullNone) RSCullNone->Release();
 
@@ -655,153 +661,174 @@ DX11PhysicsFramework::~DX11PhysicsFramework()
 
 void DX11PhysicsFramework::Update()
 {
+	static float accumlator = 0;
+	
+	accumlator += _frameTimer->GetDeltaTime();
+
+#ifdef _DEBUG
+	if (accumlator > 1.0f) // assume we've come back from breakpoint
+		accumlator  = FPS60;
+#endif
+
 	//Static initializes this value only once
 	static ULONGLONG frameStart = GetTickCount64();
 
 	ULONGLONG frameNow = GetTickCount64();
-	float deltaTime = (frameNow - frameStart) / 1000.0f;
+	float FAKEdeltaTime = (frameNow - frameStart) / 1000.0f;
 	frameStart = frameNow;
 
 	static float simpleCount = 0.0f;
-	simpleCount += deltaTime;
+	simpleCount += FAKEdeltaTime;
 
 	static bool objectSelected[6] = { false };
 
-	// Update camera
-	_camera->HandleMovement(deltaTime);
-
-	// Move gameobjects
-	if (GetAsyncKeyState('0') & 0x0001)
+	while (accumlator >= FPS60)
 	{
-		if (objectSelected[0] == false)
+		Debug::Debug_WriteString(std::to_string(accumlator));
+
+		// Update camera
+		_camera->HandleMovement(FPS60);
+
+		//_gameObjects[1]->GetPhysicsModel()->SetVelocity(Vector(0, 0, 0));
+		
+
+		// Move gameobjects
+		if (GetAsyncKeyState('0') & 0x0001)
+		{
+			if (objectSelected[0] == false)
+			{
+				for (bool& i : objectSelected) { i = false; }
+				objectSelected[0] = true;
+				Debug::Debug_WriteString("Object 0 Selected");
+			}
+		}
+		if (GetAsyncKeyState('1') & 0x0001)
+		{
+			if (objectSelected[1] == false)
+			{
+				for (bool& i : objectSelected) { i = false; }
+				objectSelected[1] = true;
+				Debug::Debug_WriteString("Object 2 Selected");
+			}
+		}
+
+		if (GetAsyncKeyState('2') & 0x0001)
+		{
+			if (objectSelected[2] == false)
+			{
+				for (bool& i : objectSelected) { i = false; }
+				objectSelected[2] = true;
+				Debug::Debug_WriteString("Object 3 Selected");
+			}
+		}
+		if (GetAsyncKeyState('3') & 0x0001)
+		{
+			if (objectSelected[3] == false)
+			{
+				for (bool& i : objectSelected) { i = false; }
+				objectSelected[3] = true;
+				Debug::Debug_WriteString("Object 4 Selected");
+			}
+		}
+		if (GetAsyncKeyState('4') & 0x0001)
+		{
+			if (objectSelected[4] == false)
+			{
+				for (bool& i : objectSelected) { i = false; }
+				objectSelected[4] = true;
+				Debug::Debug_WriteString("Object 5 Selected");
+			}
+		}
+		if (GetAsyncKeyState('5') & 0x0001)
+		{
+			if (objectSelected[5] == false)
+			{
+				for (bool& i : objectSelected) { i = false; }
+				objectSelected[5] = true;
+				Debug::Debug_WriteString("Object 6 Selected");
+			}
+		}
+
+		if (GetAsyncKeyState(VK_MULTIPLY) & 0x0001)
 		{
 			for (bool& i : objectSelected) { i = false; }
-			objectSelected[0] = true;
-			Debug::Debug_WriteString("Object 0 Selected");
+			Debug::Debug_WriteString("Object Deselected");
 		}
-	}
-	if (GetAsyncKeyState('1') & 0x0001)
-	{
-		if (objectSelected[1] == false)
+		if (GetAsyncKeyState(VK_ESCAPE) & 0x0001)
 		{
-			for (bool& i : objectSelected) { i = false; }
-			objectSelected[1] = true;
-			Debug::Debug_WriteString("Object 2 Selected");
+			PostQuitMessage(0);
 		}
-	}
 
-	if (GetAsyncKeyState('2') & 0x0001)
-	{
-		if (objectSelected[2] == false)
+		if (objectSelected[0] == true)
 		{
-			for (bool& i : objectSelected) { i = false; }
-			objectSelected[2] = true;
-			Debug::Debug_WriteString("Object 3 Selected");
+			BasicObjectMovement(FPS60, 0);
+			_gameObjects[0]->GetAppearance()->SetTextureRV(SelectedTexture);
 		}
-	}
-	if (GetAsyncKeyState('3') & 0x0001)
-	{
-		if (objectSelected[3] == false)
+		else
 		{
-			for (bool& i : objectSelected) { i = false; }
-			objectSelected[3] = true;
-			Debug::Debug_WriteString("Object 4 Selected");
+			_gameObjects[0]->GetAppearance()->SetTextureRV(GroundTextureRV);
 		}
-	}
-	if (GetAsyncKeyState('4') & 0x0001)
-	{
-		if (objectSelected[4] == false)
+		if (objectSelected[1] == true)
 		{
-			for (bool& i : objectSelected) { i = false; }
-			objectSelected[4] = true;
-			Debug::Debug_WriteString("Object 5 Selected");
+			BasicObjectMovement(FPS60, 1);
+			_gameObjects[1]->GetAppearance()->SetTextureRV(SelectedTexture);
 		}
-	}
-	if (GetAsyncKeyState('5') & 0x0001)
-	{
-		if (objectSelected[5] == false)
+		else
 		{
-			for (bool& i : objectSelected) { i = false; }
-			objectSelected[5] = true;
-			Debug::Debug_WriteString("Object 6 Selected");
+			_gameObjects[1]->GetAppearance()->SetTextureRV(StoneTextureRV);
 		}
-	}
 
-	if (GetAsyncKeyState(VK_MULTIPLY) & 0x0001)
-	{
-		for (bool& i : objectSelected) { i = false; }
-		Debug::Debug_WriteString("Object Deselected");
-	}
-	if (GetAsyncKeyState(VK_ESCAPE) & 0x0001)
-	{
-		PostQuitMessage(0);
-	}
+		if (objectSelected[2] == true)
+		{
+			BasicObjectMovement(FPS60, 2);
+			_gameObjects[2]->GetAppearance()->SetTextureRV(SelectedTexture);
+		}
+		else
+		{
+			_gameObjects[2]->GetAppearance()->SetTextureRV(StoneTextureRV);
+		}
+		if (objectSelected[3] == true)
+		{
+			BasicObjectMovement(FPS60, 3);
+			_gameObjects[3]->GetAppearance()->SetTextureRV(SelectedTexture);
+		}
+		else
+		{
+			_gameObjects[3]->GetAppearance()->SetTextureRV(StoneTextureRV);
+		}
 
-	if (objectSelected[0] == true)
-	{
-		BasicObjectMovement(deltaTime, 0);
-		_gameObjects[0]->GetAppearance()->SetTextureRV(SelectedTexture);
-	}
-	else
-	{
-		_gameObjects[0]->GetAppearance()->SetTextureRV(GroundTextureRV);
-	}
-	if (objectSelected[1] == true)
-	{
-		BasicObjectMovement(deltaTime, 1);
-		_gameObjects[1]->GetAppearance()->SetTextureRV(SelectedTexture);
-	}
-	else
-	{
-		_gameObjects[1]->GetAppearance()->SetTextureRV(StoneTextureRV);
-	}
+		if (objectSelected[4] == true)
+		{
+			BasicObjectMovement(FAKEdeltaTime, 4);
+			_gameObjects[4]->GetAppearance()->SetTextureRV(SelectedTexture);
+		}
+		else
+		{
+			_gameObjects[4]->GetAppearance()->SetTextureRV(StoneTextureRV);
+		}
 
-	if (objectSelected[2] == true)
-	{
-		BasicObjectMovement(deltaTime, 2);
-		_gameObjects[2]->GetAppearance()->SetTextureRV(SelectedTexture);
-	}
-	else
-	{
-		_gameObjects[2]->GetAppearance()->SetTextureRV(StoneTextureRV);
-	}
-	if (objectSelected[3] == true)
-	{
-		BasicObjectMovement(deltaTime, 3);
-		_gameObjects[3]->GetAppearance()->SetTextureRV(SelectedTexture);
-	}
-	else
-	{
-		_gameObjects[3]->GetAppearance()->SetTextureRV(StoneTextureRV);
-	}
+		if (objectSelected[5] == true)
+		{
+			BasicObjectMovement(FPS60, 5);
+			_gameObjects[5]->GetAppearance()->SetTextureRV(SelectedTexture);
+		}
+		else
+		{
+			_gameObjects[5]->GetAppearance()->SetTextureRV(StoneTextureRV);
+		}
 
-	if (objectSelected[4] == true)
-	{
-		BasicObjectMovement(deltaTime, 4);
-		_gameObjects[4]->GetAppearance()->SetTextureRV(SelectedTexture);
-	}
-	else
-	{
-		_gameObjects[4]->GetAppearance()->SetTextureRV(StoneTextureRV);
-	}
+		// Update camera
 
-	if (objectSelected[5] == true)
-	{
-		BasicObjectMovement(deltaTime, 5);
-		_gameObjects[5]->GetAppearance()->SetTextureRV(SelectedTexture);
-	}
-	else
-	{
-		_gameObjects[5]->GetAppearance()->SetTextureRV(StoneTextureRV);
-	}
+		// Update objects
+		for (auto gameObject : _gameObjects)
+		{
+			gameObject->Update(FPS60);
+		}
 
-	// Update camera
-
-	// Update objects
-	for (auto gameObject : _gameObjects)
-	{
-		gameObject->Update(deltaTime);
+		accumlator -=FPS60;
+		_frameTimer->Tick();
 	}
+	
 }
 
 void DX11PhysicsFramework::Draw()

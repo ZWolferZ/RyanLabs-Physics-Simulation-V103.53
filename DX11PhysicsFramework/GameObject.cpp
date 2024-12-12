@@ -8,6 +8,7 @@ GameObject::GameObject(const string& type, const string& meshpath, const Materia
 	_parent = nullptr;
 	_transform = new Transform(position, rotation, scale, type);
 	_appearance = new Appearance(meshpath, device, textureRV, material);
+	_physicsModel = new PhysicsModel(_transform);
 }
 
 GameObject::GameObject(const string& type, const Geometry& geometry, const Material& material,
@@ -17,6 +18,7 @@ GameObject::GameObject(const string& type, const Geometry& geometry, const Mater
 	_parent = nullptr;
 	_transform = new Transform(position, rotation, scale, type);
 	_appearance = new Appearance(geometry, textureRV, material);
+	_physicsModel = new PhysicsModel(_transform);
 }
 
 GameObject::~GameObject()
@@ -43,6 +45,8 @@ GameObject::~GameObject()
 void GameObject::Update(float dt) const
 {
 	_transform->Update();
+
+	_physicsModel->Update(dt);
 
 	if (_parent != nullptr)
 	{

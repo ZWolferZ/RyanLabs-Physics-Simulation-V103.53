@@ -3,6 +3,8 @@
 #include "Camera.h"
 #include "GameObject.h"
 
+constexpr auto FPS60 = 1.0/60.0f;
+
 using namespace DirectX;
 
 class DX11PhysicsFramework
@@ -14,7 +16,9 @@ class DX11PhysicsFramework
 	float _objectRotateSpeed = 2.5f;
 	float _objectScaleSpeed = 2.0f;
 
-	HWND _windowHandle = nullptr;;
+	Timer* _frameTimer;
+
+	HWND _windowHandle = nullptr;
 
 	ID3D11DeviceContext* _immediateContext = nullptr;
 	ID3D11Device* _device = nullptr;
