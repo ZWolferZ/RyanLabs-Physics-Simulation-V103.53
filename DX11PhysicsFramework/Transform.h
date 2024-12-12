@@ -43,9 +43,9 @@ public:
 
 	Vector GetRotation() const { return _rotation; }
 
-	void Move(const Vector& direction);
-	void Rotate(const Vector& rotation);
-	void Scale(const Vector& scale);
+	void Move(const Vector& direction, float deltaTime, float moveSpeed);
+	void Rotate(const Vector& rotation, float deltaTime, float moveSpeed);
+	void Scale(const Vector& scale, float deltaTime, float moveSpeed);
 	void Reset();
 
 	XMFLOAT4X4* GetWorldMatrix();

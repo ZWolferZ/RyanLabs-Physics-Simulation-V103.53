@@ -553,57 +553,57 @@ void DX11PhysicsFramework::LoadSceneCameraVariables()
 	file.close();
 }
 
-void DX11PhysicsFramework::BasicObjectMovement(float deltaTime, int objectSelected)
+void DX11PhysicsFramework::BasicObjectMovement(float deltaTime, int objectSelected) const
 {
 	if (GetAsyncKeyState(VK_NUMPAD5) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Move(Vector(0, 0, -5.0f * deltaTime));
+		_gameObjects[objectSelected]->GetTransform()->Move(Vector(0.0f, 0.0f, -1.0f), deltaTime, _objectMoveSpeed);
 	}
 	if (GetAsyncKeyState(VK_NUMPAD8) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Move(Vector(0, 0, 5.0f * deltaTime));
+		_gameObjects[objectSelected]->GetTransform()->Move(Vector(0.0f, 0.0f, 1.0f), deltaTime, _objectMoveSpeed);
 	}
 	if (GetAsyncKeyState(VK_NUMPAD4) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Move(Vector(-5.0f * deltaTime, 0, 0));
+		_gameObjects[objectSelected]->GetTransform()->Move(Vector(-1.0f, 0.0f, 0.0f), deltaTime, _objectMoveSpeed);
 	}
 	if (GetAsyncKeyState(VK_NUMPAD6) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Move(Vector(5.0f * deltaTime, 0, 0));
+		_gameObjects[objectSelected]->GetTransform()->Move(Vector(1.0f, 0.0f, 0.0f), deltaTime, _objectMoveSpeed);
 	}
 
 	if (GetAsyncKeyState(VK_NUMPAD7) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Move(Vector(0, 5.0f * deltaTime, 0));
+		_gameObjects[objectSelected]->GetTransform()->Move(Vector(0, 1.0f, 0), deltaTime, _objectMoveSpeed);
 	}
 	if (GetAsyncKeyState(VK_NUMPAD9) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Move(Vector(0, -5.0f * deltaTime, 0));
+		_gameObjects[objectSelected]->GetTransform()->Move(Vector(0, -1.0f, 0), deltaTime, _objectMoveSpeed);
 	}
 
 	if (GetAsyncKeyState(VK_NUMPAD1) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Rotate(Vector(5.0f * deltaTime, 0, 0));
+		_gameObjects[objectSelected]->GetTransform()->Rotate(Vector(1.0f, 0, 0), deltaTime, _objectRotateSpeed);
 	}
 
 	if (GetAsyncKeyState(VK_NUMPAD2) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Rotate(Vector(0, 0, -5.0f * deltaTime));
+		_gameObjects[objectSelected]->GetTransform()->Rotate(Vector(0, 1.0f, 0.0f), deltaTime, _objectRotateSpeed);
 	}
 	if (GetAsyncKeyState(VK_NUMPAD3) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Rotate(Vector(0, 0, 5.0f * deltaTime));
+		_gameObjects[objectSelected]->GetTransform()->Rotate(Vector(0, 0, 1.0f), deltaTime, _objectRotateSpeed);
 	}
 	if (GetAsyncKeyState(VK_ADD) & 0xFFFF)
 	{
 		_gameObjects[objectSelected]->GetTransform()->Scale(
-			Vector(1.0f * deltaTime, 1.0f * deltaTime, 1.0f * deltaTime));
+			Vector(1.0f, 1.0f, 1.0f), deltaTime, _objectScaleSpeed);
 	}
 
 	if (GetAsyncKeyState(VK_SUBTRACT) & 0xFFFF)
 	{
 		_gameObjects[objectSelected]->GetTransform()->Scale(
-			Vector(-1.0f * deltaTime, -1.0f * deltaTime, -1.0f * deltaTime));
+			Vector(-1.0f, -1.0f, -1.0f), deltaTime, _objectScaleSpeed);
 	}
 
 	if (GetAsyncKeyState(VK_NUMPAD0) & 0x0001)

@@ -10,6 +10,10 @@ class DX11PhysicsFramework
 	int WindowWidth = 1920;
 	int WindowHeight = 1080;
 
+	float _objectMoveSpeed = 5.0f;
+	float _objectRotateSpeed = 2.5f;
+	float _objectScaleSpeed = 2.0f;
+
 	HWND _windowHandle = nullptr;;
 
 	ID3D11DeviceContext* _immediateContext = nullptr;
@@ -65,7 +69,7 @@ class DX11PhysicsFramework
 	HRESULT InitRunTimeData();
 	void LoadSceneCameraVariables();
 
-	void BasicObjectMovement(float deltaTime, int objectSelected);
+	void BasicObjectMovement(float deltaTime, int objectSelected) const;
 
 public:
 	~DX11PhysicsFramework();

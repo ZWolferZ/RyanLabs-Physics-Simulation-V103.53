@@ -1,6 +1,8 @@
 #pragma once
 #include <cmath>
 
+float const tol = 0.0001f;
+
 class Vector
 {
 public:
@@ -101,11 +103,6 @@ public:
 		return Vector{ this->x / scalar, this->y / scalar, this->z / scalar };
 	}
 
-	Vector operator/=(const Vector b) const
-	{
-		return Vector{ this->x / b.x, this->y / b.y, this->z / b.z };
-	}
-
 	// Copy Operator Overload
 	Vector operator=(const Vector b)
 	{
@@ -122,6 +119,29 @@ public:
 	{
 		return this->x != b.x || this->y != b.y || this->z != b.z;
 	}
+	void Reverse()
+	{
+		x = -x;
+		y = -y;
+		z = -z;
+	}
+
+	static Vector Reverse(const Vector vector)
+	{
+		return { -vector.x, -vector.y, -vector.z };
+	}
+
+	Vector Zero(Vector vector)
+	{
+		return { x = 0, y = 0, z = 0 };
+	}
+
+	void Zero()
+	{
+		x = 0;
+		y = 0;
+		z = 0;
+	}
 
 	/// <summary>
 	///     Returns the magnitude of a vector
@@ -129,6 +149,11 @@ public:
 	static float Magnitude(const Vector vector)
 	{
 		return sqrt(vector.x * vector.x + vector.y * vector.y + vector.z * vector.z);
+	}
+
+	float Magnitude() const
+	{
+		return sqrt(x * x + y * y + z * z);
 	}
 
 	/// <summary>
@@ -139,8 +164,18 @@ public:
 		float mag = Magnitude(a);
 
 		return
-			mag > 0
+			mag > tol
 			? a / mag
+			: Vector(0, 0, 0); // Super cool ternary expression to check if magnitude is greater than 0
+	}
+	Vector Normalise() const
+	{
+		const auto thisVector = Vector{ x,y,z };
+		const float mag = Magnitude(thisVector);
+
+		return
+			mag > tol
+			? thisVector / mag
 			: Vector(0, 0, 0); // Super cool ternary expression to check if magnitude is greater than 0
 	}
 

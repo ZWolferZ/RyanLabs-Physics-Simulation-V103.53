@@ -16,21 +16,21 @@ Transform::Transform(const Vector& position, const Vector& rotation, const Vecto
 	_world = nullptr;
 }
 
-void Transform::Move(const Vector& direction)
+void Transform::Move(const Vector& direction, float deltaTime, float moveSpeed)
 {
-	_position += direction;
+	_position += (Vector::Normalise(direction) * moveSpeed) * deltaTime;
 	Debug::Debug_WriteVector(_objectType, "Position", _position);
 }
 
-void Transform::Rotate(const Vector& rotation)
+void Transform::Rotate(const Vector& rotation, float deltaTime, float moveSpeed)
 {
-	_rotation += rotation;
+	_rotation += (Vector::Normalise(rotation) * moveSpeed) * deltaTime;
 	Debug::Debug_WriteVector(_objectType, "Rotation", _rotation);
 }
 
-void Transform::Scale(const Vector& scale)
+void Transform::Scale(const Vector& scale, float deltaTime, float moveSpeed)
 {
-	_scale += scale;
+	_scale += (Vector::Normalise(scale) * moveSpeed) * deltaTime;
 	Debug::Debug_WriteVector(_objectType, "Scale", _scale);
 }
 
