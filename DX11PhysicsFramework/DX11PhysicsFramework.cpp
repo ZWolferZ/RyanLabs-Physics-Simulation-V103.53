@@ -1,6 +1,6 @@
 #include "DX11PhysicsFramework.h"
 
-LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	PAINTSTRUCT ps;
 	HDC hdc;
@@ -127,7 +127,7 @@ HRESULT DX11PhysicsFramework::CreateSwapChainAndFrameBuffer()
 {
 	HRESULT hr = S_OK;
 
-	DXGI_SWAP_CHAIN_DESC1 swapChainDesc;
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
 	swapChainDesc.Width = 0; // Defer to WindowWidth
 	swapChainDesc.Height = 0; // Defer to WindowHeight
 	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; //FLIP* modes don't support sRGB backbuffer
