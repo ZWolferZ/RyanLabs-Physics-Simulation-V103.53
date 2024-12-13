@@ -6,7 +6,6 @@ class PhysicsModel
 {
 public:
 	PhysicsModel(Transform* transform);
-	~PhysicsModel();
 	void Update(float deltaTime);
 
 	Vector GetVelocity() const;

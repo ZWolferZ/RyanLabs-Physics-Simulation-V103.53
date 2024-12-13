@@ -5,15 +5,6 @@ PhysicsModel::PhysicsModel(Transform* transform)
 	_transform = transform;
 }
 
-PhysicsModel::~PhysicsModel()
-{
-	if (_transform != nullptr)
-	{
-		delete _transform;
-		_transform = nullptr;
-	}
-}
-
 void PhysicsModel::Update(float deltaTime)
 {
 	Vector position = _transform->GetPosition();

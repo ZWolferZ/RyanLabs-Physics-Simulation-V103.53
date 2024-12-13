@@ -560,7 +560,7 @@ void DX11PhysicsFramework::BasicObjectMovement(float deltaTime, int objectSelect
 {
 	if (GetAsyncKeyState(VK_NUMPAD5) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Move(Vector(0.0f, 0.0f, -1.0f), FPS60, _objectMoveSpeed);
+		_gameObjects[objectSelected]->GetTransform()->Move(Vector(0.0f, 0.0f, -1.0f), deltaTime, _objectMoveSpeed);
 	}
 	if (GetAsyncKeyState(VK_NUMPAD8) & 0xFFFF)
 	{
@@ -656,8 +656,20 @@ DX11PhysicsFramework::~DX11PhysicsFramework()
 	if (_device)_device->Release();
 }
 
+// TODO: FIX DELTA TIME
+// ASK LECTURER ABOUT HOW TO GET DELTA TIME TO BE CONSISTENT
 void DX11PhysicsFramework::Update() const
 {
+	//Static initializes this value only once
+	/*static ULONGLONG frameStart = GetTickCount64();
+
+	ULONGLONG frameNow = GetTickCount64();
+	float deltaTime = (frameNow - frameStart) / 1000.0f;
+	frameStart = frameNow;
+
+	static float simpleCount = 0.0f;
+	simpleCount += deltaTime;*/
+
 	static bool objectSelected[6] = {};
 
 	_camera->HandleMovement(FPS60);
