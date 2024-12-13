@@ -16,7 +16,7 @@ class DX11PhysicsFramework
 	float _objectRotateSpeed = 0.5f;
 	float _objectScaleSpeed = 0.2f;
 
-	Timer* _frameTimer = nullptr;
+	
 
 	HWND _windowHandle = nullptr;
 
@@ -81,5 +81,5 @@ public:
 	HRESULT Initialise(HINSTANCE hInstance, int nCmdShow);
 
 	void Update() const;
-	void Draw();
+	void Draw(double alpha);
 };

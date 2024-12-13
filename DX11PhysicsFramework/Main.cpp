@@ -9,14 +9,19 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
 	auto application = DX11PhysicsFramework();
+	
 
 	if (FAILED(application.Initialise(hInstance, nCmdShow)))
 	{
+		// Skill Issue
 		return -1;
 	}
 
+	
+
 	// Main message loop
 	MSG msg = { nullptr };
+	Timer _frameTimer;
 
 	while (WM_QUIT != msg.message)
 	{
@@ -39,8 +44,26 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		}
 		else
 		{
-			application.Update();
-			application.Draw();
+			static float accumulator = 0;
+
+			accumulator += _frameTimer.GetDeltaTime();
+
+            #ifdef _DEBUG
+			if (accumulator > 1.0f) // assume come back from breakpoint
+				accumulator = FPS60;
+            #endif
+			Debug::Debug_WriteString(std::to_string(accumulator));
+
+			while (accumulator >= FPS60)
+			{
+				application.Update();
+				accumulator -= FPS60;
+				_frameTimer.Tick();
+			}
+
+			const double alpha = accumulator / FPS60;
+
+			application.Draw(alpha);
 		}
 	}
 

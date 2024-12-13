@@ -510,7 +510,7 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 
 	_gameObjectSize = _gameObjects.size();
 
-	_frameTimer = new Timer();
+	
 
 	//_gameObjects[1]->GetPhysicsModel()->SetVelocity(Vector(0, 1, 0));
 	//_gameObjects[1]->GetPhysicsModel()->SetAcceleration(Vector(0, 0, 0.01f));
@@ -644,7 +644,7 @@ DX11PhysicsFramework::~DX11PhysicsFramework()
 	if (_planeIndexBuffer)_planeIndexBuffer->Release();
 	if (_objMeshData.IndexBuffer) _objMeshData.IndexBuffer->Release();
 	if (_objMeshData.VertexBuffer)_objMeshData.VertexBuffer->Release();
-	delete _frameTimer;
+	
 	if (DSLessEqual) DSLessEqual->Release();
 	if (RSCullNone) RSCullNone->Release();
 
@@ -660,30 +660,17 @@ DX11PhysicsFramework::~DX11PhysicsFramework()
 
 void DX11PhysicsFramework::Update() const
 {
-	static float accumulator = 0;
+	////Static initializes this value only once
+	//static ULONGLONG frameStart = GetTickCount64();
 
-	accumulator += _frameTimer->GetDeltaTime();
+	//ULONGLONG frameNow = GetTickCount64();
+	//float FAKEdeltaTime = (frameNow - frameStart) / 1000.0f;
+	//frameStart = frameNow;
 
-#ifdef _DEBUG
-	if (accumulator > 1.0f) // assume we've come back from breakpoint
-		accumulator = FPS60;
-#endif
-
-	//Static initializes this value only once
-	static ULONGLONG frameStart = GetTickCount64();
-
-	ULONGLONG frameNow = GetTickCount64();
-	float FAKEdeltaTime = (frameNow - frameStart) / 1000.0f;
-	frameStart = frameNow;
-
-	static float simpleCount = 0.0f;
-	simpleCount += FAKEdeltaTime;
+	//static float simpleCount = 0.0f;
+	//simpleCount += FAKEdeltaTime;
 
 	static bool objectSelected[6] = { false };
-
-	while (accumulator >= FPS60)
-	{
-		Debug::Debug_WriteString(std::to_string(accumulator));
 
 		// Update camera
 		_camera->HandleMovement(FPS60);
@@ -820,18 +807,13 @@ void DX11PhysicsFramework::Update() const
 		{
 			gameObject->Update(FPS60);
 		}
-
-		accumulator -= FPS60;
-		_frameTimer->Tick();
-	}
+	
 }
 
-int math(int a, int b) {
-	return a + b;
-}
-
-void DX11PhysicsFramework::Draw()
+void DX11PhysicsFramework::Draw(double alpha)
 {
+	if (alpha > FPS60) return;
+
 	//
 	// Clear buffers
 	//
