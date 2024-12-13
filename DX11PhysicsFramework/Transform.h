@@ -6,11 +6,10 @@ class Transform
 public:
 	Transform(const Vector& position, const Vector& rotation, const Vector& scale, const std::string& objectType);
 
-	void Update() const;
+	void Update();
 
-	// Setters and Getters for position/rotation/scale
-
-	void SetPosition(const Vector& newposition) { _position = newposition; }
+	Vector GetPosition() const { return _position; }
+	void SetPosition(const Vector& newPosition) { _position = newPosition; }
 
 	void SetPosition(const float x, const float y, const float z)
 	{
@@ -19,11 +18,8 @@ public:
 		_position.z = z;
 	}
 
-
-
-	Vector GetPosition() const { return _position; }
-
-	void SetScale(const Vector& scale) { _scale = scale; }
+	Vector GetScale() const { return _scale; }
+	void SetScale(const Vector& newScale) { _scale = newScale; }
 
 	void SetScale(const float x, const float y, const float z)
 	{
@@ -32,9 +28,8 @@ public:
 		_scale.z = z;
 	}
 
-	Vector GetScale() const { return _scale; }
-
-	void SetRotation(const Vector& rotation) { _rotation = rotation; }
+	Vector GetRotation() const { return _rotation; }
+	void SetRotation(const Vector& newRotation) { _rotation = newRotation; }
 
 	void SetRotation(const float x, const float y, const float z)
 	{
@@ -43,15 +38,14 @@ public:
 		_rotation.z = z;
 	}
 
-	Vector GetRotation() const { return _rotation; }
-
 	void Move(const Vector& direction, float deltaTime, float moveSpeed);
 	void Rotate(const Vector& rotation, float deltaTime, float moveSpeed);
 	void Scale(const Vector& scale, float deltaTime, float moveSpeed);
 	void Reset();
 
-	XMFLOAT4X4* GetWorldMatrix();
-	XMMATRIX GetWorldMatrix4X4();
+	XMFLOAT4X4* GetWorldFloat4X4() { return &_world; }
+	XMMATRIX GetWorldMatrix() const { return XMLoadFloat4x4(&_world); }
+	XMMATRIX GetPreviousWorldMatrix() const { return XMLoadFloat4x4(&_previousWorld); }
 
 private:
 	Vector _position;
@@ -64,6 +58,6 @@ private:
 
 	std::string _objectType;
 
-	XMFLOAT4X4* _world;
-	bool dirtyMatrix;
+	XMFLOAT4X4 _world;
+	XMFLOAT4X4 _previousWorld;
 };

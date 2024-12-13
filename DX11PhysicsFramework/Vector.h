@@ -1,7 +1,7 @@
 #pragma once
 #include <cmath>
 
-float const tol = 0.0001f;
+constexpr float tol = 0.0001f;
 
 class Vector
 {
@@ -27,86 +27,86 @@ public:
 	// Add Operator Overload
 	Vector operator+(const Vector b) const
 	{
-		return Vector{ this->x + b.x, this->y + b.y, this->z + b.z };
+		return Vector{this->x + b.x, this->y + b.y, this->z + b.z};
 	}
 
 	Vector operator+=(const Vector b)
 	{
-		return Vector{ this->x += b.x, this->y += b.y, this->z += b.z };
+		return Vector{this->x += b.x, this->y += b.y, this->z += b.z};
 	}
 
 	// Minus Operator Overload
 	Vector operator-(const Vector b) const
 	{
-		return Vector{ this->x - b.x, this->y - b.y, this->z - b.z };
+		return Vector{this->x - b.x, this->y - b.y, this->z - b.z};
 	}
 
 	Vector operator-=(const Vector b)
 	{
-		return Vector{ this->x -= b.x, this->y -= b.y, this->z -= b.z };
+		return Vector{this->x -= b.x, this->y -= b.y, this->z -= b.z};
 	}
 
 	// Multiply Operator Overload
 	Vector operator*(const float scalar) const
 	{
-		return Vector{ this->x * scalar, this->y * scalar, this->z * scalar };
+		return Vector{this->x * scalar, this->y * scalar, this->z * scalar};
 	}
 
 	Vector operator*(const int scalar) const
 	{
-		return Vector{ this->x * scalar, this->y * scalar, this->z * scalar };
+		return Vector{this->x * scalar, this->y * scalar, this->z * scalar};
 	}
 
 	Vector operator*(const Vector b) const
 	{
-		return Vector{ this->x * b.x, this->y * b.y, this->z * b.z };
+		return Vector{this->x * b.x, this->y * b.y, this->z * b.z};
 	}
 
 	Vector operator*=(const float scalar) const
 	{
-		return Vector{ this->x * scalar, this->y * scalar, this->z * scalar };
+		return Vector{this->x * scalar, this->y * scalar, this->z * scalar};
 	}
 
 	Vector operator*=(const int scalar) const
 	{
-		return Vector{ this->x * scalar, this->y * scalar, this->z * scalar };
+		return Vector{this->x * scalar, this->y * scalar, this->z * scalar};
 	}
 
 	Vector operator*=(const Vector b) const
 	{
-		return Vector{ this->x * b.x, this->y * b.y, this->z * b.z };
+		return Vector{this->x * b.x, this->y * b.y, this->z * b.z};
 	}
 
 	// Divide Operator Overload
 	Vector operator/(const float scalar) const
 	{
-		return Vector{ this->x / scalar, this->y / scalar, this->z / scalar };
+		return Vector{this->x / scalar, this->y / scalar, this->z / scalar};
 	}
 
 	Vector operator/(const int scalar) const
 	{
-		return Vector{ this->x / scalar, this->y / scalar, this->z / scalar };
+		return Vector{this->x / scalar, this->y / scalar, this->z / scalar};
 	}
 
 	Vector operator/(const Vector b) const
 	{
-		return Vector{ this->x / b.x, this->y / b.y, this->z / b.z };
+		return Vector{this->x / b.x, this->y / b.y, this->z / b.z};
 	}
 
 	Vector operator/=(const float scalar) const
 	{
-		return Vector{ this->x / scalar, this->y / scalar, this->z / scalar };
+		return Vector{this->x / scalar, this->y / scalar, this->z / scalar};
 	}
 
 	Vector operator/=(const int scalar) const
 	{
-		return Vector{ this->x / scalar, this->y / scalar, this->z / scalar };
+		return Vector{this->x / scalar, this->y / scalar, this->z / scalar};
 	}
 
 	// Copy Operator Overload
 	Vector operator=(const Vector b)
 	{
-		return Vector{ this->x = b.x, this->y = b.y, this->z = b.z };
+		return Vector{this->x = b.x, this->y = b.y, this->z = b.z};
 	}
 
 	// Comparison Operator Overload
@@ -119,6 +119,7 @@ public:
 	{
 		return this->x != b.x || this->y != b.y || this->z != b.z;
 	}
+
 	void Reverse()
 	{
 		x = -x;
@@ -128,12 +129,12 @@ public:
 
 	static Vector Reverse(const Vector vector)
 	{
-		return { -vector.x, -vector.y, -vector.z };
+		return {-vector.x, -vector.y, -vector.z};
 	}
 
 	Vector Zero(Vector vector)
 	{
-		return { x = 0, y = 0, z = 0 };
+		return {x = 0, y = 0, z = 0};
 	}
 
 	void Zero()
@@ -165,18 +166,19 @@ public:
 
 		return
 			mag > tol
-			? a / mag
-			: Vector(0, 0, 0); // Super cool ternary expression to check if magnitude is greater than 0
+				? a / mag
+				: Vector(0, 0, 0); // Super cool ternary expression to check if magnitude is greater than 0
 	}
+
 	Vector Normalise() const
 	{
-		const auto thisVector = Vector{ x,y,z };
+		const auto thisVector = Vector{x, y, z};
 		const float mag = Magnitude(thisVector);
 
 		return
 			mag > tol
-			? thisVector / mag
-			: Vector(0, 0, 0); // Super cool ternary expression to check if magnitude is greater than 0
+				? thisVector / mag
+				: Vector(0, 0, 0); // Super cool ternary expression to check if magnitude is greater than 0
 	}
 
 	/// <summary>

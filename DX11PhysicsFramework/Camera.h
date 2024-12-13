@@ -20,6 +20,7 @@ public:
 	// Returns XMMATRIX - The camera view matrix
 	XMMATRIX GetViewMatrix() const;
 
+	XMMATRIX GetPreviousViewMatrix() const;
 	// Get the projection matrix
 	// Returns XMMATRIX - The camera projection matrix
 	XMMATRIX GetProjectionMatrix() const;
@@ -85,11 +86,12 @@ private:
 	XMFLOAT3 m_rotation;
 
 	XMMATRIX m_viewMatrix;
+	XMMATRIX m_previousViewMatrix;
 	XMMATRIX m_projectionMatrix;
 
 	nlohmann::json m_cameraStartingVectors;
-	const float _cameraSpeed = 1.5f;
-	const float _cameraRotationSpeed = 0.25f;
+	const float _cameraSpeed = 1.0f;
+	const float _cameraRotationSpeed = 0.15f;
 
 	XMVECTOR m_startforwardVector;
 	XMVECTOR m_startupVector;

@@ -16,8 +16,6 @@ class DX11PhysicsFramework
 	float _objectRotateSpeed = 0.5f;
 	float _objectScaleSpeed = 0.2f;
 
-	
-
 	HWND _windowHandle = nullptr;
 
 	ID3D11DeviceContext* _immediateContext = nullptr;
@@ -81,5 +79,5 @@ public:
 	HRESULT Initialise(HINSTANCE hInstance, int nCmdShow);
 
 	void Update() const;
-	void Draw(double alpha);
+	void Draw(double alphaScalar);
 };

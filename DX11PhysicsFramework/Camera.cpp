@@ -109,6 +109,8 @@ void Camera::UpdateViewMatrix()
 	m_backVector = XMVector3TransformCoord(m_startbackVector, vecRotationMatrix);
 	m_leftVector = XMVector3TransformCoord(m_startleftVector, vecRotationMatrix);
 	m_rightVector = XMVector3TransformCoord(m_startrightVector, vecRotationMatrix);
+
+	m_previousViewMatrix = m_viewMatrix;
 }
 
 void Camera::LoadStartingVectors()
@@ -243,6 +245,11 @@ void Camera::AddToRotation(float x, float y, float z)
 XMMATRIX Camera::GetViewMatrix() const
 {
 	return m_viewMatrix;
+}
+
+XMMATRIX Camera::GetPreviousViewMatrix() const
+{
+	return m_previousViewMatrix;
 }
 
 XMMATRIX Camera::GetProjectionMatrix() const

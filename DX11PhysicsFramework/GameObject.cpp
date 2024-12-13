@@ -1,8 +1,8 @@
 #include "GameObject.h"
 
 GameObject::GameObject(const string& type, const string& meshpath, const Material& material,
-	ID3D11ShaderResourceView* textureRV, ID3D11Device& device,
-	const Vector& position, const Vector& scale, const Vector& rotation) : _type(type)
+                       ID3D11ShaderResourceView* textureRV, ID3D11Device& device,
+                       const Vector& position, const Vector& scale, const Vector& rotation) : _type(type)
 
 {
 	_parent = nullptr;
@@ -12,8 +12,8 @@ GameObject::GameObject(const string& type, const string& meshpath, const Materia
 }
 
 GameObject::GameObject(const string& type, const Geometry& geometry, const Material& material,
-	ID3D11ShaderResourceView* textureRV, const Vector& position,
-	const Vector& scale, const Vector& rotation) : _type(type)
+                       ID3D11ShaderResourceView* textureRV, const Vector& position,
+                       const Vector& scale, const Vector& rotation) : _type(type)
 {
 	_parent = nullptr;
 	_transform = new Transform(position, rotation, scale, type);
@@ -40,9 +40,15 @@ GameObject::~GameObject()
 		delete _parent;
 		_parent = nullptr;
 	}
+
+	if (_physicsModel != nullptr)
+	{
+		delete _physicsModel;
+		_physicsModel = nullptr;
+	}
 }
 
-void GameObject::Update(float dt) const
+void GameObject::Update(const float dt) const
 {
 	_transform->Update();
 
@@ -50,7 +56,7 @@ void GameObject::Update(float dt) const
 
 	if (_parent != nullptr)
 	{
-		XMStoreFloat4x4(GetTransform()->GetWorldMatrix(),
-			this->GetTransform()->GetWorldMatrix4X4() * _parent->GetTransform()->GetWorldMatrix4X4());
+		XMStoreFloat4x4(GetTransform()->GetWorldFloat4X4(),
+		                this->GetTransform()->GetWorldMatrix() * _parent->GetTransform()->GetWorldMatrix());
 	}
 }

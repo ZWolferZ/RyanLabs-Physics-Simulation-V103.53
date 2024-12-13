@@ -2,7 +2,6 @@
 #include <windows.h>
 #include <string>
 
-
 class Debug
 {
 public:
@@ -19,7 +18,7 @@ public:
 	}
 
 	static void Debug_WriteVector(const std::string& objectType, const std::string& vectorType,
-		const DirectX::XMFLOAT3& vector)
+	                              const DirectX::XMFLOAT3& vector)
 	{
 		std::string message = objectType + " - " + vectorType + " - X: " + std::to_string(vector.x) + ", Y: " +
 			std::to_string(vector.y) + ", Z: " + std::to_string(vector.z) + "\n";
@@ -34,7 +33,7 @@ public:
 
 	static int VDebugPrintF(const char* format, va_list args)
 	{
-		const UINT32 MAX_CHARS = 1024;
+		constexpr UINT32 MAX_CHARS = 1024;
 		static char s_buffer[MAX_CHARS];
 
 		int charsWritten = vsnprintf(s_buffer, MAX_CHARS, format, args);

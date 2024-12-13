@@ -510,10 +510,8 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 
 	_gameObjectSize = _gameObjects.size();
 
-	
-
-	//_gameObjects[1]->GetPhysicsModel()->SetVelocity(Vector(0, 1, 0));
-	//_gameObjects[1]->GetPhysicsModel()->SetAcceleration(Vector(0, 0, 0.01f));
+	_gameObjects[1]->GetPhysicsModel()->SetVelocity(Vector(0, 0.1, 0));
+	_gameObjects[1]->GetPhysicsModel()->SetAcceleration(Vector(0.0001f, 0, 0));
 
 	return S_OK;
 }
@@ -644,7 +642,7 @@ DX11PhysicsFramework::~DX11PhysicsFramework()
 	if (_planeIndexBuffer)_planeIndexBuffer->Release();
 	if (_objMeshData.IndexBuffer) _objMeshData.IndexBuffer->Release();
 	if (_objMeshData.VertexBuffer)_objMeshData.VertexBuffer->Release();
-	
+
 	if (DSLessEqual) DSLessEqual->Release();
 	if (RSCullNone) RSCullNone->Release();
 
@@ -660,171 +658,66 @@ DX11PhysicsFramework::~DX11PhysicsFramework()
 
 void DX11PhysicsFramework::Update() const
 {
-	////Static initializes this value only once
-	//static ULONGLONG frameStart = GetTickCount64();
+	static bool objectSelected[6] = {};
 
-	//ULONGLONG frameNow = GetTickCount64();
-	//float FAKEdeltaTime = (frameNow - frameStart) / 1000.0f;
-	//frameStart = frameNow;
+	_camera->HandleMovement(FPS60);
 
-	//static float simpleCount = 0.0f;
-	//simpleCount += FAKEdeltaTime;
+	for (auto gameObject : _gameObjects)
+	{
+		gameObject->Update(FPS60);
+	}
 
-	static bool objectSelected[6] = { false };
+	for (int i = 0; i < 6; i++)
+	{
+		if (GetAsyncKeyState('0' + i) & 0x0001)
+		{
+			for (bool& j : objectSelected) { j = false; }
+			objectSelected[i] = true;
+			Debug::Debug_WriteString("Object " + std::to_string(i) + " Selected");
+		}
+	}
 
-		// Update camera
-		_camera->HandleMovement(FPS60);
+	if (GetAsyncKeyState(VK_MULTIPLY) & 0x0001)
+	{
+		for (bool& j : objectSelected) { j = false; }
+		Debug::Debug_WriteString("Objects Deselected");
+	}
 
-		// Move gameobjects
-		if (GetAsyncKeyState('0') & 0x0001)
-		{
-			if (objectSelected[0] == false)
-			{
-				for (bool& i : objectSelected) { i = false; }
-				objectSelected[0] = true;
-				Debug::Debug_WriteString("Object 0 Selected");
-			}
-		}
-		if (GetAsyncKeyState('1') & 0x0001)
-		{
-			if (objectSelected[1] == false)
-			{
-				for (bool& i : objectSelected) { i = false; }
-				objectSelected[1] = true;
-				Debug::Debug_WriteString("Object 2 Selected");
-			}
-		}
+	if (GetAsyncKeyState(VK_ESCAPE) & 0x0001)
+	{
+		PostQuitMessage(0);
+	}
 
-		if (GetAsyncKeyState('2') & 0x0001)
+	for (int i = 0; i < 6; i++)
+	{
+		if (objectSelected[i])
 		{
-			if (objectSelected[2] == false)
-			{
-				for (bool& i : objectSelected) { i = false; }
-				objectSelected[2] = true;
-				Debug::Debug_WriteString("Object 3 Selected");
-			}
-		}
-		if (GetAsyncKeyState('3') & 0x0001)
-		{
-			if (objectSelected[3] == false)
-			{
-				for (bool& i : objectSelected) { i = false; }
-				objectSelected[3] = true;
-				Debug::Debug_WriteString("Object 4 Selected");
-			}
-		}
-		if (GetAsyncKeyState('4') & 0x0001)
-		{
-			if (objectSelected[4] == false)
-			{
-				for (bool& i : objectSelected) { i = false; }
-				objectSelected[4] = true;
-				Debug::Debug_WriteString("Object 5 Selected");
-			}
-		}
-		if (GetAsyncKeyState('5') & 0x0001)
-		{
-			if (objectSelected[5] == false)
-			{
-				for (bool& i : objectSelected) { i = false; }
-				objectSelected[5] = true;
-				Debug::Debug_WriteString("Object 6 Selected");
-			}
-		}
-
-		if (GetAsyncKeyState(VK_MULTIPLY) & 0x0001)
-		{
-			for (bool& i : objectSelected) { i = false; }
-			Debug::Debug_WriteString("Object Deselected");
-		}
-		if (GetAsyncKeyState(VK_ESCAPE) & 0x0001)
-		{
-			PostQuitMessage(0);
-		}
-
-		if (objectSelected[0] == true)
-		{
-			BasicObjectMovement(FPS60, 0);
-			_gameObjects[0]->GetAppearance()->SetTextureRV(SelectedTexture);
+			BasicObjectMovement(FPS60, i);
+			_gameObjects[i]->GetAppearance()->SetTextureRV(SelectedTexture);
 		}
 		else
 		{
-			_gameObjects[0]->GetAppearance()->SetTextureRV(GroundTextureRV);
+			if (_gameObjects[i]->GetType() == "Floor")
+			{
+				_gameObjects[i]->GetAppearance()->SetTextureRV(GroundTextureRV);
+			}
+			else
+			{
+				_gameObjects[i]->GetAppearance()->SetTextureRV(StoneTextureRV);
+			}
 		}
-		if (objectSelected[1] == true)
-		{
-			BasicObjectMovement(FPS60, 1);
-			_gameObjects[1]->GetAppearance()->SetTextureRV(SelectedTexture);
-		}
-		else
-		{
-			_gameObjects[1]->GetAppearance()->SetTextureRV(StoneTextureRV);
-		}
-
-		if (objectSelected[2] == true)
-		{
-			BasicObjectMovement(FPS60, 2);
-			_gameObjects[2]->GetAppearance()->SetTextureRV(SelectedTexture);
-		}
-		else
-		{
-			_gameObjects[2]->GetAppearance()->SetTextureRV(StoneTextureRV);
-		}
-		if (objectSelected[3] == true)
-		{
-			BasicObjectMovement(FPS60, 3);
-			_gameObjects[3]->GetAppearance()->SetTextureRV(SelectedTexture);
-		}
-		else
-		{
-			_gameObjects[3]->GetAppearance()->SetTextureRV(StoneTextureRV);
-		}
-
-		if (objectSelected[4] == true)
-		{
-			BasicObjectMovement(FPS60, 4);
-			_gameObjects[4]->GetAppearance()->SetTextureRV(SelectedTexture);
-		}
-		else
-		{
-			_gameObjects[4]->GetAppearance()->SetTextureRV(StoneTextureRV);
-		}
-
-		if (objectSelected[5] == true)
-		{
-			BasicObjectMovement(FPS60, 5);
-			_gameObjects[5]->GetAppearance()->SetTextureRV(SelectedTexture);
-		}
-		else
-		{
-			_gameObjects[5]->GetAppearance()->SetTextureRV(StoneTextureRV);
-		}
-
-		// Update camera
-
-		// Update objects
-		for (const auto gameObject : _gameObjects)
-		{
-			gameObject->Update(FPS60);
-		}
-	
+	}
 }
 
-void DX11PhysicsFramework::Draw(double alpha)
+void DX11PhysicsFramework::Draw(const double alphaScalar)
 {
-	if (alpha > FPS60) return;
-
-	//
 	// Clear buffers
-	//
-	float ClearColor[4] = { 0.25f, 0.55f, 1.0f, 1.0f }; // red,green,blue,alpha
+	float ClearColor[4] = { 0.25f, 0.55f, 1.0f, 1.0f }; // red, green, blue, alpha
 	_immediateContext->OMSetRenderTargets(1, &_frameBufferView, _depthBufferView);
 	_immediateContext->ClearRenderTargetView(_frameBufferView, ClearColor);
 	_immediateContext->ClearDepthStencilView(_depthBufferView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	//
 	// Setup buffers and render scene
-	//
 	_immediateContext->VSSetShader(_vertexShader, nullptr, 0);
 	_immediateContext->PSSetShader(_pixelShader, nullptr, 0);
 
@@ -832,15 +725,15 @@ void DX11PhysicsFramework::Draw(double alpha)
 	_immediateContext->PSSetConstantBuffers(0, 1, &_constantBuffer);
 	_immediateContext->PSSetSamplers(0, 1, &_samplerLinear);
 
-	XMFLOAT4X4 view;
+	// Use alpha scalar to interpolate matrix to get a smoother movement
+	XMMATRIX previousView = _camera->GetPreviousViewMatrix();
+	XMMATRIX currentView = _camera->GetViewMatrix();
 
-	XMFLOAT4X4 projection;
+	XMMATRIX predictedView = alphaScalar * (currentView - previousView);
+	XMMATRIX interpolatedView = previousView + predictedView;
 
-	XMStoreFloat4x4(&view, _camera->GetViewMatrix());
-	XMStoreFloat4x4(&projection, _camera->GetProjectionMatrix());
-
-	_cbData.View = XMMatrixTranspose(XMLoadFloat4x4(&view));
-	_cbData.Projection = XMMatrixTranspose(XMLoadFloat4x4(&projection));
+	_cbData.View = XMMatrixTranspose(interpolatedView);
+	_cbData.Projection = XMMatrixTranspose(_camera->GetProjectionMatrix());
 
 	_cbData.light = basicLight;
 	_cbData.EyePosW = _camera->GetPosition();
@@ -848,16 +741,22 @@ void DX11PhysicsFramework::Draw(double alpha)
 	// Render all scene objects
 	for (auto gameObject : _gameObjects)
 	{
-		// Get render material
+		// Use alpha scalar to interpolate matrix to get a smoother movement
+		XMMATRIX previousWorld = gameObject->GetTransform()->GetPreviousWorldMatrix();
+		XMMATRIX currentWorld = gameObject->GetTransform()->GetWorldMatrix();
+
+		XMMATRIX predictedMatrix = alphaScalar * (currentWorld - previousWorld);
+		XMMATRIX interpolatedMatrix = previousWorld + predictedMatrix;
+
+		_cbData.World = XMMatrixTranspose(interpolatedMatrix);
+		//_cbData.World = XMMatrixTranspose(gameObject->GetTransform()->GetWorldMatrix());
+
 		Material material = gameObject->GetAppearance()->GetMaterial();
 
 		// Copy material to shader
 		_cbData.surface.AmbientMtrl = material.ambient;
 		_cbData.surface.DiffuseMtrl = material.diffuse;
 		_cbData.surface.SpecularMtrl = material.specular;
-
-		// Set world matrix
-		_cbData.World = XMMatrixTranspose(gameObject->GetTransform()->GetWorldMatrix4X4());
 
 		// Set texture
 		if (gameObject->GetAppearance()->_hasTexture)
@@ -870,7 +769,7 @@ void DX11PhysicsFramework::Draw(double alpha)
 			_cbData.HasTexture = 0.0f;
 		}
 
-		//Write constant buffer data onto GPU
+		// Write constant buffer data onto GPU
 		D3D11_MAPPED_SUBRESOURCE mappedSubresource;
 		_immediateContext->Map(_constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
 		memcpy(mappedSubresource.pData, &_cbData, sizeof(_cbData));
@@ -880,8 +779,6 @@ void DX11PhysicsFramework::Draw(double alpha)
 		gameObject->GetAppearance()->Draw(_immediateContext);
 	}
 
-	//
 	// Present our back buffer to our front buffer
-	//
 	_swapChain->Present(0, 0);
 }

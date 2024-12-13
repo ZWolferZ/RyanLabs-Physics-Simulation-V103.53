@@ -12,6 +12,5 @@ public:
 	void Tick();
 
 private:
-
 	steady_clock::time_point lastFrame;
 };

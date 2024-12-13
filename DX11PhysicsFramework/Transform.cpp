@@ -9,11 +9,19 @@ Transform::Transform(const Vector& position, const Vector& rotation, const Vecto
 	_originPosition = position;
 	_originRotation = rotation;
 	_originScale = scale;
-	dirtyMatrix = false;
 
 	_objectType = objectType;
+}
 
-	_world = nullptr;
+void Transform::Update()
+{
+	_previousWorld = _world;
+
+	XMMATRIX scale = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
+	XMMATRIX rotation = XMMatrixRotationRollPitchYaw(_rotation.x, _rotation.y, _rotation.z);
+	XMMATRIX translation = XMMatrixTranslation(_position.x, _position.y, _position.z);
+
+	XMStoreFloat4x4(&_world, scale * rotation * translation);
 }
 
 void Transform::Move(const Vector& direction, float deltaTime, float moveSpeed)
@@ -41,38 +49,4 @@ void Transform::Reset()
 	_scale = _originScale;
 
 	Debug::Debug_WriteString(_objectType + " Reset");
-}
-
-XMMATRIX Transform::GetWorldMatrix4X4()
-{
-	if (!dirtyMatrix)
-	{
-		_world = new XMFLOAT4X4();
-		dirtyMatrix = true;
-	}
-
-	return XMLoadFloat4x4(_world);
-}
-
-XMFLOAT4X4* Transform::GetWorldMatrix()
-{
-	if (!dirtyMatrix)
-	{
-		_world = new XMFLOAT4X4();
-		dirtyMatrix = true;
-	}
-	return _world;
-}
-
-void Transform::Update() const
-{
-	if (!dirtyMatrix) return;
-
-	// Calculate world matrix
-	XMMATRIX scale = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
-	XMMATRIX rotation = XMMatrixRotationX(_rotation.x) * XMMatrixRotationY(_rotation.y) *
-		XMMatrixRotationZ(_rotation.z);
-	XMMATRIX translation = XMMatrixTranslation(_position.x, _position.y, _position.z);
-
-	XMStoreFloat4x4(_world, scale * rotation * translation);
 }
