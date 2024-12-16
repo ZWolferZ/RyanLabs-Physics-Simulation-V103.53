@@ -12,9 +12,9 @@ class DX11PhysicsFramework
 	int WindowWidth = 1920;
 	int WindowHeight = 1080;
 
-	float _objectMoveSpeed = 1.0f;
-	float _objectRotateSpeed = 0.5f;
-	float _objectScaleSpeed = 0.2f;
+	const float _objectMoveSpeed = 4.0f;
+	const float _objectRotateSpeed = 3.0f;
+	const float _objectScaleSpeed = 1.0f;
 
 	HWND _windowHandle = nullptr;
 
@@ -78,6 +78,8 @@ public:
 
 	HRESULT Initialise(HINSTANCE hInstance, int nCmdShow);
 
-	void Update() const;
+	void Update();
+	void PhysicsUpdate() const;
+	void GeneralUpdate(float deltaTime) const;
 	void Draw(double alphaScalar);
 };

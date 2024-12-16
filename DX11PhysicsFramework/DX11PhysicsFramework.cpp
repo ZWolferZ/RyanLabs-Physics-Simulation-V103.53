@@ -126,8 +126,8 @@ HRESULT DX11PhysicsFramework::CreateD3DDevice()
 HRESULT DX11PhysicsFramework::CreateSwapChainAndFrameBuffer()
 {
 	HRESULT hr = S_OK;
-
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
+
 	swapChainDesc.Width = 0; // Defer to WindowWidth
 	swapChainDesc.Height = 0; // Defer to WindowHeight
 	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; //FLIP* modes don't support sRGB backbuffer
@@ -147,21 +147,17 @@ HRESULT DX11PhysicsFramework::CreateSwapChainAndFrameBuffer()
 	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	ID3D11Texture2D* frameBuffer = nullptr;
-
 	hr = _swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&frameBuffer));
 	if (FAILED(hr)) return hr;
 
 	D3D11_RENDER_TARGET_VIEW_DESC framebufferDesc = {};
 	framebufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; //sRGB render target enables hardware gamma correction
 	framebufferDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-
 	hr = _device->CreateRenderTargetView(frameBuffer, &framebufferDesc, &_frameBufferView);
-
 	frameBuffer->Release();
 
 	D3D11_TEXTURE2D_DESC depthBufferDesc;
 	frameBuffer->GetDesc(&depthBufferDesc); // copy from framebuffer properties
-
 	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
@@ -530,7 +526,7 @@ void DX11PhysicsFramework::LoadSceneCameraVariables()
 	file >> m_sceneCameraVariables;
 
 	//Camera
-	float aspect = WindowWidth / WindowHeight;
+	const int aspect = WindowWidth / WindowHeight;
 
 	//////////////////////////////////////
 
@@ -609,7 +605,7 @@ void DX11PhysicsFramework::BasicObjectMovement(float deltaTime, int objectSelect
 			Vector(-1.0f, -1.0f, -1.0f), deltaTime, _objectScaleSpeed);
 	}
 
-	if (GetAsyncKeyState(VK_NUMPAD0) & 0x0001)
+	if (GetAsyncKeyState(VK_NUMPAD0) & 0xFFFF)
 	{
 		_gameObjects[objectSelected]->GetTransform()->Reset();
 	}
@@ -658,26 +654,58 @@ DX11PhysicsFramework::~DX11PhysicsFramework()
 
 // TODO: FIX DELTA TIME
 // ASK LECTURER ABOUT HOW TO GET DELTA TIME TO BE CONSISTENT
-void DX11PhysicsFramework::Update() const
+void DX11PhysicsFramework::Update()
 {
 	//Static initializes this value only once
-	/*static ULONGLONG frameStart = GetTickCount64();
+	static ULONGLONG frameStart = GetTickCount64();
 
 	ULONGLONG frameNow = GetTickCount64();
 	float deltaTime = (frameNow - frameStart) / 1000.0f;
 	frameStart = frameNow;
 
 	static float simpleCount = 0.0f;
-	simpleCount += deltaTime;*/
+	simpleCount += deltaTime;
 
-	static bool objectSelected[6] = {};
+	static Timer frame_timer;
+	static float accumulator = 0;
 
-	_camera->HandleMovement(FPS60);
+	accumulator += frame_timer.GetDeltaTime();
 
+#ifdef _DEBUG
+	if (accumulator > 1.0f) // assume back from breakpoint
+		accumulator = FPS60;
+#endif
+	//Debug::Debug_WriteString(std::to_string(accumulator));
+
+	while (accumulator >= FPS60)
+	{
+		// Update physics
+		PhysicsUpdate();
+		accumulator -= FPS60;
+		frame_timer.Tick();
+	}
+
+	// Update the general game loop
+	GeneralUpdate(deltaTime);
+
+	const double alpha = accumulator / FPS60;
+
+	Draw(alpha);
+}
+
+void DX11PhysicsFramework::PhysicsUpdate() const
+{
 	for (auto gameObject : _gameObjects)
 	{
 		gameObject->Update(FPS60);
 	}
+}
+
+void DX11PhysicsFramework::GeneralUpdate(float deltaTime) const
+{
+	static bool objectSelected[6] = {};
+
+	_camera->HandleMovement(deltaTime);
 
 	for (int i = 0; i < 6; i++)
 	{
@@ -704,7 +732,7 @@ void DX11PhysicsFramework::Update() const
 	{
 		if (objectSelected[i])
 		{
-			BasicObjectMovement(FPS60, i);
+			BasicObjectMovement(deltaTime, i);
 			_gameObjects[i]->GetAppearance()->SetTextureRV(SelectedTexture);
 		}
 		else

@@ -2,7 +2,7 @@
 #include <string>
 
 bool OBJLoader::FindSimilarVertex(const SimpleVertex& vertex, std::map<SimpleVertex, unsigned short>& vertToIndexMap,
-                                  unsigned short& index)
+	unsigned short& index)
 {
 	auto it = vertToIndexMap.find(vertex);
 
@@ -15,12 +15,12 @@ bool OBJLoader::FindSimilarVertex(const SimpleVertex& vertex, std::map<SimpleVer
 }
 
 void OBJLoader::CreateIndices(const std::vector<XMFLOAT3>& inVertices,
-                              const std::vector<XMFLOAT2>& inTexCoords,
-                              const std::vector<XMFLOAT3>& inNormals,
-                              std::vector<unsigned short>& outIndices,
-                              std::vector<XMFLOAT3>& outVertices,
-                              std::vector<XMFLOAT2>& outTexCoords,
-                              std::vector<XMFLOAT3>& outNormals)
+	const std::vector<XMFLOAT2>& inTexCoords,
+	const std::vector<XMFLOAT3>& inNormals,
+	std::vector<unsigned short>& outIndices,
+	std::vector<XMFLOAT3>& outVertices,
+	std::vector<XMFLOAT2>& outTexCoords,
+	std::vector<XMFLOAT3>& outNormals)
 {
 	// Mapping from an already-existing SimpleVertex to its corresponding index
 	std::map<SimpleVertex, unsigned short> vertToIndexMap;
@@ -31,7 +31,7 @@ void OBJLoader::CreateIndices(const std::vector<XMFLOAT3>& inVertices,
 
 	for (int i = 0; i < numVertices; ++i) //For each vertex
 	{
-		SimpleVertex vertex = {inVertices[i], inNormals[i], inTexCoords[i]};
+		SimpleVertex vertex = { inVertices[i], inNormals[i], inTexCoords[i] };
 
 		unsigned short index;
 		// See if a vertex already exists in the buffer that has the same attributes as this one
@@ -189,7 +189,7 @@ MeshData OBJLoader::Load(const char* filename, ID3D11Device* _pd3dDevice, bool i
 		meshTexCoords.reserve(expandedTexCoords.size());
 
 		CreateIndices(expandedVertices, expandedTexCoords, expandedNormals, meshIndices, meshVertices, meshTexCoords,
-		              meshNormals);
+			meshNormals);
 
 		MeshData meshData;
 

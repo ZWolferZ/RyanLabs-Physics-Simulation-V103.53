@@ -7,11 +7,11 @@ class GameObject
 {
 public:
 	GameObject(const string& type, const string& meshpath, const Material& material,
-	           ID3D11ShaderResourceView* textureRV, ID3D11Device& device,
-	           const Vector& position, const Vector& scale, const Vector& rotation);
+		ID3D11ShaderResourceView* textureRV, ID3D11Device& device,
+		const Vector& position, const Vector& scale, const Vector& rotation);
 	GameObject(const string& type, const Geometry& geometry, const Material& material,
-	           ID3D11ShaderResourceView* textureRV, const Vector& position,
-	           const Vector& scale, const Vector& rotation);
+		ID3D11ShaderResourceView* textureRV, const Vector& position,
+		const Vector& scale, const Vector& rotation);
 
 	~GameObject();
 

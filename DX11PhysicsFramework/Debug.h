@@ -18,7 +18,7 @@ public:
 	}
 
 	static void Debug_WriteVector(const std::string& objectType, const std::string& vectorType,
-	                              const DirectX::XMFLOAT3& vector)
+		const DirectX::XMFLOAT3& vector)
 	{
 		std::string message = objectType + " - " + vectorType + " - X: " + std::to_string(vector.x) + ", Y: " +
 			std::to_string(vector.y) + ", Z: " + std::to_string(vector.z) + "\n";

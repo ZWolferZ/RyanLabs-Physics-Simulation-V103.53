@@ -10,7 +10,7 @@ Appearance::Appearance(Geometry geometry, ID3D11ShaderResourceView* textureRV, M
 }
 
 Appearance::Appearance(const string& meshpath, ID3D11Device& device, ID3D11ShaderResourceView* textureRV,
-                       Material material)
+	Material material)
 {
 	LoadMesh(meshpath, device);
 
@@ -35,7 +35,7 @@ void Appearance::Draw(ID3D11DeviceContext* pImmediateContext) const
 
 	// Set vertex and index buffers
 	pImmediateContext->IASetVertexBuffers(0, 1, &_geometry.vertexBuffer, &_geometry.vertexBufferStride,
-	                                      &_geometry.vertexBufferOffset);
+		&_geometry.vertexBufferOffset);
 	pImmediateContext->IASetIndexBuffer(_geometry.indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
 	pImmediateContext->DrawIndexed(_geometry.numberOfIndices, 0, 0);

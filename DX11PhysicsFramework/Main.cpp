@@ -18,7 +18,6 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 	// Main message loop
 	MSG msg = { nullptr };
-	Timer frame_timer;
 
 	while (WM_QUIT != msg.message)
 	{
@@ -41,25 +40,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		}
 		else
 		{
-			static float accumulator = 0;
-
-			accumulator += frame_timer.GetDeltaTime();
-
-#ifdef _DEBUG
-			if (accumulator > 1.0f) // assume come back from breakpoint
-				accumulator = FPS60;
-#endif
-			//Debug::Debug_WriteString(std::to_string(accumulator));
-
-			while (accumulator >= FPS60)
-			{
-				application.Update();
-				accumulator -= FPS60;
-				frame_timer.Tick();
-			}
-
-			const double alpha = accumulator / FPS60;
-			application.Draw(alpha);
+			application.Update();
 		}
 	}
 
