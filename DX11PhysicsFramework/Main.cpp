@@ -23,20 +23,10 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	{
 		if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
-			bool handled = false;
-
-			if (msg.message >= WM_KEYFIRST && msg.message <= WM_KEYLAST)
-			{
-				handled = true;
-			}
-			else if (WM_QUIT == msg.message)
+			if (msg.message == WM_QUIT)
 				break;
-
-			if (!handled)
-			{
-				TranslateMessage(&msg);
-				DispatchMessageW(&msg);
-			}
+			TranslateMessage(&msg);
+			DispatchMessageW(&msg);
 		}
 		else
 		{

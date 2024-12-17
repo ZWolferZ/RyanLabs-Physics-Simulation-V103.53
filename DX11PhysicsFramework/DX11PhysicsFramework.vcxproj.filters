@@ -24,6 +24,9 @@
     <Filter Include="JSON Files">
       <UniqueIdentifier>{9ace8d84-ed57-4432-8ae9-2a62bb8d0890}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Helpers\GUI">
+      <UniqueIdentifier>{73a7cd1a-94ed-488c-aa71-329cfeafbfe9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="OBJLoader.h">
@@ -93,6 +96,24 @@
     </ClCompile>
     <ClCompile Include="PhysicsModel.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui-1.91.6\backends\imgui_impl_dx11.cpp">
+      <Filter>Helpers\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui-1.91.6\backends\imgui_impl_win32.cpp">
+      <Filter>Helpers\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui-1.91.6\imgui_draw.cpp">
+      <Filter>Helpers\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui-1.91.6\imgui_widgets.cpp">
+      <Filter>Helpers\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui-1.91.6\imgui_tables.cpp">
+      <Filter>Helpers\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui-1.91.6\imgui.cpp">
+      <Filter>Helpers\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

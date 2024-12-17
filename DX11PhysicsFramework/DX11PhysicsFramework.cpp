@@ -1,17 +1,53 @@
 #include "DX11PhysicsFramework.h"
 
-static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	PAINTSTRUCT ps;
-	HDC hdc;
+	if (ImGui::GetCurrentContext() != nullptr)
+	{
+		ImGuiIO& io = ImGui::GetIO();
+		switch (message)
+		{
+		case WM_LBUTTONDOWN:
+		case WM_LBUTTONDBLCLK:
+			io.MouseDown[0] = true;
+			return 0;
+		case WM_RBUTTONDOWN:
+		case WM_RBUTTONDBLCLK:
+			io.MouseDown[1] = true;
+			return 0;
+		case WM_MBUTTONDOWN:
+		case WM_MBUTTONDBLCLK:
+			io.MouseDown[2] = true;
+			return 0;
+		case WM_LBUTTONUP:
+			io.MouseDown[0] = false;
+			return 0;
+		case WM_RBUTTONUP: io.MouseDown[1] = false;
+			return 0;
+		case WM_MBUTTONUP: io.MouseDown[2] = false;
+			return 0;
+		case WM_MOUSEWHEEL: io.MouseWheel += GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA;
+			return 0;
+		case WM_MOUSEHWHEEL: io.MouseWheelH += GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA;
+			return 0;
+		case WM_MOUSEMOVE: io.MousePos.x = static_cast<float>(GET_X_LPARAM(lParam));
+			io.MousePos.y = static_cast<float>(GET_Y_LPARAM(lParam));
+			return 0;
+		case WM_CHAR: io.AddInputCharacter(static_cast<unsigned int>(wParam));
+			return 0;
+		default:;
+		}
+	}
 
 	switch (message)
 	{
 	case WM_PAINT:
-		hdc = BeginPaint(hWnd, &ps);
+	{
+		PAINTSTRUCT ps;
+		HDC hdc = BeginPaint(hWnd, &ps);
 		EndPaint(hWnd, &ps);
 		break;
-
+	}
 	case WM_DESTROY:
 		PostQuitMessage(0);
 		break;
@@ -22,9 +58,9 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 
 	// YOU WILL BE MAXIMIZED
 	ShowWindow(hWnd, SW_MAXIMIZE);
-	ShowCursor(FALSE);
+	ShowCursor(TRUE);
 
-	return message;
+	return 0;
 }
 
 HRESULT DX11PhysicsFramework::Initialise(HINSTANCE hInstance, int nShowCmd)
@@ -39,6 +75,8 @@ HRESULT DX11PhysicsFramework::Initialise(HINSTANCE hInstance, int nShowCmd)
 
 	hr = CreateSwapChainAndFrameBuffer();
 	if (FAILED(hr)) return E_FAIL;
+
+	InitGUI();
 
 	hr = InitShadersAndInputLayout();
 	if (FAILED(hr)) return E_FAIL;
@@ -71,7 +109,7 @@ HRESULT DX11PhysicsFramework::CreateWindowHandle(HINSTANCE hInstance, int nCmdSh
 	wndClass.hbrBackground = nullptr;
 	wndClass.lpszMenuName = nullptr;
 	wndClass.lpszClassName = windowName;
-	wndClass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(1)); // Load the RyanLabs Icon from the resources
+	wndClass.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(1)); // Load the RyanLabs Icon
 
 	RegisterClassW(&wndClass);
 
@@ -136,7 +174,7 @@ HRESULT DX11PhysicsFramework::CreateSwapChainAndFrameBuffer()
 	swapChainDesc.SampleDesc.Quality = 0;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.BufferCount = 2;
-	swapChainDesc.Scaling = DXGI_SCALING_STRETCH;
+	swapChainDesc.Scaling = DXGI_SCALING_NONE;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
 	swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
 	swapChainDesc.Flags = 0;
@@ -168,6 +206,19 @@ HRESULT DX11PhysicsFramework::CreateSwapChainAndFrameBuffer()
 	}
 
 	return hr;
+}
+
+void DX11PhysicsFramework::InitGUI() const
+{
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	(void)io;
+	ImGui::StyleColorsDark();
+	ImGui_ImplWin32_Init(GetWindowHandle());
+	ImGui_ImplDX11_Init(GetDevice(), GetDeviceContext());
+
+	io.IniFilename = nullptr;
 }
 
 HRESULT DX11PhysicsFramework::InitShadersAndInputLayout()
@@ -491,7 +542,7 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 
 	for (auto i = 0; i < 4; i++)
 	{
-		gameObject = new GameObject("Cube " + i, cubeGeometry, shinyMaterial, StoneTextureRV,
+		gameObject = new GameObject("Cube", cubeGeometry, shinyMaterial, StoneTextureRV,
 			Vector(-2.0f + (i * 2.5f), 1.0f, 10.0f),
 			Vector(1.0f, 1.0f, 1.0f), Vector(0.0f, 0.0f, 0.0f));
 
@@ -505,9 +556,6 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 	_gameObjects.push_back(gameObject);
 
 	_gameObjectSize = _gameObjects.size();
-
-	//_gameObjects[1]->GetPhysicsModel()->SetVelocity(Vector(0, 0.1, 0));
-	//_gameObjects[1]->GetPhysicsModel()->SetAcceleration(Vector(0.0001f, 0, 0));
 
 	return S_OK;
 }
@@ -650,45 +698,44 @@ DX11PhysicsFramework::~DX11PhysicsFramework()
 	if (_dxgiDevice)_dxgiDevice->Release();
 	if (_dxgiFactory)_dxgiFactory->Release();
 	if (_device)_device->Release();
+
+	ImGui_ImplDX11_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
 }
 
-// TODO: FIX DELTA TIME
-// ASK LECTURER ABOUT HOW TO GET DELTA TIME TO BE CONSISTENT
 void DX11PhysicsFramework::Update()
 {
 	//Static initializes this value only once
 	static ULONGLONG frameStart = GetTickCount64();
 
 	ULONGLONG frameNow = GetTickCount64();
-	float deltaTime = (frameNow - frameStart) / 1000.0f;
+	deltaTime = (frameNow - frameStart) / 1000.0f;
 	frameStart = frameNow;
 
-	static float simpleCount = 0.0f;
-	simpleCount += deltaTime;
+	_runtimeTimer += deltaTime;
 
 	static Timer frame_timer;
-	static float accumulator = 0;
 
-	accumulator += frame_timer.GetDeltaTime();
+	_accumulator += frame_timer.GetDeltaTime();
 
 #ifdef _DEBUG
-	if (accumulator > 1.0f) // assume back from breakpoint
-		accumulator = FPS60;
+	if (_accumulator > 1.0f) // assume back from breakpoint
+		_accumulator = FPS60;
 #endif
-	//Debug::Debug_WriteString(std::to_string(accumulator));
 
-	while (accumulator >= FPS60)
+	while (_accumulator >= FPS60)
 	{
 		// Update physics
 		PhysicsUpdate();
-		accumulator -= FPS60;
+		_accumulator -= FPS60;
 		frame_timer.Tick();
 	}
 
 	// Update the general game loop
 	GeneralUpdate(deltaTime);
 
-	const double alpha = accumulator / FPS60;
+	const double alpha = _accumulator / FPS60;
 
 	Draw(alpha);
 }
@@ -701,10 +748,8 @@ void DX11PhysicsFramework::PhysicsUpdate() const
 	}
 }
 
-void DX11PhysicsFramework::GeneralUpdate(float deltaTime) const
+void DX11PhysicsFramework::GeneralUpdate(float deltaTime)
 {
-	static bool objectSelected[6] = {};
-
 	_camera->HandleMovement(deltaTime);
 
 	for (int i = 0; i < 6; i++)
@@ -749,6 +794,268 @@ void DX11PhysicsFramework::GeneralUpdate(float deltaTime) const
 	}
 }
 
+void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int objectSelected)
+{
+	// Object Movement Control Window
+	ImGui::SetNextWindowPos(ImVec2(1315, 10), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(600, 600), ImGuiCond_FirstUseEver);
+
+	ImGui::Begin("Object Movement Control");
+	ImGui::Text("Control the transform speeds of the selected object:");
+
+	ImGui::SliderFloat("Move Speed", &_objectMoveSpeed, 0.1f, 10.0f);
+	ImGui::SliderFloat("Rotate Speed", &_objectRotateSpeed, 0.1f, 10.0f);
+	ImGui::SliderFloat("Scale Speed", &_objectScaleSpeed, 0.1f, 10.0f);
+
+	if (objectSelected >= 0 && objectSelected < _gameObjectSize)
+	{
+		ImGui::Text("Reset Controls:");
+		if (ImGui::Button("Reset Transform"))
+		{
+			_gameObjects[objectSelected]->GetTransform()->Reset();
+		}
+		if (ImGui::Button("Reset Velocity"))
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.0f, 0.0f, 0.0f));
+		}
+		if (ImGui::Button("Reset Acceleration"))
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.0f, 0.0f));
+		}
+
+		ImGui::Text("Movement Controls:");
+
+		ImGui::Button("Move Forward (Z-)");
+		if (ImGui::IsItemActive())
+		{
+			_gameObjects[objectSelected]->GetTransform()->Move(Vector(0.0f, 0.0f, -1.0f), deltaTime, _objectMoveSpeed);
+		}
+
+		ImGui::Button("Move Backward (Z+)");
+		if (ImGui::IsItemActive())
+		{
+			_gameObjects[objectSelected]->GetTransform()->Move(Vector(0.0f, 0.0f, 1.0f), deltaTime, _objectMoveSpeed);
+		}
+
+		ImGui::Button("Move Left (X-)");
+		if (ImGui::IsItemActive())
+		{
+			_gameObjects[objectSelected]->GetTransform()->Move(Vector(-1.0f, 0.0f, 0.0f), deltaTime, _objectMoveSpeed);
+		}
+
+		ImGui::Button("Move Right (X+)");
+		if (ImGui::IsItemActive())
+		{
+			_gameObjects[objectSelected]->GetTransform()->Move(Vector(1.0f, 0.0f, 0.0f), deltaTime, _objectMoveSpeed);
+		}
+
+		ImGui::Button("Move Up (Y+)");
+		if (ImGui::IsItemActive())
+		{
+			_gameObjects[objectSelected]->GetTransform()->Move(Vector(0.0f, 1.0f, 0.0f), deltaTime, _objectMoveSpeed);
+		}
+
+		ImGui::Button("Move Down (Y-)");
+		if (ImGui::IsItemActive())
+		{
+			_gameObjects[objectSelected]->GetTransform()->Move(Vector(0.0f, -1.0f, 0.0f), deltaTime, _objectMoveSpeed);
+		}
+
+		ImGui::Text("Rotate Controls:");
+		ImGui::Button("Rotate X");
+		if (ImGui::IsItemActive())
+		{
+			_gameObjects[objectSelected]->GetTransform()->Rotate(Vector(1.0f, 0.0f, 0.0f), deltaTime,
+				_objectRotateSpeed);
+		}
+
+		ImGui::Button("Rotate Y");
+		if (ImGui::IsItemActive())
+		{
+			_gameObjects[objectSelected]->GetTransform()->Rotate(Vector(0.0f, 1.0f, 0.0f), deltaTime,
+				_objectRotateSpeed);
+		}
+
+		ImGui::Button("Rotate Z");
+		if (ImGui::IsItemActive())
+		{
+			_gameObjects[objectSelected]->GetTransform()->Rotate(Vector(0.0f, 0.0f, 1.0f), deltaTime,
+				_objectRotateSpeed);
+		}
+
+		ImGui::Text("Scale Controls:");
+		ImGui::Button("Scale Up");
+		if (ImGui::IsItemActive())
+		{
+			_gameObjects[objectSelected]->GetTransform()->Scale(Vector(1.0f, 1.0f, 1.0f), deltaTime, _objectScaleSpeed);
+		}
+
+		ImGui::Button("Scale Down");
+		if (ImGui::IsItemActive())
+		{
+			_gameObjects[objectSelected]->GetTransform()->Scale(Vector(-1.0f, -1.0f, -1.0f), deltaTime,
+				_objectScaleSpeed);
+		}
+
+		ImGui::Text("Velocity Controls:");
+		if (ImGui::Button("Set Velocity Forward (Z-)"))
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.0f, 0.0f, -0.1f));
+		}
+
+		if (ImGui::Button("Set Velocity Backward (Z+)"))
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.0f, 0.0f, 0.1f));
+		}
+
+		if (ImGui::Button("Set Velocity Left (X-)"))
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->SetVelocity(Vector(-0.1f, 0.0f, 0.0f));
+		}
+
+		if (ImGui::Button("Set Velocity Right (X+)"))
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.1f, 0.0f, 0.0f));
+		}
+
+		if (ImGui::Button("Set Velocity Up (Y+)"))
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.0f, 0.1f, 0.0f));
+		}
+
+		if (ImGui::Button("Set Velocity Down (Y-)"))
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.0f, -0.1f, 0.0f));
+		}
+
+		ImGui::Text("Acceleration Controls:");
+		if (ImGui::Button("Set Acceleration Forward (Z-)"))
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.0f, -0.0001f));
+		}
+
+		if (ImGui::Button("Set Acceleration Backward (Z+)"))
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.0f, 0.0001f));
+		}
+
+		if (ImGui::Button("Set Acceleration Left (X-)"))
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(-0.0001f, 0.0f, 0.0f));
+		}
+
+		if (ImGui::Button("Set Acceleration Right (X+)"))
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0001f, 0.0f, 0.0f));
+		}
+
+		if (ImGui::Button("Set Acceleration Up (Y+)"))
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.0001f, 0.0f));
+		}
+
+		if (ImGui::Button("Set Acceleration Down (Y-)"))
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, -0.0001f, 0.0f));
+		}
+	}
+
+	ImGui::End();
+}
+
+void DX11PhysicsFramework::DrawObjectSelectWindow()
+{
+	// Object Selection Window
+	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(300, 500), ImGuiCond_FirstUseEver);
+
+	ImGui::Begin("Object Selection");
+	ImGui::Text("Use this Window To Select Objects!");
+	ImGui::NewLine();
+
+	for (int i = 0; i < _gameObjectSize; i++)
+	{
+		ImGui::Text("Select Object: %d", i);
+
+		std::string label = _gameObjects[i]->GetType() + " " + std::to_string(i);
+
+		if (objectSelected[i])
+		{
+			// Green when selected
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.0f, 0.5f, 0.0f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.0f, 0.1f, 0.0f, 1.0f));
+		}
+		else
+		{
+			// Red when not selected
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.5f, 0.0f, 0.0f, 1.0f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.0f, 0.0f, 1.0f));
+		}
+
+		if (ImGui::Button(label.c_str(), ImVec2(150, 50)))
+		{
+			if (objectSelected[i])
+			{
+				objectSelected[i] = false;
+			}
+			else
+			{
+				for (bool& object : objectSelected)
+				{
+					object = false;
+				}
+				objectSelected[i] = true;
+			}
+		}
+
+		ImGui::PopStyleColor(3);
+	}
+
+	ImGui::End();
+}
+
+void DX11PhysicsFramework::DrawStatsWindow() const
+{
+	// Statistics Window
+	ImGui::SetNextWindowPos(ImVec2(320, 10), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(300, 130), ImGuiCond_FirstUseEver);
+
+	ImGui::Begin("App Statistics");
+	ImGui::Text("Application Statistics:");
+	ImGui::NewLine();
+	ImGui::Text("Physics Frame Time: %s", std::to_string(_accumulator).c_str());
+	ImGui::Text("Application Runtime: %s", std::to_string(_runtimeTimer).c_str());
+
+	ImGui::Text("Total Objects: %d", _gameObjectSize);
+
+	ImGui::End();
+}
+
+void DX11PhysicsFramework::DrawUI()
+{
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
+	DrawObjectSelectWindow();
+
+	DrawStatsWindow();
+
+	for (int i = 0; i < 6; i++)
+	{
+		if (objectSelected[i])
+		{
+			DrawObjectMovementControlWindow(deltaTime, i);
+		}
+	}
+
+	ImGui::Render();
+	ImDrawData* draw_data = ImGui::GetDrawData();
+	ImGui_ImplDX11_RenderDrawData(draw_data);
+}
+
 void DX11PhysicsFramework::Draw(const double alphaScalar)
 {
 	// Clear buffers
@@ -789,7 +1096,6 @@ void DX11PhysicsFramework::Draw(const double alphaScalar)
 		XMMATRIX interpolatedMatrix = previousWorld + predictedMatrix;
 
 		_cbData.World = XMMatrixTranspose(interpolatedMatrix);
-		//_cbData.World = XMMatrixTranspose(gameObject->GetTransform()->GetWorldMatrix());
 
 		Material material = gameObject->GetAppearance()->GetMaterial();
 
@@ -818,6 +1124,8 @@ void DX11PhysicsFramework::Draw(const double alphaScalar)
 		// Draw object
 		gameObject->GetAppearance()->Draw(_immediateContext);
 	}
+
+	DrawUI();
 
 	// Present our back buffer to our front buffer
 	_swapChain->Present(0, 0);

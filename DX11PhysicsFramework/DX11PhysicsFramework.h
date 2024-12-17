@@ -12,9 +12,9 @@ class DX11PhysicsFramework
 	int WindowWidth = 1920;
 	int WindowHeight = 1080;
 
-	const float _objectMoveSpeed = 4.0f;
-	const float _objectRotateSpeed = 3.0f;
-	const float _objectScaleSpeed = 1.0f;
+	float _objectMoveSpeed = 4.0f;
+	float _objectRotateSpeed = 3.0f;
+	float _objectScaleSpeed = 1.0f;
 
 	HWND _windowHandle = nullptr;
 
@@ -49,7 +49,6 @@ class DX11PhysicsFramework
 
 	MeshData _objMeshData = {};
 	vector<GameObject*> _gameObjects = {};
-	int _gameObjectSize = 0;
 
 	Camera* _camera = nullptr;
 	nlohmann::json m_sceneCameraVariables = nullptr;
@@ -62,9 +61,18 @@ class DX11PhysicsFramework
 	ID3D11RasterizerState* CCWcullMode = nullptr; //Counter Clockwise
 	ID3D11RasterizerState* CWcullMode = nullptr; //Clockwise
 
+	float _accumulator = 0.0f;
+
+	float _runtimeTimer = 0.0f;
+
+	bool objectSelected[6] = { false, false, false, false, false, false };
+	int _gameObjectSize = 0;
+	float deltaTime = 0.0f;
+
 	HRESULT CreateWindowHandle(HINSTANCE hInstance, int nCmdShow);
 	HRESULT CreateD3DDevice();
 	HRESULT CreateSwapChainAndFrameBuffer();
+	void InitGUI() const;
 	HRESULT InitShadersAndInputLayout();
 	HRESULT InitVertexIndexBuffers();
 	HRESULT InitPipelineStates();
@@ -80,6 +88,15 @@ public:
 
 	void Update();
 	void PhysicsUpdate() const;
-	void GeneralUpdate(float deltaTime) const;
+	void GeneralUpdate(float deltaTime);
+	void DrawObjectSelectWindow();
+	void DrawStatsWindow() const;
+	void DrawObjectMovementControlWindow(float deltaTime, int objectSelected);
+
+	void DrawUI();
 	void Draw(double alphaScalar);
+
+	HWND GetWindowHandle() const { return _windowHandle; }
+	ID3D11Device* GetDevice() const { return _device; }
+	ID3D11DeviceContext* GetDeviceContext() const { return _immediateContext; }
 };
