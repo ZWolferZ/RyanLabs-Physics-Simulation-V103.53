@@ -92,7 +92,7 @@ public:
 	void DrawObjectSelectWindow();
 	void DrawStatsWindow() const;
 	void DrawObjectMovementControlWindow(float deltaTime, int objectSelected);
-
+	void DrawCameraWindow() const;
 	void DrawUI();
 	void Draw(double alphaScalar);
 

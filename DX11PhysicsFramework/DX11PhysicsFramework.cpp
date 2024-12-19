@@ -33,8 +33,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_MOUSEMOVE: io.MousePos.x = static_cast<float>(GET_X_LPARAM(lParam));
 			io.MousePos.y = static_cast<float>(GET_Y_LPARAM(lParam));
 			return 0;
-		case WM_CHAR: io.AddInputCharacter(static_cast<unsigned int>(wParam));
-			return 0;
 		default:;
 		}
 	}
@@ -963,6 +961,27 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 	ImGui::End();
 }
 
+void DX11PhysicsFramework::DrawCameraWindow() const
+{
+	// Camera Window
+	ImGui::SetNextWindowPos(ImVec2(635, 10), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(300, 202), ImGuiCond_FirstUseEver);
+
+	ImGui::Begin("Camera Statistics");
+	ImGui::Text("Camera POSITION:");
+	ImGui::NewLine();
+	ImGui::Text("Camera Position X: %s", std::to_string(_camera->GetPosition().x).c_str());
+	ImGui::Text("Camera Position Y: %s", std::to_string(_camera->GetPosition().y).c_str());
+	ImGui::Text("Camera Position Z: %s", std::to_string(_camera->GetPosition().z).c_str());
+
+	ImGui::NewLine();
+	ImGui::Text("Camera ROTATION:");
+	ImGui::NewLine();
+	ImGui::Text("Camera Rotation X: %s", std::to_string(_camera->GetRotation().x).c_str());
+	ImGui::Text("Camera Rotation Y: %s", std::to_string(_camera->GetRotation().y).c_str());
+	ImGui::End();
+}
+
 void DX11PhysicsFramework::DrawObjectSelectWindow()
 {
 	// Object Selection Window
@@ -1042,6 +1061,8 @@ void DX11PhysicsFramework::DrawUI()
 	DrawObjectSelectWindow();
 
 	DrawStatsWindow();
+
+	DrawCameraWindow();
 
 	for (int i = 0; i < 6; i++)
 	{
