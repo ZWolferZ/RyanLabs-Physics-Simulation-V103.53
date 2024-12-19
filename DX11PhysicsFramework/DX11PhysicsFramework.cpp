@@ -175,7 +175,7 @@ HRESULT DX11PhysicsFramework::CreateSwapChainAndFrameBuffer()
 	swapChainDesc.Scaling = DXGI_SCALING_NONE;
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_SEQUENTIAL;
 	swapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
-	swapChainDesc.Flags = 0;
+	swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
 
 	hr = _dxgiFactory->CreateSwapChainForHwnd(_device, _windowHandle, &swapChainDesc, nullptr, nullptr, &_swapChain);
 	if (FAILED(hr)) return hr;
@@ -197,7 +197,7 @@ HRESULT DX11PhysicsFramework::CreateSwapChainAndFrameBuffer()
 	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
-	if (_depthStencilBuffer == nullptr)
+	if (_depthStencilBuffer == nullptr || _depthStencilBuffer != 0)
 	{
 		hr = _device->CreateTexture2D(&depthBufferDesc, nullptr, &_depthStencilBuffer);
 		hr = _device->CreateDepthStencilView(_depthStencilBuffer, nullptr, &_depthBufferView);
@@ -977,8 +977,10 @@ void DX11PhysicsFramework::DrawCameraWindow() const
 	ImGui::NewLine();
 	ImGui::Text("Camera ROTATION:");
 	ImGui::NewLine();
-	ImGui::Text("Camera Rotation X: %s", std::to_string(_camera->GetRotation().x).c_str());
-	ImGui::Text("Camera Rotation Y: %s", std::to_string(_camera->GetRotation().y).c_str());
+	// Why is this flipped (I am not going to fix it)
+	ImGui::Text("Camera Rotation X: %s", std::to_string(_camera->GetRotation().y).c_str());
+	ImGui::Text("Camera Rotation Y: %s", std::to_string(_camera->GetRotation().x).c_str());
+
 	ImGui::End();
 }
 
@@ -1149,5 +1151,5 @@ void DX11PhysicsFramework::Draw(const double alphaScalar)
 	DrawUI();
 
 	// Present our back buffer to our front buffer
-	_swapChain->Present(0, 0);
+	_swapChain->Present(0, DXGI_PRESENT_ALLOW_TEARING);
 }
