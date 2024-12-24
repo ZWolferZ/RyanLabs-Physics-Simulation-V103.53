@@ -2542,13 +2542,17 @@ bool ImGui::DataTypeApplyFromText(const char* buf, ImGuiDataType data_type, void
     if (type_info->Size < 4)
     {
         if (data_type == ImGuiDataType_S8)
-            *static_cast<ImS8*>(p_data) = static_cast<ImS8>(ImClamp(v32, (int)IM_S8_MIN, (int)IM_S8_MAX));
+            *static_cast<ImS8*>(p_data) = static_cast<ImS8>(ImClamp(v32, static_cast<int>(IM_S8_MIN),
+                static_cast<int>(IM_S8_MAX)));
         else if (data_type == ImGuiDataType_U8)
-            *static_cast<ImU8*>(p_data) = static_cast<ImU8>(ImClamp(v32, (int)IM_U8_MIN, (int)IM_U8_MAX));
+            *static_cast<ImU8*>(p_data) = static_cast<ImU8>(ImClamp(v32, static_cast<int>(IM_U8_MIN),
+                static_cast<int>(IM_U8_MAX)));
         else if (data_type == ImGuiDataType_S16)
-            *static_cast<ImS16*>(p_data) = static_cast<ImS16>(ImClamp(v32, (int)IM_S16_MIN, (int)IM_S16_MAX));
+            *static_cast<ImS16*>(p_data) = static_cast<ImS16>(ImClamp(v32, static_cast<int>(IM_S16_MIN),
+                static_cast<int>(IM_S16_MAX)));
         else if (data_type == ImGuiDataType_U16)
-            *static_cast<ImU16*>(p_data) = static_cast<ImU16>(ImClamp(v32, (int)IM_U16_MIN, (int)IM_U16_MAX));
+            *static_cast<ImU16*>(p_data) = static_cast<ImU16>(ImClamp(v32, static_cast<int>(IM_U16_MIN),
+                static_cast<int>(IM_U16_MAX)));
         else
             IM_ASSERT(0);
     }
@@ -2815,7 +2819,7 @@ bool ImGui::DragBehaviorT(ImGuiDataType data_type, TYPE* v, float v_speed, const
     }
     else
     {
-        g.DragCurrentAccum -= static_cast<float>((SIGNEDTYPE)v_cur - (SIGNEDTYPE)*v);
+        g.DragCurrentAccum -= static_cast<float>(static_cast<SIGNEDTYPE>(v_cur) - static_cast<SIGNEDTYPE>(*v));
     }
 
     // Lose zero sign for float/double
@@ -3093,7 +3097,7 @@ bool ImGui::DragScalarN(const char* label, ImGuiDataType data_type, void* p_data
         value_changed |= DragScalar("", data_type, p_data, v_speed, p_min, p_max, format, flags);
         PopID();
         PopItemWidth();
-        p_data = static_cast<void*>((char*)p_data + type_size);
+        p_data = static_cast<void*>(static_cast<char*>(p_data) + type_size);
     }
     PopID();
 
@@ -3297,24 +3301,27 @@ float ImGui::ScaleRatioFromValueT(ImGuiDataType data_type, TYPE v, TYPE v_min, T
             if (v == 0.0f)
                 result = zero_point_center; // Special case for exactly zero
             else if (v < 0.0f)
-                result = (1.0f - static_cast<float>(ImLog(-(FLOATTYPE)v_clamped / logarithmic_zero_epsilon) / ImLog(
-                    -v_min_fudged / logarithmic_zero_epsilon))) * zero_point_snap_L;
+                result = (1.0f - static_cast<float>(ImLog(-static_cast<FLOATTYPE>(v_clamped) / logarithmic_zero_epsilon)
+                    / ImLog(
+                        -v_min_fudged / logarithmic_zero_epsilon))) * zero_point_snap_L;
             else
-                result = zero_point_snap_R + (static_cast<float>(ImLog((FLOATTYPE)v_clamped / logarithmic_zero_epsilon)
+                result = zero_point_snap_R + (static_cast<float>(ImLog(
+                    static_cast<FLOATTYPE>(v_clamped) / logarithmic_zero_epsilon)
                     / ImLog(
                         v_max_fudged / logarithmic_zero_epsilon)) * (1.0f - zero_point_snap_R));
         }
         else if ((v_min < 0.0f) || (v_max < 0.0f)) // Entirely negative slider
-            result = 1.0f - static_cast<float>(ImLog(-(FLOATTYPE)v_clamped / -v_max_fudged) / ImLog(
+            result = 1.0f - static_cast<float>(ImLog(-static_cast<FLOATTYPE>(v_clamped) / -v_max_fudged) / ImLog(
                 -v_min_fudged / -v_max_fudged));
         else
-            result = static_cast<float>(ImLog((FLOATTYPE)v_clamped / v_min_fudged) /
+            result = static_cast<float>(ImLog(static_cast<FLOATTYPE>(v_clamped) / v_min_fudged) /
                 ImLog(v_max_fudged / v_min_fudged));
 
         return flipped ? (1.0f - result) : result;
     }
     // Linear slider
-    return static_cast<float>((FLOATTYPE)(SIGNEDTYPE)(v_clamped - v_min) / (FLOATTYPE)(SIGNEDTYPE)(v_max - v_min));
+    return static_cast<float>(static_cast<FLOATTYPE>((SIGNEDTYPE)(v_clamped - v_min)) / static_cast<FLOATTYPE>((
+        SIGNEDTYPE)(v_max - v_min)));
 }
 
 // Convert a parametric position on a slider into a value v in the output space (the logical opposite of ScaleRatioFromValueT)
@@ -3362,19 +3369,21 @@ TYPE ImGui::ScaleValueFromRatioT(ImGuiDataType data_type, float t, TYPE v_min, T
             // Special case to make getting exactly zero possible (the epsilon prevents it otherwise)
             else if (t_with_flip < zero_point_center)
                 result = static_cast<TYPE>(-(logarithmic_zero_epsilon * ImPow(-v_min_fudged / logarithmic_zero_epsilon,
-                    (FLOATTYPE)(1.0f - (t_with_flip /
+                    static_cast<FLOATTYPE>(1.0f - (t_with_flip
+                        /
                         zero_point_snap_L)))));
             else
                 result = static_cast<TYPE>(logarithmic_zero_epsilon * ImPow(v_max_fudged / logarithmic_zero_epsilon,
-                    (FLOATTYPE)((t_with_flip -
+                    static_cast<FLOATTYPE>((t_with_flip -
                         zero_point_snap_R) / (1.0f -
                             zero_point_snap_R))));
         }
         else if ((v_min < 0.0f) || (v_max < 0.0f)) // Entirely negative slider
             result = static_cast<TYPE>(-(-v_max_fudged * ImPow(-v_min_fudged / -v_max_fudged,
-                (FLOATTYPE)(1.0f - t_with_flip))));
+                static_cast<FLOATTYPE>(1.0f - t_with_flip))));
         else
-            result = static_cast<TYPE>(v_min_fudged * ImPow(v_max_fudged / v_min_fudged, (FLOATTYPE)t_with_flip));
+            result = static_cast<TYPE>(v_min_fudged * ImPow(v_max_fudged / v_min_fudged,
+                static_cast<FLOATTYPE>(t_with_flip)));
     }
     else
     {
@@ -3391,8 +3400,9 @@ TYPE ImGui::ScaleValueFromRatioT(ImGuiDataType data_type, float t, TYPE v_min, T
             // - Not doing a *1.0 multiply at the end of a range as it tends to be lossy. While absolute aiming at a large s64/u64
             //   range is going to be imprecise anyway, with this check we at least make the edge values matches expected limits.
             FLOATTYPE v_new_off_f = static_cast<SIGNEDTYPE>(v_max - v_min) * t;
-            result = static_cast<TYPE>((SIGNEDTYPE)v_min + (SIGNEDTYPE)(v_new_off_f + (FLOATTYPE)(
-                v_min > v_max ? -0.5 : 0.5)));
+            result = static_cast<TYPE>(static_cast<SIGNEDTYPE>(v_min) + static_cast<SIGNEDTYPE>(v_new_off_f + (
+                FLOATTYPE)(
+                    v_min > v_max ? -0.5 : 0.5)));
         }
     }
 
@@ -3813,7 +3823,7 @@ bool ImGui::SliderScalarN(const char* label, ImGuiDataType data_type, void* v, i
         value_changed |= SliderScalar("", data_type, v, v_min, v_max, format, flags);
         PopID();
         PopItemWidth();
-        v = static_cast<void*>((char*)v + type_size);
+        v = static_cast<void*>(static_cast<char*>(v) + type_size);
     }
     PopID();
 
@@ -4323,7 +4333,7 @@ bool ImGui::InputScalarN(const char* label, ImGuiDataType data_type, void* p_dat
         value_changed |= InputScalar("", data_type, p_data, p_step, p_step_fast, format, flags);
         PopID();
         PopItemWidth();
-        p_data = static_cast<void*>((char*)p_data + type_size);
+        p_data = static_cast<void*>(static_cast<char*>(p_data) + type_size);
     }
     PopID();
 
@@ -5920,7 +5930,8 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
             int line_count = 1;
             if (is_multiline)
             {
-                for (const char* s = text_begin; (s = static_cast<const char*>(memchr(s, '\n', (size_t)(text_end - s))))
+                for (const char* s = text_begin; (s = static_cast<const char*>(memchr(
+                    s, '\n', static_cast<size_t>(text_end - s))))
                     != nullptr; s++)
                 {
                     if (cursor_line_no == -1 && s >= cursor_ptr) { cursor_line_no = line_count; }
@@ -7092,20 +7103,25 @@ void ImGui::ColorEditOptionsPopup(const float* col, ImGuiColorEditFlags flags)
     ImGuiColorEditFlags opts = g.ColorEditOptions;
     if (allow_opt_inputs)
     {
-        if (RadioButton("RGB", (opts & ImGuiColorEditFlags_DisplayRGB) != 0)) opts = (opts & ~
-            ImGuiColorEditFlags_DisplayMask_) | ImGuiColorEditFlags_DisplayRGB;
-        if (RadioButton("HSV", (opts & ImGuiColorEditFlags_DisplayHSV) != 0)) opts = (opts & ~
-            ImGuiColorEditFlags_DisplayMask_) | ImGuiColorEditFlags_DisplayHSV;
-        if (RadioButton("Hex", (opts & ImGuiColorEditFlags_DisplayHex) != 0)) opts = (opts & ~
-            ImGuiColorEditFlags_DisplayMask_) | ImGuiColorEditFlags_DisplayHex;
+        if (RadioButton("RGB", (opts & ImGuiColorEditFlags_DisplayRGB) != 0))
+            opts = (opts & ~
+                ImGuiColorEditFlags_DisplayMask_) | ImGuiColorEditFlags_DisplayRGB;
+        if (RadioButton("HSV", (opts & ImGuiColorEditFlags_DisplayHSV) != 0))
+            opts = (opts & ~
+                ImGuiColorEditFlags_DisplayMask_) | ImGuiColorEditFlags_DisplayHSV;
+        if (RadioButton("Hex", (opts & ImGuiColorEditFlags_DisplayHex) != 0))
+            opts = (opts & ~
+                ImGuiColorEditFlags_DisplayMask_) | ImGuiColorEditFlags_DisplayHex;
     }
     if (allow_opt_datatype)
     {
         if (allow_opt_inputs) Separator();
-        if (RadioButton("0..255", (opts & ImGuiColorEditFlags_Uint8) != 0)) opts = (opts & ~
-            ImGuiColorEditFlags_DataTypeMask_) | ImGuiColorEditFlags_Uint8;
-        if (RadioButton("0.00..1.00", (opts & ImGuiColorEditFlags_Float) != 0)) opts = (opts & ~
-            ImGuiColorEditFlags_DataTypeMask_) | ImGuiColorEditFlags_Float;
+        if (RadioButton("0..255", (opts & ImGuiColorEditFlags_Uint8) != 0))
+            opts = (opts & ~
+                ImGuiColorEditFlags_DataTypeMask_) | ImGuiColorEditFlags_Uint8;
+        if (RadioButton("0.00..1.00", (opts & ImGuiColorEditFlags_Float) != 0))
+            opts = (opts & ~
+                ImGuiColorEditFlags_DataTypeMask_) | ImGuiColorEditFlags_Float;
     }
 
     if (allow_opt_inputs || allow_opt_datatype)
@@ -9508,7 +9524,8 @@ struct ImGuiPlotArrayGetterData
 static float Plot_ArrayGetter(void* data, int idx)
 {
     auto plot_data = static_cast<ImGuiPlotArrayGetterData*>(data);
-    const float v = *static_cast<const float*>((const void*)((const unsigned char*)plot_data->Values + (size_t)idx *
+    const float v = *static_cast<const float*>(static_cast<const void*>((const unsigned char*)plot_data->Values + (
+        size_t)idx *
         plot_data->Stride));
     return v;
 }
@@ -9712,8 +9729,7 @@ void ImGui::EndMenuBar()
     }
 
     IM_MSVC_WARNING_SUPPRESS(6011)
-        ; // Static Analysis false positive "warning C6011: Dereferencing NULL pointer 'window'"
-    IM_ASSERT(window->Flags & ImGuiWindowFlags_MenuBar);
+        IM_ASSERT(window->Flags & ImGuiWindowFlags_MenuBar);
     IM_ASSERT(window->DC.MenuBarAppending);
     PopClipRect();
     PopID();
@@ -9746,7 +9762,7 @@ bool ImGui::BeginViewportSideBar(const char* name, ImGuiViewport* viewport_p, Im
     if (bar_window == nullptr || bar_window->BeginCount == 0)
     {
         // Calculate and set window size/position
-        auto viewport = static_cast<ImGuiViewportP*>((void*)(viewport_p ? viewport_p : GetMainViewport()));
+        auto viewport = static_cast<ImGuiViewportP*>(static_cast<void*>(viewport_p ? viewport_p : GetMainViewport()));
         ImRect avail_rect = viewport->GetBuildWorkRect();
         ImGuiAxis axis = (dir == ImGuiDir_Up || dir == ImGuiDir_Down) ? ImGuiAxis_Y : ImGuiAxis_X;
         ImVec2 pos = avail_rect.Min;
@@ -9776,7 +9792,7 @@ bool ImGui::BeginViewportSideBar(const char* name, ImGuiViewport* viewport_p, Im
 bool ImGui::BeginMainMenuBar()
 {
     ImGuiContext& g = *GImGui;
-    auto viewport = static_cast<ImGuiViewportP*>((void*)GetMainViewport());
+    auto viewport = static_cast<ImGuiViewportP*>(static_cast<void*>(GetMainViewport()));
 
     // For the main menu bar, which cannot be moved, we honor g.Style.DisplaySafeAreaPadding to ensure text can be visible on a TV set.
     // FIXME: This could be generalized as an opt-in way to clamp window->DC.CursorStartPos to avoid SafeArea?
@@ -10545,8 +10561,7 @@ static void ImGui::TabBarLayout(ImGuiTabBar* tab_bar)
 
         // Store data so we can build an array sorted by width if we need to shrink tabs down
         IM_MSVC_WARNING_SUPPRESS(6385)
-            ;
-        ImGuiShrinkWidthItem* shrink_width_item = &g.ShrinkWidthBuffer[shrink_buffer_indexes[section_n]++];
+            ImGuiShrinkWidthItem* shrink_width_item = &g.ShrinkWidthBuffer[shrink_buffer_indexes[section_n]++];
         shrink_width_item->Index = tab_n;
         shrink_width_item->Width = shrink_width_item->InitialWidth = tab->ContentWidth;
         tab->Width = ImMax(tab->ContentWidth, 1.0f);

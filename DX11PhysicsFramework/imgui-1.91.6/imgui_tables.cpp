@@ -2106,7 +2106,7 @@ void ImGui::TableEndRow(ImGuiTable* table)
 
         // Decide of top border color
         ImU32 top_border_col = 0;
-        const float border_size = TABLE_BORDER_SIZE;
+        constexpr float border_size = TABLE_BORDER_SIZE;
         if (table->CurrentRow > 0 && (table->Flags & ImGuiTableFlags_BordersInnerH))
             top_border_col = (table->LastRowFlags & ImGuiTableRowFlags_Headers)
             ? table->BorderColorStrong
@@ -2714,9 +2714,10 @@ void ImGui::TableMergeDrawChannels(ImGuiTable* table)
     g.TempBuffer.reserve(size_for_masks_bitarrays_one * 5);
     memset(g.TempBuffer.Data, 0, size_for_masks_bitarrays_one * 5);
     for (int n = 0; n < IM_ARRAYSIZE(merge_groups); n++)
-        merge_groups[n].ChannelsMask = static_cast<ImBitArrayPtr>((void*)(g.TempBuffer.Data + (
+        merge_groups[n].ChannelsMask = static_cast<ImBitArrayPtr>(static_cast<void*>(g.TempBuffer.Data + (
             size_for_masks_bitarrays_one * n)));
-    auto remaining_mask = static_cast<ImBitArrayPtr>((void*)(g.TempBuffer.Data + (size_for_masks_bitarrays_one * 4)));
+    auto remaining_mask = static_cast<ImBitArrayPtr>(static_cast<void*>(g.TempBuffer.Data + (
+        size_for_masks_bitarrays_one * 4)));
 
     // 1. Scan channels and take note of those which can be merged
     for (int column_n = 0; column_n < table->ColumnsCount; column_n++)
@@ -2894,7 +2895,7 @@ void ImGui::TableDrawBorders(ImGuiTable* table)
 
     // Draw inner border and resizing feedback
     ImGuiTableInstanceData* table_instance = TableGetInstanceData(table, table->InstanceCurrent);
-    const float border_size = TABLE_BORDER_SIZE;
+    constexpr float border_size = TABLE_BORDER_SIZE;
     const float draw_y1 = ImMax(table->InnerRect.Min.y,
         (table->FreezeRowsCount >= 1 ? table->InnerRect.Min.y : table->WorkRect.Min.y) + table->
         AngledHeadersHeight) + ((table->Flags & ImGuiTableFlags_BordersOuterH) ? 1.0f : 0.0f);

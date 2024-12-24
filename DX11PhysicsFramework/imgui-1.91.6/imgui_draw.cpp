@@ -1985,12 +1985,13 @@ struct ImTriangulatorNodeSpan
 
     void find_erase_unsorted(int idx)
     {
-        for (int i = Size - 1; i >= 0; i--) if (Data[i]->Index == idx)
-        {
-            Data[i] = Data[Size - 1];
-            Size--;
-            return;
-        }
+        for (int i = Size - 1; i >= 0; i--)
+            if (Data[i]->Index == idx)
+            {
+                Data[i] = Data[Size - 1];
+                Size--;
+                return;
+            }
     }
 };
 
@@ -2776,7 +2777,8 @@ void ImFontAtlas::GetTexDataAsRGBA32(unsigned char** out_pixels, int* out_width,
         GetTexDataAsAlpha8(&pixels, nullptr, nullptr);
         if (pixels)
         {
-            TexPixelsRGBA32 = static_cast<unsigned int*>(IM_ALLOC((size_t)TexWidth * (size_t)TexHeight * 4));
+            TexPixelsRGBA32 = static_cast<unsigned int*>(IM_ALLOC(
+                static_cast<size_t>(TexWidth) * static_cast<size_t>(TexHeight) * 4));
             const unsigned char* src = pixels;
             unsigned int* dst = TexPixelsRGBA32;
             for (int n = TexWidth * TexHeight; n > 0; n--)
@@ -3273,7 +3275,7 @@ static bool ImFontAtlasBuildWithStbTruetype(ImFontAtlas* atlas)
     // We need a width for the skyline algorithm, any width!
     // The exact width doesn't really matter much, but some API/GPU have texture size limitations and increasing width can decrease height.
     // User can override TexDesiredWidth and TexGlyphPadding if they wish, otherwise we use a simple heuristic to select the width based on expected surface.
-    const int surface_sqrt = static_cast<int>(ImSqrt((float)total_surface)) + 1;
+    const int surface_sqrt = static_cast<int>(ImSqrt(static_cast<float>(total_surface))) + 1;
     atlas->TexHeight = 0;
     if (atlas->TexDesiredWidth > 0)
         atlas->TexWidth = atlas->TexDesiredWidth;
@@ -4198,7 +4200,7 @@ bool ImFont::IsGlyphRangeUnused(unsigned int c_begin, unsigned int c_last)
 
 void ImFont::SetGlyphVisible(ImWchar c, bool visible)
 {
-    if (auto glyph = static_cast<ImFontGlyph*>((void*)FindGlyph((ImWchar)c)))
+    if (auto glyph = static_cast<ImFontGlyph*>((void*)FindGlyph(c)))
         glyph->Visible = visible ? 1 : 0;
 }
 
@@ -4887,32 +4889,40 @@ void ImGui::RenderRectFilledWithHole(ImDrawList* draw_list, const ImRect& outer,
     const bool fill_R = (inner.Max.x < outer.Max.x);
     const bool fill_U = (inner.Min.y > outer.Min.y);
     const bool fill_D = (inner.Max.y < outer.Max.y);
-    if (fill_L) draw_list->AddRectFilled(ImVec2(outer.Min.x, inner.Min.y), ImVec2(inner.Min.x, inner.Max.y), col,
-        rounding,
-        ImDrawFlags_RoundCornersNone | (fill_U ? 0 : ImDrawFlags_RoundCornersTopLeft) |
-        (fill_D ? 0 : ImDrawFlags_RoundCornersBottomLeft));
-    if (fill_R) draw_list->AddRectFilled(ImVec2(inner.Max.x, inner.Min.y), ImVec2(outer.Max.x, inner.Max.y), col,
-        rounding,
-        ImDrawFlags_RoundCornersNone | (fill_U ? 0 : ImDrawFlags_RoundCornersTopRight)
-        | (fill_D ? 0 : ImDrawFlags_RoundCornersBottomRight));
-    if (fill_U) draw_list->AddRectFilled(ImVec2(inner.Min.x, outer.Min.y), ImVec2(inner.Max.x, inner.Min.y), col,
-        rounding,
-        ImDrawFlags_RoundCornersNone | (fill_L ? 0 : ImDrawFlags_RoundCornersTopLeft) |
-        (fill_R ? 0 : ImDrawFlags_RoundCornersTopRight));
-    if (fill_D) draw_list->AddRectFilled(ImVec2(inner.Min.x, inner.Max.y), ImVec2(inner.Max.x, outer.Max.y), col,
-        rounding,
-        ImDrawFlags_RoundCornersNone | (
-            fill_L ? 0 : ImDrawFlags_RoundCornersBottomLeft) | (fill_R
-                ? 0
-                : ImDrawFlags_RoundCornersBottomRight));
-    if (fill_L && fill_U) draw_list->AddRectFilled(ImVec2(outer.Min.x, outer.Min.y), ImVec2(inner.Min.x, inner.Min.y),
-        col, rounding, ImDrawFlags_RoundCornersTopLeft);
-    if (fill_R && fill_U) draw_list->AddRectFilled(ImVec2(inner.Max.x, outer.Min.y), ImVec2(outer.Max.x, inner.Min.y),
-        col, rounding, ImDrawFlags_RoundCornersTopRight);
-    if (fill_L && fill_D) draw_list->AddRectFilled(ImVec2(outer.Min.x, inner.Max.y), ImVec2(inner.Min.x, outer.Max.y),
-        col, rounding, ImDrawFlags_RoundCornersBottomLeft);
-    if (fill_R && fill_D) draw_list->AddRectFilled(ImVec2(inner.Max.x, inner.Max.y), ImVec2(outer.Max.x, outer.Max.y),
-        col, rounding, ImDrawFlags_RoundCornersBottomRight);
+    if (fill_L)
+        draw_list->AddRectFilled(ImVec2(outer.Min.x, inner.Min.y), ImVec2(inner.Min.x, inner.Max.y), col,
+            rounding,
+            ImDrawFlags_RoundCornersNone | (fill_U ? 0 : ImDrawFlags_RoundCornersTopLeft) |
+            (fill_D ? 0 : ImDrawFlags_RoundCornersBottomLeft));
+    if (fill_R)
+        draw_list->AddRectFilled(ImVec2(inner.Max.x, inner.Min.y), ImVec2(outer.Max.x, inner.Max.y), col,
+            rounding,
+            ImDrawFlags_RoundCornersNone | (fill_U ? 0 : ImDrawFlags_RoundCornersTopRight)
+            | (fill_D ? 0 : ImDrawFlags_RoundCornersBottomRight));
+    if (fill_U)
+        draw_list->AddRectFilled(ImVec2(inner.Min.x, outer.Min.y), ImVec2(inner.Max.x, inner.Min.y), col,
+            rounding,
+            ImDrawFlags_RoundCornersNone | (fill_L ? 0 : ImDrawFlags_RoundCornersTopLeft) |
+            (fill_R ? 0 : ImDrawFlags_RoundCornersTopRight));
+    if (fill_D)
+        draw_list->AddRectFilled(ImVec2(inner.Min.x, inner.Max.y), ImVec2(inner.Max.x, outer.Max.y), col,
+            rounding,
+            ImDrawFlags_RoundCornersNone | (
+                fill_L ? 0 : ImDrawFlags_RoundCornersBottomLeft) | (fill_R
+                    ? 0
+                    : ImDrawFlags_RoundCornersBottomRight));
+    if (fill_L && fill_U)
+        draw_list->AddRectFilled(ImVec2(outer.Min.x, outer.Min.y), ImVec2(inner.Min.x, inner.Min.y),
+            col, rounding, ImDrawFlags_RoundCornersTopLeft);
+    if (fill_R && fill_U)
+        draw_list->AddRectFilled(ImVec2(inner.Max.x, outer.Min.y), ImVec2(outer.Max.x, inner.Min.y),
+            col, rounding, ImDrawFlags_RoundCornersTopRight);
+    if (fill_L && fill_D)
+        draw_list->AddRectFilled(ImVec2(outer.Min.x, inner.Max.y), ImVec2(inner.Min.x, outer.Max.y),
+            col, rounding, ImDrawFlags_RoundCornersBottomLeft);
+    if (fill_R && fill_D)
+        draw_list->AddRectFilled(ImVec2(inner.Max.x, inner.Max.y), ImVec2(outer.Max.x, outer.Max.y),
+            col, rounding, ImDrawFlags_RoundCornersBottomRight);
 }
 
 // Helper for ColorPicker4()

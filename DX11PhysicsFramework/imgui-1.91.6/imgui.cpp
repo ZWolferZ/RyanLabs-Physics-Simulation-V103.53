@@ -5935,10 +5935,9 @@ void ImGui::Render()
     for (ImGuiWindow* window : g.Windows)
     {
         IM_MSVC_WARNING_SUPPRESS(6011)
-            ; // Static Analysis false positive "warning C6011: Dereferencing NULL pointer 'window'"
-        if (IsWindowActiveAndVisible(window) && (window->Flags & ImGuiWindowFlags_ChildWindow) == 0 && window !=
-            windows_to_render_top_most[0] && window != windows_to_render_top_most[1])
-            AddRootWindowToDrawData(window);
+            if (IsWindowActiveAndVisible(window) && (window->Flags & ImGuiWindowFlags_ChildWindow) == 0 && window !=
+                windows_to_render_top_most[0] && window != windows_to_render_top_most[1])
+                AddRootWindowToDrawData(window);
     }
     for (int n = 0; n < IM_ARRAYSIZE(windows_to_render_top_most); n++)
         if (windows_to_render_top_most[n] && IsWindowActiveAndVisible(windows_to_render_top_most[n]))
@@ -6025,9 +6024,8 @@ void ImGui::FindHoveredWindowEx(const ImVec2& pos, bool find_first_and_in_any_vi
     {
         ImGuiWindow* window = g.Windows[i];
         IM_MSVC_WARNING_SUPPRESS(28182)
-            ; // [Static Analyzer] Dereferencing NULL pointer.
-        if (!window->WasActive || window->Hidden)
-            continue;
+            if (!window->WasActive || window->Hidden)
+                continue;
         if (window->Flags & ImGuiWindowFlags_NoMouseInputs)
             continue;
 
@@ -6057,10 +6055,9 @@ void ImGui::FindHoveredWindowEx(const ImVec2& pos, bool find_first_and_in_any_vi
         if (hovered_window == nullptr)
             hovered_window = window;
         IM_MSVC_WARNING_SUPPRESS(28182)
-            ; // [Static Analyzer] Dereferencing NULL pointer.
-        if (hovered_window_under_moving_window == nullptr && (!g.MovingWindow || window->RootWindow != g.MovingWindow->
-            RootWindow))
-            hovered_window_under_moving_window = window;
+            if (hovered_window_under_moving_window == nullptr && (!g.MovingWindow || window->RootWindow != g.MovingWindow->
+                RootWindow))
+                hovered_window_under_moving_window = window;
         if (hovered_window && hovered_window_under_moving_window)
             break;
     }
@@ -13921,7 +13918,8 @@ void ImGui::NavUpdateCreateMoveRequest()
             }
             if (!IsActiveIdUsingNavDir(ImGuiDir_Up) && ((nav_gamepad_active &&
                 IsKeyPressed(ImGuiKey_GamepadDpadUp, repeat_mode, ImGuiKeyOwner_NoOwner)) || (nav_keyboard_active &&
-                    IsKeyPressed(ImGuiKey_UpArrow, repeat_mode, ImGuiKeyOwner_NoOwner)))) {
+                    IsKeyPressed(ImGuiKey_UpArrow, repeat_mode, ImGuiKeyOwner_NoOwner))))
+            {
                 g.NavMoveDir = ImGuiDir_Up;
             }
             if (!IsActiveIdUsingNavDir(ImGuiDir_Down) && ((nav_gamepad_active &&
@@ -16794,23 +16792,26 @@ void ImGui::ShowMetricsWindow(bool* p_open)
             Text("Mouse delta: (%g, %g)", io.MouseDelta.x, io.MouseDelta.y);
             int count = IM_ARRAYSIZE(io.MouseDown);
             Text("Mouse down:");
-            for (int i = 0; i < count; i++) if (IsMouseDown(i))
-            {
-                SameLine();
-                Text("b%d (%.02f secs)", i, io.MouseDownDuration[i]);
-            }
+            for (int i = 0; i < count; i++)
+                if (IsMouseDown(i))
+                {
+                    SameLine();
+                    Text("b%d (%.02f secs)", i, io.MouseDownDuration[i]);
+                }
             Text("Mouse clicked:");
-            for (int i = 0; i < count; i++) if (IsMouseClicked(i))
-            {
-                SameLine();
-                Text("b%d (%d)", i, io.MouseClickedCount[i]);
-            }
+            for (int i = 0; i < count; i++)
+                if (IsMouseClicked(i))
+                {
+                    SameLine();
+                    Text("b%d (%d)", i, io.MouseClickedCount[i]);
+                }
             Text("Mouse released:");
-            for (int i = 0; i < count; i++) if (IsMouseReleased(i))
-            {
-                SameLine();
-                Text("b%d", i);
-            }
+            for (int i = 0; i < count; i++)
+                if (IsMouseReleased(i))
+                {
+                    SameLine();
+                    Text("b%d", i);
+                }
             Text("Mouse wheel: %.1f", io.MouseWheel);
             Text("MouseStationaryTimer: %.2f", g.MouseStationaryTimer);
             Text("Mouse source: %s", GetMouseSourceName(io.MouseSource));

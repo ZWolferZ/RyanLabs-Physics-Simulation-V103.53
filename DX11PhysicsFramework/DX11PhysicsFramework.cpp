@@ -197,7 +197,7 @@ HRESULT DX11PhysicsFramework::CreateSwapChainAndFrameBuffer()
 	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 
-	if (_depthStencilBuffer == nullptr || _depthStencilBuffer != 0)
+	if (_depthStencilBuffer == nullptr || _depthStencilBuffer != nullptr)
 	{
 		hr = _device->CreateTexture2D(&depthBufferDesc, nullptr, &_depthStencilBuffer);
 		hr = _device->CreateDepthStencilView(_depthStencilBuffer, nullptr, &_depthBufferView);
@@ -292,8 +292,6 @@ HRESULT DX11PhysicsFramework::InitShadersAndInputLayout()
 
 HRESULT DX11PhysicsFramework::InitVertexIndexBuffers()
 {
-	HRESULT hr;
-
 	// Create vertex buffer
 	SimpleVertex vertices[] =
 	{
@@ -339,7 +337,7 @@ HRESULT DX11PhysicsFramework::InitVertexIndexBuffers()
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = vertices;
 
-	hr = _device->CreateBuffer(&bd, &InitData, &_cubeVertexBuffer);
+	HRESULT hr = _device->CreateBuffer(&bd, &InitData, &_cubeVertexBuffer);
 
 	if (FAILED(hr))
 		return hr;
