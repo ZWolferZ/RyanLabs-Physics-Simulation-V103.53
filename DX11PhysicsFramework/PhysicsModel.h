@@ -34,7 +34,8 @@ protected:
 	Vector _acceleration;
 	Vector _netForce;
 	float _mass = 1.0f;
-	float _generalCoefficient = 0.47f;
+	float _generalGroundCoefficient = 0.47f;
+	float _airCoefficient = 0.1f;
 	float _objectDensity = 1.225f;
 	float _objectArea = 1.0f;
 };
