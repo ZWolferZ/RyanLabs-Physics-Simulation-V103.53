@@ -65,6 +65,9 @@
     <ClInclude Include="PhysicsModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ParticleModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="OBJLoader.cpp">
@@ -114,6 +117,9 @@
     </ClCompile>
     <ClCompile Include="imgui-1.91.6\imgui.cpp">
       <Filter>Helpers\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleModel.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

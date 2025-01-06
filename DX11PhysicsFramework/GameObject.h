@@ -1,7 +1,7 @@
 #pragma once
 #include "Structures.h"
 #include "Appearance.h"
-#include"PhysicsModel.h"
+#include "ParticleModel.h"
 
 class GameObject
 {
@@ -12,6 +12,9 @@ public:
 	GameObject(const string& type, const Geometry& geometry, const Material& material,
 		ID3D11ShaderResourceView* textureRV, const Vector& position,
 		const Vector& scale, const Vector& rotation);
+	GameObject(const string& type, const Geometry& geometry, const Material& material,
+		ID3D11ShaderResourceView* textureRV, const Vector& position,
+		const Vector& scale, const Vector& rotation, float mass);
 
 	~GameObject();
 

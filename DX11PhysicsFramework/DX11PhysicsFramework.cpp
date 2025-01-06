@@ -797,11 +797,14 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 	ImGui::SetNextWindowSize(ImVec2(600, 600), ImGuiCond_FirstUseEver);
 
 	ImGui::Begin("Object Movement Control");
+	ImGui::Separator();
 	ImGui::Text("Control the transform speeds of the selected object:");
 
 	ImGui::SliderFloat("Move Speed", &_objectMoveSpeed, 0.1f, 10.0f);
 	ImGui::SliderFloat("Rotate Speed", &_objectRotateSpeed, 0.1f, 10.0f);
 	ImGui::SliderFloat("Scale Speed", &_objectScaleSpeed, 0.1f, 10.0f);
+
+	ImGui::Separator();
 
 	if (objectSelected >= 0 && objectSelected < _gameObjectSize)
 	{
@@ -857,6 +860,8 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 			_gameObjects[objectSelected]->GetTransform()->Move(Vector(0.0f, -1.0f, 0.0f), deltaTime, _objectMoveSpeed);
 		}
 
+		ImGui::Separator();
+
 		ImGui::Text("Rotate Controls:");
 		ImGui::Button("Rotate X");
 		if (ImGui::IsItemActive())
@@ -879,6 +884,8 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 				_objectRotateSpeed);
 		}
 
+		ImGui::Separator();
+
 		ImGui::Text("Scale Controls:");
 		ImGui::Button("Scale Up");
 		if (ImGui::IsItemActive())
@@ -893,7 +900,9 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 				_objectScaleSpeed);
 		}
 
-		ImGui::Text("Velocity Controls:");
+		ImGui::Separator();
+
+		ImGui::Text("Constant Velocity Controls:");
 		if (ImGui::Button("Set Velocity Forward (Z-)"))
 		{
 			_gameObjects[objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.0f, 0.0f, -0.1f));
@@ -924,7 +933,10 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 			_gameObjects[objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.0f, -0.1f, 0.0f));
 		}
 
-		ImGui::Text("Acceleration Controls:");
+		ImGui::Separator();
+
+		ImGui::Text("Constant Acceleration Controls:");
+		ImGui::Checkbox("Switch On Constant Acceleration", &_gameObjects[objectSelected]->GetPhysicsModel()->_constantAcceleration);
 		if (ImGui::Button("Set Acceleration Forward (Z-)"))
 		{
 			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.0f, -0.0001f));
@@ -954,6 +966,43 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 		{
 			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, -0.0001f, 0.0f));
 		}
+
+		ImGui::Separator();
+
+		ImGui::Text("Add Force Controls:");
+		if (ImGui::Button("Set Force Forward (Z-)"))
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, 0.0f, -0.05f));
+		}
+		if (ImGui::Button("Set Force Backward (Z+)"))
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, 0.0f, 0.05f));
+		}
+		if (ImGui::Button("Set Force Left (X-)"))
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(-0.05f, 0.0f, 0.0f));
+		}
+		if (ImGui::Button("Set Force Right (X+)"))
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(0.05f, 0.0f, 0.0f));
+		}
+		if (ImGui::Button("Set Force Up (Y+)"))
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, 0.05f, 0.0f));
+		}
+		if (ImGui::Button("Set Force Down (Y-)"))
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, -0.05f, 0.0f));
+		}
+
+		ImGui::Separator();
+		ImGui::Text("Simulate Forces:");
+		ImGui::Checkbox("Simulate Gravity", &_gameObjects[objectSelected]->GetPhysicsModel()->_simulateGravity);
+		ImGui::SliderFloat("Gravity Force", &_gameObjects[objectSelected]->GetPhysicsModel()->_gravity.y, -9.81f, 9.81f);
+		ImGui::Checkbox("Simulate Drag", &_gameObjects[objectSelected]->GetPhysicsModel()->_simulateDrag);
+		ImGui::Checkbox("Simulate Friction", &_gameObjects[objectSelected]->GetPhysicsModel()->_simulateFriction);
+		ImGui::SliderFloat("Friction Force", &_gameObjects[objectSelected]->GetPhysicsModel()->_frictionScalar, 0.01f, 0.1f);
+		ImGui::Separator();
 	}
 
 	ImGui::End();
@@ -963,7 +1012,7 @@ void DX11PhysicsFramework::DrawCameraWindow() const
 {
 	// Camera Window
 	ImGui::SetNextWindowPos(ImVec2(635, 10), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(300, 202), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(300, 208), ImGuiCond_FirstUseEver);
 
 	ImGui::Begin("Camera Statistics");
 	ImGui::Text("Camera POSITION:");
@@ -971,7 +1020,7 @@ void DX11PhysicsFramework::DrawCameraWindow() const
 	ImGui::Text("Camera Position X: %s", std::to_string(_camera->GetPosition().x).c_str());
 	ImGui::Text("Camera Position Y: %s", std::to_string(_camera->GetPosition().y).c_str());
 	ImGui::Text("Camera Position Z: %s", std::to_string(_camera->GetPosition().z).c_str());
-
+	ImGui::Separator();
 	ImGui::NewLine();
 	ImGui::Text("Camera ROTATION:");
 	ImGui::NewLine();

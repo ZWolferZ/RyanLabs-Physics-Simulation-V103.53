@@ -8,7 +8,7 @@ GameObject::GameObject(const string& type, const string& meshpath, const Materia
 	_parent = nullptr;
 	_transform = new Transform(position, rotation, scale, type);
 	_appearance = new Appearance(meshpath, device, textureRV, material);
-	_physicsModel = new PhysicsModel(_transform);
+	_physicsModel = new ParticleModel(_transform);
 }
 
 GameObject::GameObject(const string& type, const Geometry& geometry, const Material& material,
@@ -18,7 +18,17 @@ GameObject::GameObject(const string& type, const Geometry& geometry, const Mater
 	_parent = nullptr;
 	_transform = new Transform(position, rotation, scale, type);
 	_appearance = new Appearance(geometry, textureRV, material);
-	_physicsModel = new PhysicsModel(_transform);
+	_physicsModel = new ParticleModel(_transform);
+}
+
+GameObject::GameObject(const string& type, const Geometry& geometry, const Material& material,
+	ID3D11ShaderResourceView* textureRV, const Vector& position,
+	const Vector& scale, const Vector& rotation, float mass) : _type(type)
+{
+	_parent = nullptr;
+	_transform = new Transform(position, rotation, scale, type);
+	_appearance = new Appearance(geometry, textureRV, material);
+	_physicsModel = new ParticleModel(_transform, mass);
 }
 
 GameObject::~GameObject()
