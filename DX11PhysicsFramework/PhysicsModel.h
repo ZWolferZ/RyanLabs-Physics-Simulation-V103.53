@@ -26,7 +26,7 @@ public:
 	bool _simulateFriction = false;
 	bool _constantAcceleration = false;
 	Vector _gravity = { 0,-9.81f,0 };
-	float _frictionScalar = 0.01f; //This scalar modify the force of friction it more gradual. (Easier to test)
+	float _frictionScalar = 0.1f; //This scalar modify the force of friction it more gradual. (Easier to test)
 
 protected:
 	Transform* _transform;

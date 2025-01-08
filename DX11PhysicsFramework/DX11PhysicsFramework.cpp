@@ -998,10 +998,10 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 		ImGui::Separator();
 		ImGui::Text("Simulate Forces:");
 		ImGui::Checkbox("Simulate Gravity", &_gameObjects[objectSelected]->GetPhysicsModel()->_simulateGravity);
-		ImGui::SliderFloat("Gravity Force", &_gameObjects[objectSelected]->GetPhysicsModel()->_gravity.y, -9.81f, 9.81f);
+		ImGui::SliderFloat("Gravity Force", &_gameObjects[objectSelected]->GetPhysicsModel()->_gravity.y, -9.81f, 0);
 		ImGui::Checkbox("Simulate Drag", &_gameObjects[objectSelected]->GetPhysicsModel()->_simulateDrag);
 		ImGui::Checkbox("Simulate Friction", &_gameObjects[objectSelected]->GetPhysicsModel()->_simulateFriction);
-		ImGui::SliderFloat("Friction Force", &_gameObjects[objectSelected]->GetPhysicsModel()->_frictionScalar, 0.01f, 0.1f);
+		ImGui::SliderFloat("Friction Force", &_gameObjects[objectSelected]->GetPhysicsModel()->_frictionScalar, 0.00f, 0.3f);
 		ImGui::Separator();
 	}
 
