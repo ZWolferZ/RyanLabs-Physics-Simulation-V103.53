@@ -33,9 +33,9 @@ protected:
 	Vector _velocity;
 	Vector _acceleration;
 	Vector _netForce;
-	float _mass = 1.0f;
-	float _generalGroundCoefficient = 0.47f;
-	float _airCoefficient = 0.1f;
-	float _objectDensity = 1.225f;
-	float _objectArea = 1.0f;
+	float _mass = 1.0f; // Mass of the object unless changed when object is instantiated
+	float _generalGroundCoefficient = 0.65f; // Stone on Stone friction coefficient
+	float _airCoefficient = 0.3f; // Air drag coefficient
+	float _fluidDensity = 1.225f; // Air density
+	float _objectArea = 1.0f; // Cross-section area of the object
 };

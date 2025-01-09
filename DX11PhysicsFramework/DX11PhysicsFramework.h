@@ -16,6 +16,8 @@ class DX11PhysicsFramework
 	float _objectRotateSpeed = 3.0f;
 	float _objectScaleSpeed = 1.0f;
 
+	float _addForceNumber = 1.0f;
+
 	HWND _windowHandle = nullptr;
 
 	ID3D11DeviceContext* _immediateContext = nullptr;

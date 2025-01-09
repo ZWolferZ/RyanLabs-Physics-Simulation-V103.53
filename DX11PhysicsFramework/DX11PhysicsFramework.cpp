@@ -798,6 +798,13 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 
 	ImGui::Begin("Object Movement Control");
 	ImGui::Separator();
+	ImGui::Text("Object Statistics:");
+	ImGui::Text("VELOCITY:");
+	ImGui::Text("Velocity X: %s", std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().x).c_str());
+	ImGui::Text("Velocity Y: %s", std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().y).c_str());
+	ImGui::Text("Velocity Z: %s", std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().z).c_str());
+
+	ImGui::Separator();
 	ImGui::Text("Control the transform speeds of the selected object:");
 
 	ImGui::SliderFloat("Move Speed", &_objectMoveSpeed, 0.1f, 10.0f);
@@ -939,69 +946,69 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 		ImGui::Checkbox("Switch On Constant Acceleration", &_gameObjects[objectSelected]->GetPhysicsModel()->_constantAcceleration);
 		if (ImGui::Button("Set Acceleration Forward (Z-)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.0f, -0.0001f));
+			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.0f, -0.1f));
 		}
 
 		if (ImGui::Button("Set Acceleration Backward (Z+)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.0f, 0.0001f));
+			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.0f, 0.1f));
 		}
 
 		if (ImGui::Button("Set Acceleration Left (X-)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(-0.0001f, 0.0f, 0.0f));
+			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(-0.1f, 0.0f, 0.0f));
 		}
 
 		if (ImGui::Button("Set Acceleration Right (X+)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0001f, 0.0f, 0.0f));
+			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.1f, 0.0f, 0.0f));
 		}
 
 		if (ImGui::Button("Set Acceleration Up (Y+)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.0001f, 0.0f));
+			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.1f, 0.0f));
 		}
 
 		if (ImGui::Button("Set Acceleration Down (Y-)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, -0.0001f, 0.0f));
+			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, -0.1f, 0.0f));
 		}
 
 		ImGui::Separator();
 
 		ImGui::Text("Add Force Controls:");
-		if (ImGui::Button("Set Force Forward (Z-)"))
+		ImGui::SliderFloat("Force to Add", &_addForceNumber, 1.0f, 10.0f);
+		if (ImGui::Button("Add Force Forward (Z-)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, 0.0f, -0.05f));
+			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, 0.0f, -_addForceNumber));
 		}
-		if (ImGui::Button("Set Force Backward (Z+)"))
+		if (ImGui::Button("Add Force Backward (Z+)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, 0.0f, 0.05f));
+			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, 0.0f, _addForceNumber));
 		}
-		if (ImGui::Button("Set Force Left (X-)"))
+		if (ImGui::Button("Add Force Left (X-)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(-0.05f, 0.0f, 0.0f));
+			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(-_addForceNumber, 0.0f, 0.0f));
 		}
-		if (ImGui::Button("Set Force Right (X+)"))
+		if (ImGui::Button("Add Force Right (X+)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(0.05f, 0.0f, 0.0f));
+			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(_addForceNumber, 0.0f, 0.0f));
 		}
-		if (ImGui::Button("Set Force Up (Y+)"))
+		if (ImGui::Button("Add Force Up (Y+)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, 0.05f, 0.0f));
+			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, _addForceNumber, 0.0f));
 		}
-		if (ImGui::Button("Set Force Down (Y-)"))
+		if (ImGui::Button("Add Force Down (Y-)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, -0.05f, 0.0f));
+			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, -_addForceNumber, 0.0f));
 		}
 
 		ImGui::Separator();
 		ImGui::Text("Simulate Forces:");
-		ImGui::Checkbox("Simulate Gravity", &_gameObjects[objectSelected]->GetPhysicsModel()->_simulateGravity);
 		ImGui::SliderFloat("Gravity Force", &_gameObjects[objectSelected]->GetPhysicsModel()->_gravity.y, -9.81f, 0);
+		ImGui::Checkbox("Simulate Gravity", &_gameObjects[objectSelected]->GetPhysicsModel()->_simulateGravity);
 		ImGui::Checkbox("Simulate Drag", &_gameObjects[objectSelected]->GetPhysicsModel()->_simulateDrag);
 		ImGui::Checkbox("Simulate Friction", &_gameObjects[objectSelected]->GetPhysicsModel()->_simulateFriction);
-		ImGui::SliderFloat("Friction Force", &_gameObjects[objectSelected]->GetPhysicsModel()->_frictionScalar, 0.00f, 0.3f);
 		ImGui::Separator();
 	}
 

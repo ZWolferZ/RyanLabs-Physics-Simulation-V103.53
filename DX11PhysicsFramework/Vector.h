@@ -62,19 +62,19 @@ public:
 		return Vector{ this->x * b.x, this->y * b.y, this->z * b.z };
 	}
 
-	Vector operator*=(const float scalar) const
+	Vector operator*=(const float scalar)
 	{
-		return Vector{ this->x * scalar, this->y * scalar, this->z * scalar };
+		return Vector{ this->x *= scalar, this->y *= scalar, this->z *= scalar };
 	}
 
-	Vector operator*=(const int scalar) const
+	Vector operator*=(const int scalar)
 	{
-		return Vector{ this->x * scalar, this->y * scalar, this->z * scalar };
+		return Vector{ this->x *= scalar, this->y *= scalar, this->z *= scalar };
 	}
 
-	Vector operator*=(const Vector b) const
+	Vector operator*=(const Vector b)
 	{
-		return Vector{ this->x * b.x, this->y * b.y, this->z * b.z };
+		return Vector{ this->x *= b.x, this->y *= b.y, this->z *= b.z };
 	}
 
 	// Divide Operator Overload

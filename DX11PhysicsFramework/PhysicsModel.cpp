@@ -35,7 +35,7 @@ void PhysicsModel::Update(float deltaTime)
 		_acceleration += _netForce / _mass;
 	}
 
-	_velocity += _acceleration;
+	_velocity += _acceleration * deltaTime;
 
 	position += _velocity * deltaTime;
 
@@ -71,7 +71,7 @@ Vector PhysicsModel::SetAcceleration(const Vector& newAcceleration)
 
 void PhysicsModel::AddForce(const Vector& force)
 {
-	_netForce += force;
+	_netForce = _netForce + force;
 }
 
 Vector PhysicsModel::GravityForce()
@@ -83,11 +83,16 @@ Vector PhysicsModel::GravityForce()
 
 Vector PhysicsModel::Dragforce()
 {
-	float dragForce = 0.5f * _airCoefficient * _objectDensity * _objectArea * _velocity.Magnitude() * _velocity.Magnitude();
+	float dragForce = 0.5f * _airCoefficient * _fluidDensity * _objectArea * _velocity.Magnitude() * _velocity.Magnitude();
 
 	Vector drag = _velocity.Normalise() * -1.0f;
 
-	return drag * dragForce;
+	if (_velocity.Magnitude() < 0.045f) // If the velocity is less than this tolerance, stop moving.
+	{
+		return drag;
+	}
+
+	return	drag *= dragForce;
 }
 
 Vector PhysicsModel::FrictionForce()
@@ -96,7 +101,7 @@ Vector PhysicsModel::FrictionForce()
 
 	Vector friction = _velocity.Normalise() * -frictionForceMagnitude;
 
-	friction = friction * (_frictionScalar * _velocity.Magnitude());
+	friction *= _velocity.Magnitude();
 
 	return friction;
 }
