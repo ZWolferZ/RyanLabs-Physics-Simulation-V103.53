@@ -2,6 +2,9 @@
 #include"Transform.h"
 #include "Vector.h"
 
+class Collider;
+class SphereCollider;
+
 class PhysicsModel
 {
 public:
@@ -21,6 +24,10 @@ public:
 	virtual Vector Dragforce();
 	virtual Vector FrictionForce();
 
+	bool IsCollideable() const { return _collider != nullptr; }
+	Collider* GetCollider() const { return _collider; }
+	Collider* SetCollider(Collider* collider) {return _collider = collider;}
+
 	bool _simulateGravity = false;
 	bool _simulateDrag = false;
 	bool _simulateFriction = false;
@@ -29,7 +36,8 @@ public:
 	float _frictionScalar = 0.1f; //This scalar modify the force of friction it more gradual. (Easier to test)
 
 protected:
-	Transform* _transform;
+	Transform* _transform = nullptr;
+	Collider* _collider = nullptr;
 	Vector _velocity;
 	Vector _acceleration;
 	Vector _netForce;

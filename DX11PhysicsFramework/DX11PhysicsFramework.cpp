@@ -1,4 +1,5 @@
 #include "DX11PhysicsFramework.h"
+#include "SphereCollider.h"
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -532,7 +533,7 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 
 	auto gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial, GroundTextureRV,
 		Vector(0.0f, 0.0f, 0.0f),
-		Vector(15.0f, 15.0f, 15.0f), Vector(XMConvertToRadians(90.0f), 0.0f, 0.0f));
+		Vector(15.0f, 15.0f, 15.0f), Vector(XMConvertToRadians(90.0f), 0.0f, 0.0f),1,false);
 
 	_gameObjects.push_back(gameObject);
 
@@ -540,7 +541,11 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 	{
 		gameObject = new GameObject("Cube", cubeGeometry, shinyMaterial, StoneTextureRV,
 			Vector(-2.0f + (i * 2.5f), 1.0f, 10.0f),
-			Vector(1.0f, 1.0f, 1.0f), Vector(0.0f, 0.0f, 0.0f));
+			Vector(1.0f, 1.0f, 1.0f), Vector(0.0f, 0.0f, 0.0f),1,false);
+		
+		Collider* collider = new SphereCollider(gameObject->GetTransform(), 1.0f);
+
+		gameObject->GetPhysicsModel()->SetCollider(collider);
 
 		_gameObjects.push_back(gameObject);
 	}
@@ -548,7 +553,7 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 	gameObject = new GameObject("Donut", "Resources\\OBJ\\donut.obj", shinyMaterial, StoneTextureRV, *_device,
 		Vector(-5.0f, 0.5f, 10.0f),
 		Vector(1.0f, 1.0f, 1.0f),
-		Vector(0.0f, 0.0f, 0.0f));
+		Vector(0.0f, 0.0f, 0.0f), 1.0f, false);
 	_gameObjects.push_back(gameObject);
 
 	_gameObjectSize = _gameObjects.size();
@@ -742,6 +747,20 @@ void DX11PhysicsFramework::PhysicsUpdate() const
 	{
 		gameObject->Update(FPS60);
 	}
+
+	if (_gameObjects[1]->GetPhysicsModel()->IsCollideable() && _gameObjects[2]->GetPhysicsModel()->IsCollideable())
+	{
+		if (_gameObjects[1]->GetPhysicsModel()->GetCollider()->CollidesWith(*_gameObjects[2]->GetPhysicsModel()->GetCollider()))
+		{
+			_gameObjects[1]->TEMP_COLLIDED_BOOL_FOR_UI = true;
+			_gameObjects[2]->TEMP_COLLIDED_BOOL_FOR_UI = true;
+		}
+		else
+		{
+			_gameObjects[1]->TEMP_COLLIDED_BOOL_FOR_UI = false;
+			_gameObjects[2]->TEMP_COLLIDED_BOOL_FOR_UI = false;
+		}
+	}
 }
 
 void DX11PhysicsFramework::GeneralUpdate(float deltaTime)
@@ -803,6 +822,16 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 	ImGui::Text("Velocity X: %s", std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().x).c_str());
 	ImGui::Text("Velocity Y: %s", std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().y).c_str());
 	ImGui::Text("Velocity Z: %s", std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().z).c_str());
+	ImGui::Separator();
+	if (_gameObjects[objectSelected]->TEMP_COLLIDED_BOOL_FOR_UI)
+	{
+		ImGui::Text("Collided State: True");
+	}
+	else
+	{
+		ImGui::Text("Collided State: False");
+	}
+	ImGui::Separator();
 
 	ImGui::Separator();
 	ImGui::Text("Control the transform speeds of the selected object:");

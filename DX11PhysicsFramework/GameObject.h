@@ -1,38 +1,36 @@
 #pragma once
 #include "Structures.h"
 #include "Appearance.h"
+#include "RigidBodyModel.h"
 #include "ParticleModel.h"
 
 class GameObject
 {
 public:
+
+	GameObject(const string& type, const Geometry& geometry, const Material& material,
+		ID3D11ShaderResourceView* textureRV, const Vector& position,
+		const Vector& scale, const Vector& rotation, float mass , bool isparticle);
+
 	GameObject(const string& type, const string& meshpath, const Material& material,
 		ID3D11ShaderResourceView* textureRV, ID3D11Device& device,
-		const Vector& position, const Vector& scale, const Vector& rotation);
-	GameObject(const string& type, const Geometry& geometry, const Material& material,
-		ID3D11ShaderResourceView* textureRV, const Vector& position,
-		const Vector& scale, const Vector& rotation);
-	GameObject(const string& type, const Geometry& geometry, const Material& material,
-		ID3D11ShaderResourceView* textureRV, const Vector& position,
-		const Vector& scale, const Vector& rotation, float mass);
+		const Vector& position, const Vector& scale, const Vector& rotation, float mass, bool isparticle);
+
 
 	~GameObject();
 
 	Transform* GetTransform() const
 	{
-		if (_transform == nullptr) { return nullptr; }
 		return _transform;
 	}
 
 	Appearance* GetAppearance() const
 	{
-		if (_appearance == nullptr) { return nullptr; }
 		return _appearance;
 	}
 
 	PhysicsModel* GetPhysicsModel() const
 	{
-		if (_physicsModel == nullptr) { return nullptr; }
 		return _physicsModel;
 	}
 
@@ -42,7 +40,9 @@ public:
 
 	void Update(float dt) const;
 
-private:
+	bool TEMP_COLLIDED_BOOL_FOR_UI = false;
+
+protected:
 	GameObject* _parent = nullptr;
 
 	string _type;
