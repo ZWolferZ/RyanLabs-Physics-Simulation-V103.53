@@ -845,7 +845,7 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 		std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().y).c_str());
 	ImGui::Text("Velocity Z: %s",
 		std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().z).c_str());
-	ImGui::Separator();
+
 	if (_gameObjects[objectSelected]->_objectHasCollided)
 	{
 		ImGui::Text("Collided State: True");
@@ -854,7 +854,6 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 	{
 		ImGui::Text("Collided State: False");
 	}
-	ImGui::Separator();
 
 	ImGui::Separator();
 	ImGui::Text("Control the transform speeds of the selected object:");
@@ -881,7 +880,7 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.0f, 0.0f));
 		}
 
-		ImGui::Text("Movement Controls:");
+		ImGui::Text("Movement Controls: (Does NOT work with Collision Response)");
 
 		ImGui::Button("Move Forward (Z-)");
 		if (ImGui::IsItemActive())
