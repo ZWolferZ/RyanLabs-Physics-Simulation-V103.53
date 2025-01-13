@@ -83,7 +83,8 @@ Vector PhysicsModel::GravityForce()
 
 Vector PhysicsModel::Dragforce()
 {
-	float dragForce = 0.5f * _airCoefficient * _fluidDensity * _objectArea * _velocity.Magnitude() * _velocity.Magnitude();
+	float dragForce = 0.5f * _airCoefficient * _fluidDensity * _objectArea * _velocity.Magnitude() * _velocity.
+		Magnitude();
 
 	Vector drag = _velocity.Normalise() * -1.0f;
 
@@ -92,7 +93,7 @@ Vector PhysicsModel::Dragforce()
 		return drag;
 	}
 
-	return	drag *= dragForce;
+	return drag *= dragForce;
 }
 
 Vector PhysicsModel::FrictionForce()

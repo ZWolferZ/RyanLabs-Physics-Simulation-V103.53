@@ -7,7 +7,6 @@ constexpr auto FPS60 = 1.0 / 60.0f;
 
 using namespace DirectX;
 
-
 class DX11PhysicsFramework
 {
 	int WindowWidth = 1920;
@@ -91,6 +90,7 @@ public:
 
 	void Update();
 	void PhysicsUpdate() const;
+	void DetectCollisions() const;
 	void GeneralUpdate(float deltaTime);
 	void DrawObjectSelectWindow();
 	void DrawStatsWindow() const;

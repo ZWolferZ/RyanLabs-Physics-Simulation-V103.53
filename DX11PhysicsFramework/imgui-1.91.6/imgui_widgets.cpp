@@ -3320,8 +3320,8 @@ float ImGui::ScaleRatioFromValueT(ImGuiDataType data_type, TYPE v, TYPE v_min, T
         return flipped ? (1.0f - result) : result;
     }
     // Linear slider
-    return static_cast<float>(static_cast<FLOATTYPE>((SIGNEDTYPE)(v_clamped - v_min)) / static_cast<FLOATTYPE>((
-        SIGNEDTYPE)(v_max - v_min)));
+    return static_cast<float>(static_cast<FLOATTYPE>(static_cast<SIGNEDTYPE>(v_clamped - v_min)) / static_cast<
+        FLOATTYPE>(static_cast<SIGNEDTYPE>(v_max - v_min)));
 }
 
 // Convert a parametric position on a slider into a value v in the output space (the logical opposite of ScaleRatioFromValueT)
@@ -3400,9 +3400,8 @@ TYPE ImGui::ScaleValueFromRatioT(ImGuiDataType data_type, float t, TYPE v_min, T
             // - Not doing a *1.0 multiply at the end of a range as it tends to be lossy. While absolute aiming at a large s64/u64
             //   range is going to be imprecise anyway, with this check we at least make the edge values matches expected limits.
             FLOATTYPE v_new_off_f = static_cast<SIGNEDTYPE>(v_max - v_min) * t;
-            result = static_cast<TYPE>(static_cast<SIGNEDTYPE>(v_min) + static_cast<SIGNEDTYPE>(v_new_off_f + (
-                FLOATTYPE)(
-                    v_min > v_max ? -0.5 : 0.5)));
+            result = static_cast<TYPE>(static_cast<SIGNEDTYPE>(v_min) + static_cast<SIGNEDTYPE>(v_new_off_f +
+                static_cast<FLOATTYPE>(v_min > v_max ? -0.5 : 0.5)));
         }
     }
 
@@ -9524,8 +9523,8 @@ struct ImGuiPlotArrayGetterData
 static float Plot_ArrayGetter(void* data, int idx)
 {
     auto plot_data = static_cast<ImGuiPlotArrayGetterData*>(data);
-    const float v = *static_cast<const float*>(static_cast<const void*>((const unsigned char*)plot_data->Values + (
-        size_t)idx *
+    const float v = *static_cast<const float*>(static_cast<const void*>((const unsigned char*)plot_data->Values +
+        static_cast<size_t>(idx) *
         plot_data->Stride));
     return v;
 }

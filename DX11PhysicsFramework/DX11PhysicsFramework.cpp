@@ -533,7 +533,8 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 
 	auto gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial, GroundTextureRV,
 		Vector(0.0f, 0.0f, 0.0f),
-		Vector(15.0f, 15.0f, 15.0f), Vector(XMConvertToRadians(90.0f), 0.0f, 0.0f),1,false);
+		Vector(15.0f, 15.0f, 15.0f), Vector(XMConvertToRadians(90.0f), 0.0f, 0.0f), 1,
+		false);
 
 	_gameObjects.push_back(gameObject);
 
@@ -541,8 +542,8 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 	{
 		gameObject = new GameObject("Cube", cubeGeometry, shinyMaterial, StoneTextureRV,
 			Vector(-2.0f + (i * 2.5f), 1.0f, 10.0f),
-			Vector(1.0f, 1.0f, 1.0f), Vector(0.0f, 0.0f, 0.0f),1,false);
-		
+			Vector(1.0f, 1.0f, 1.0f), Vector(0.0f, 0.0f, 0.0f), 1, false);
+
 		Collider* collider = new SphereCollider(gameObject->GetTransform(), 1.0f);
 
 		gameObject->GetPhysicsModel()->SetCollider(collider);
@@ -748,17 +749,36 @@ void DX11PhysicsFramework::PhysicsUpdate() const
 		gameObject->Update(FPS60);
 	}
 
-	if (_gameObjects[1]->GetPhysicsModel()->IsCollideable() && _gameObjects[2]->GetPhysicsModel()->IsCollideable())
-	{
-		if (_gameObjects[1]->GetPhysicsModel()->GetCollider()->CollidesWith(*_gameObjects[2]->GetPhysicsModel()->GetCollider()))
-		{
-			_gameObjects[1]->TEMP_COLLIDED_BOOL_FOR_UI = true;
-			_gameObjects[2]->TEMP_COLLIDED_BOOL_FOR_UI = true;
+	DetectCollisions();
+}
+
+void DX11PhysicsFramework::DetectCollisions() const
+{
+	// Set all collision bools to false
+	for (auto gameObject : _gameObjects) {
+		if (gameObject->GetPhysicsModel()->IsCollideable()) {
+			gameObject->_objectHasCollided = false;
 		}
-		else
-		{
-			_gameObjects[1]->TEMP_COLLIDED_BOOL_FOR_UI = false;
-			_gameObjects[2]->TEMP_COLLIDED_BOOL_FOR_UI = false;
+	}
+
+	// Nested for loop hell
+	for (int i = 0; i < _gameObjects.size(); ++i) {
+		for (int j = i + 1; j < _gameObjects.size(); ++j) {
+			// What the hell is this?
+			if (_gameObjects[i]->GetPhysicsModel()->IsCollideable() &&
+				_gameObjects[j]->GetPhysicsModel()->IsCollideable() &&
+				_gameObjects[i]->GetPhysicsModel()->GetCollider()->CollidesWith(
+					*_gameObjects[j]->GetPhysicsModel()->GetCollider()))
+			{
+				_gameObjects[i]->_objectHasCollided = true;
+				_gameObjects[j]->_objectHasCollided = true;
+			}
+
+			if (_gameObjects[i]->_objectHasCollided && _gameObjects[j]->_objectHasCollided)
+			{
+				_gameObjects[i]->GetPhysicsModel()->GetCollider()->HandleCollision(_gameObjects[i], _gameObjects[j]);
+				_gameObjects[j]->GetPhysicsModel()->GetCollider()->HandleCollision(_gameObjects[j], _gameObjects[i]);
+			}
 		}
 	}
 }
@@ -819,11 +839,14 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 	ImGui::Separator();
 	ImGui::Text("Object Statistics:");
 	ImGui::Text("VELOCITY:");
-	ImGui::Text("Velocity X: %s", std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().x).c_str());
-	ImGui::Text("Velocity Y: %s", std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().y).c_str());
-	ImGui::Text("Velocity Z: %s", std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().z).c_str());
+	ImGui::Text("Velocity X: %s",
+		std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().x).c_str());
+	ImGui::Text("Velocity Y: %s",
+		std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().y).c_str());
+	ImGui::Text("Velocity Z: %s",
+		std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().z).c_str());
 	ImGui::Separator();
-	if (_gameObjects[objectSelected]->TEMP_COLLIDED_BOOL_FOR_UI)
+	if (_gameObjects[objectSelected]->_objectHasCollided)
 	{
 		ImGui::Text("Collided State: True");
 	}
@@ -972,7 +995,8 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 		ImGui::Separator();
 
 		ImGui::Text("Constant Acceleration Controls:");
-		ImGui::Checkbox("Switch On Constant Acceleration", &_gameObjects[objectSelected]->GetPhysicsModel()->_constantAcceleration);
+		ImGui::Checkbox("Switch On Constant Acceleration",
+			&_gameObjects[objectSelected]->GetPhysicsModel()->_constantAcceleration);
 		if (ImGui::Button("Set Acceleration Forward (Z-)"))
 		{
 			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.0f, -0.1f));

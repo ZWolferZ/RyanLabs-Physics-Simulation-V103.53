@@ -7,15 +7,13 @@
 class GameObject
 {
 public:
-
 	GameObject(const string& type, const Geometry& geometry, const Material& material,
 		ID3D11ShaderResourceView* textureRV, const Vector& position,
-		const Vector& scale, const Vector& rotation, float mass , bool isparticle);
+		const Vector& scale, const Vector& rotation, float mass, bool isparticle);
 
 	GameObject(const string& type, const string& meshpath, const Material& material,
 		ID3D11ShaderResourceView* textureRV, ID3D11Device& device,
 		const Vector& position, const Vector& scale, const Vector& rotation, float mass, bool isparticle);
-
 
 	~GameObject();
 
@@ -40,7 +38,7 @@ public:
 
 	void Update(float dt) const;
 
-	bool TEMP_COLLIDED_BOOL_FOR_UI = false;
+	bool _objectHasCollided = false;
 
 protected:
 	GameObject* _parent = nullptr;

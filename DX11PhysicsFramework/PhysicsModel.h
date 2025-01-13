@@ -8,7 +8,6 @@ class SphereCollider;
 class PhysicsModel
 {
 public:
-
 	PhysicsModel(Transform* transform);
 
 	PhysicsModel(Transform* transform, float mass);
@@ -26,13 +25,13 @@ public:
 
 	bool IsCollideable() const { return _collider != nullptr; }
 	Collider* GetCollider() const { return _collider; }
-	Collider* SetCollider(Collider* collider) {return _collider = collider;}
+	Collider* SetCollider(Collider* collider) { return _collider = collider; }
 
 	bool _simulateGravity = false;
 	bool _simulateDrag = false;
 	bool _simulateFriction = false;
 	bool _constantAcceleration = false;
-	Vector _gravity = { 0,-9.81f,0 };
+	Vector _gravity = { 0, -9.81f, 0 };
 	float _frictionScalar = 0.1f; //This scalar modify the force of friction it more gradual. (Easier to test)
 
 protected:

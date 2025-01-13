@@ -9,7 +9,14 @@ bool SphereCollider::CollidesWith(SphereCollider& other)
 	if (combinedradii < distance.Magnitude())
 	{
 		return false;
-    }
+	}
 
 	return true;
+}
+
+Vector SphereCollider::GetCollisionNormal(const Collider& other)
+{
+	Vector collisionNormal = this->GetPosition() - other.GetPosition();
+
+	return collisionNormal.Normalise();
 }

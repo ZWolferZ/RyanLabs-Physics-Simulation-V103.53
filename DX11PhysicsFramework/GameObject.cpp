@@ -1,6 +1,5 @@
 #include "GameObject.h"
 
-
 GameObject::GameObject(const string& type, const Geometry& geometry, const Material& material,
 	ID3D11ShaderResourceView* textureRV, const Vector& position,
 	const Vector& scale, const Vector& rotation, float mass, bool isparticle) : _type(type)
@@ -12,17 +11,16 @@ GameObject::GameObject(const string& type, const Geometry& geometry, const Mater
 	if (isparticle)
 	{
 		_physicsModel = new ParticleModel(_transform, mass);
-	
 	}
 	else
 	{
 		_physicsModel = new RigidBodyModel(_transform, mass);
 	}
-
-	
 }
 
-GameObject::GameObject(const string& type, const string& meshpath, const Material& material, ID3D11ShaderResourceView* textureRV, ID3D11Device& device, const Vector& position, const Vector& scale, const Vector& rotation, float mass, bool isparticle)
+GameObject::GameObject(const string& type, const string& meshpath, const Material& material,
+	ID3D11ShaderResourceView* textureRV, ID3D11Device& device, const Vector& position,
+	const Vector& scale, const Vector& rotation, float mass, bool isparticle)
 {
 	_parent = nullptr;
 	_transform = new Transform(position, rotation, scale, type);
@@ -31,7 +29,6 @@ GameObject::GameObject(const string& type, const string& meshpath, const Materia
 	if (isparticle)
 	{
 		_physicsModel = new ParticleModel(_transform, mass);
-
 	}
 	else
 	{
@@ -64,13 +61,12 @@ GameObject::~GameObject()
 		delete _physicsModel;
 		_physicsModel = nullptr;
 	}
-
 }
 
 void GameObject::Update(const float dt) const
 {
 	_physicsModel->Update(dt);
-	
+
 	_transform->Update();
 
 	if (_parent != nullptr)
