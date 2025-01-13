@@ -164,6 +164,9 @@
     <None Include="JSON Files\Starting Camera Vectors.json">
       <Filter>JSON Files</Filter>
     </None>
+    <None Include="ClassDiagram.cd">
+      <Filter>Helpers</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DX11PhysicsFramework.rc">

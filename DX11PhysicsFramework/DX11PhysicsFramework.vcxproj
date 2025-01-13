@@ -391,6 +391,7 @@
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="JSON Files\Scene Camera Variables.json" />
     <None Include="JSON Files\Starting Camera Vectors.json" />
     <None Include="packages.config" />
