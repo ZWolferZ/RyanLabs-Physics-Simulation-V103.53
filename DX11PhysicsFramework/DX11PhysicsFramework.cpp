@@ -542,7 +542,6 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 
 	Collider* floorCollider = new AABB_Collider(gameObject->GetTransform(), floorMinPoints, floorMaxPoints);
 	gameObject->GetPhysicsModel()->SetCollider(floorCollider);
-	gameObject->_collisionEnabled = false;
 
 	_gameObjects.push_back(gameObject);
 
@@ -779,19 +778,28 @@ void DX11PhysicsFramework::PhysicsUpdate() const
 	DetectCollisions();
 }
 
+// This function killed me to figure out, but essentially it's a nested for loop that checks for collisions between all objects,
+// Once a collision is detected it will store the pair of objects that collided in a vector, which is sorted out after the collision detection loop.
+// If you don't store them in a pair and resolve them this way, the multiple collisions that happen at the same time will spit out garbage normal data for some reason.
 void DX11PhysicsFramework::DetectCollisions() const
 {
-	// Set all collision bools to false
-	for (auto gameObject : _gameObjects) {
-		if (gameObject->GetPhysicsModel()->IsCollideable()) {
+	// Set all collision bools to false as we gotta recheck them
+	for (GameObject* gameObject : _gameObjects)
+	{
+		if (gameObject->GetPhysicsModel()->IsCollideable())
+		{
 			gameObject->_objectHasCollided = false;
 		}
 	}
 
-	// Nested for loop hell
-	for (int i = 0; i < _gameObjects.size(); ++i) {
-		for (int j = i + 1; j < _gameObjects.size(); ++j) {
-			// What the hell is this?
+	// Super based Standard library coming in clutch
+	std::vector<std::pair<GameObject*, GameObject*>> collisions;
+
+	// Nested for loop Hell
+	for (int i = 0; i < _gameObjects.size(); ++i)
+	{
+		for (int j = i + 1; j < _gameObjects.size(); ++j)
+		{
 			if (_gameObjects[i]->GetPhysicsModel()->IsCollideable() &&
 				_gameObjects[j]->GetPhysicsModel()->IsCollideable() &&
 				_gameObjects[i]->GetPhysicsModel()->GetCollider()->CollidesWith(
@@ -800,16 +808,23 @@ void DX11PhysicsFramework::DetectCollisions() const
 				if (!_gameObjects[i]->_collisionEnabled) continue;
 				if (!_gameObjects[j]->_collisionEnabled) continue;
 
+				// Just a flag I use for the UI
 				_gameObjects[i]->_objectHasCollided = true;
 				_gameObjects[j]->_objectHasCollided = true;
-			}
 
-			if (_gameObjects[i]->_objectHasCollided && _gameObjects[j]->_objectHasCollided)
-			{
-				_gameObjects[i]->GetPhysicsModel()->GetCollider()->HandleCollision(_gameObjects[i], _gameObjects[j]);
-				_gameObjects[j]->GetPhysicsModel()->GetCollider()->HandleCollision(_gameObjects[j], _gameObjects[i]);
+				collisions.push_back(std::make_pair(_gameObjects[i], _gameObjects[j]));
 			}
 		}
+	}
+
+	// Handle collisions in pairs instead of all at once at random
+	for (const pair<GameObject*, GameObject*>& collisionPair : collisions)
+	{
+		GameObject* gameObjectA = collisionPair.first;
+		GameObject* gameObjectB = collisionPair.second;
+
+		gameObjectA->GetPhysicsModel()->GetCollider()->HandleCollision(gameObjectA, gameObjectB);
+		gameObjectB->GetPhysicsModel()->GetCollider()->HandleCollision(gameObjectB, gameObjectA);
 	}
 }
 
@@ -1060,7 +1075,7 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 		ImGui::Separator();
 
 		ImGui::Text("Add Force Controls:");
-		ImGui::SliderFloat("Force to Add", &_addForceNumber, 1.0f, 10.0f);
+		ImGui::SliderFloat("Force to Add", &_addForceNumber, 10.0f, 20.0f);
 		if (ImGui::Button("Add Force Forward (Z-)"))
 		{
 			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, 0.0f, -_addForceNumber));

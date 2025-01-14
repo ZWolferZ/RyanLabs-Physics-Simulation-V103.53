@@ -16,7 +16,7 @@ class DX11PhysicsFramework
 	float _objectRotateSpeed = 3.0f;
 	float _objectScaleSpeed = 1.0f;
 
-	float _addForceNumber = 1.0f;
+	float _addForceNumber = 10.0f;
 
 	HWND _windowHandle = nullptr;
 

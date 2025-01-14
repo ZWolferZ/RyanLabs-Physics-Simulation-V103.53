@@ -6,9 +6,38 @@ void Collider::HandleCollision(const GameObject* gameObjectA, const GameObject* 
 
 	// Get the other object's collision normal
 	Vector collisionNormal = this->GetCollisionNormal(*gameObjectB->GetPhysicsModel()->GetCollider());
+	NormalCollided collided = None;
 
-	// Adjust velocity to stop movement in the direction of collision
-	Vector velocity = gameObjectA->GetPhysicsModel()->GetVelocity();
-	Vector newVelocity = velocity - collisionNormal * Vector::Dot(velocity, collisionNormal);
-	gameObjectA->GetPhysicsModel()->SetVelocity(newVelocity);
+	if (collisionNormal == Vector(0, 1, 0))
+	{
+		// Top collision
+		collided = Top;
+	}
+	else if (collisionNormal == Vector(0, -1, 0))
+	{
+		// Bottom collision
+		collided = Bottom;
+	}
+	else if (collisionNormal == Vector(1, 0, 0))
+	{
+		// Right collision
+		collided = Right;
+	}
+	else if (collisionNormal == Vector(-1, 0, 0))
+	{
+		// Left collision
+		collided = Left;
+	}
+	else if (collisionNormal == Vector(0, 0, 1))
+	{
+		// Front collision
+		collided = Front;
+	}
+	else if (collisionNormal == Vector(0, 0, -1))
+	{
+		// Back collision
+		collided = Back;
+	}
+
+	gameObjectA->WallCollided(collided);
 }

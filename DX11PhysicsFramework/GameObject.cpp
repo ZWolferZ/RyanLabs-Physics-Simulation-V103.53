@@ -75,3 +75,53 @@ void GameObject::Update(const float dt) const
 			this->GetTransform()->GetWorldMatrix() * _parent->GetTransform()->GetWorldMatrix());
 	}
 }
+
+void GameObject::WallCollided(NormalCollided collided) const
+{
+	Vector currentVelocity = _physicsModel->GetVelocity();
+
+	switch (collided)
+	{
+	case Top:
+		if (currentVelocity.y < 0)
+			currentVelocity.y = 0;
+
+		_physicsModel->_simulateGravity = false;
+		break;
+
+	case Bottom:
+		if (currentVelocity.y > 0)
+			currentVelocity.y = 0;
+
+		break;
+
+	case Left:
+		if (currentVelocity.x > 0)
+			currentVelocity.x = 0;
+		break;
+
+	case Right:
+		if (currentVelocity.x < 0)
+			currentVelocity.x = 0;
+		break;
+
+	case Front:
+		if (currentVelocity.z < 0)
+			currentVelocity.z = 0;
+		break;
+
+	case Back:
+		if (currentVelocity.z > 0)
+			currentVelocity.z = 0;
+		break;
+
+	case None:
+		Debug::Debug_WriteString(GetType() + " : NONE");
+		break;
+
+	default:
+		break;
+	}
+
+	_physicsModel->SetVelocity(currentVelocity);
+}

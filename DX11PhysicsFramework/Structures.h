@@ -93,3 +93,14 @@ struct MeshData
 	UINT VBOffset;
 	UINT IndexCount;
 };
+
+enum NormalCollided
+{
+	Top,
+	Bottom,
+	Left,
+	Right,
+	Front,
+	Back,
+	None
+};

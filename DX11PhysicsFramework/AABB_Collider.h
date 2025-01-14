@@ -19,6 +19,7 @@ public:
 		dy = _maxPoints.y - _minPoints.y;
 		dz = _maxPoints.z - _minPoints.z;
 	}
+
 	bool CollidesWith(Collider& other) override { return other.CollidesWith(*this); }
 	bool CollidesWith(SphereCollider& other) override;
 	bool CollidesWith(AABB_Collider& other) override;

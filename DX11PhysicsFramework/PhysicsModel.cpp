@@ -55,6 +55,11 @@ void PhysicsModel::Update(float deltaTime)
 		_netForce = Vector(0.0f, 0.0f, 0.0f);
 		_acceleration = Vector(0.0f, 0.0f, 0.0f);
 	}
+
+	if (_velocity.Magnitude() < 0.035f)
+	{
+		_velocity = Vector(0.0f, 0.0f, 0.0f);
+	}
 }
 
 Vector PhysicsModel::GetVelocity() const
@@ -95,11 +100,6 @@ Vector PhysicsModel::Dragforce()
 		Magnitude();
 
 	Vector drag = _velocity.Normalise() * -1.0f;
-
-	if (_velocity.Magnitude() < 0.045f) // If the velocity is less than this tolerance, stop moving.
-	{
-		return drag;
-	}
 
 	return drag *= dragForce;
 }

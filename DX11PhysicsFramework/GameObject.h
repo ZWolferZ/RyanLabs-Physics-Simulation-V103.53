@@ -38,6 +38,8 @@ public:
 
 	void Update(float dt) const;
 
+	void WallCollided(NormalCollided collided) const;
+
 	bool _objectHasCollided = false;
 	bool _collisionEnabled = true;
 

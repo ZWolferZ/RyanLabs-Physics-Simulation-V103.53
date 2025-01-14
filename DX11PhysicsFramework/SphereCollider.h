@@ -12,7 +12,10 @@ public:
 	bool CollidesWith(SphereCollider& other) override;
 	bool CollidesWith(AABB_Collider& other) override;
 	Vector GetCollisionNormal(const Collider& other) override;
-	void Update() override {}
+
+	void Update() override
+	{
+	}
 
 	float GetRadius() const { return radius; }
 };

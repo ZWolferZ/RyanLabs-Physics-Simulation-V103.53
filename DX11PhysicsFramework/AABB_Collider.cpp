@@ -15,10 +15,10 @@ bool AABB_Collider::CollidesWith(AABB_Collider& other)
 
 Vector AABB_Collider::GetCollisionNormal(const Collider& other)
 {
-	Vector normal = { 0,0,0 };
+	Vector normal = { 0, 0, 0 };
 
 	// WE CASTING SPELLS HERE (This is a joke about casting, I give up)
-	if (const AABB_Collider* otherAABB = dynamic_cast<const AABB_Collider*>(&other))
+	if (auto otherAABB = dynamic_cast<const AABB_Collider*>(&other))
 	{
 		float faceDistances[6] = {
 			_maxPoints.x - otherAABB->GetMinPoints().x, // Left face
@@ -26,17 +26,17 @@ Vector AABB_Collider::GetCollisionNormal(const Collider& other)
 			_maxPoints.y - otherAABB->GetMinPoints().y, // Bottom face
 			otherAABB->GetMaxPoints().y - _minPoints.y, // Top face
 			_maxPoints.z - otherAABB->GetMinPoints().z, // Back face
-			otherAABB->GetMaxPoints().z - _minPoints.z  // Front face
+			otherAABB->GetMaxPoints().z - _minPoints.z // Front face
 		};
 
 		// Cube Normals
 		Vector normals[6] = {
 			Vector(-1, 0, 0), // Left face
-			Vector(1, 0, 0),  // Right face
+			Vector(1, 0, 0), // Right face
 			Vector(0, -1, 0), // Bottom face
-			Vector(0, 1, 0),  // Top face
+			Vector(0, 1, 0), // Top face
 			Vector(0, 0, -1), // Back face
-			Vector(0, 0, 1)   // Front face
+			Vector(0, 0, 1) // Front face
 		};
 
 		float closestFace = faceDistances[0];
