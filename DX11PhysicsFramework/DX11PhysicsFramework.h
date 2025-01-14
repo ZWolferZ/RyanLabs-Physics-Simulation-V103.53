@@ -68,6 +68,7 @@ class DX11PhysicsFramework
 	float _runtimeTimer = 0.0f;
 
 	bool objectSelected[6] = { false, false, false, false, false, false };
+	bool floorCollision = false;
 	int _gameObjectSize = 0;
 	float deltaTime = 0.0f;
 

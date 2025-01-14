@@ -1,5 +1,6 @@
 #include "DX11PhysicsFramework.h"
 #include "SphereCollider.h"
+#include "AABB_Collider.h"
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -536,6 +537,13 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 		Vector(15.0f, 15.0f, 15.0f), Vector(XMConvertToRadians(90.0f), 0.0f, 0.0f), 1,
 		false);
 
+	Vector floorMinPoints = gameObject->GetTransform()->GetPosition() - Vector(15.0f, 0.1f, 15.0f);
+	Vector floorMaxPoints = gameObject->GetTransform()->GetPosition() + Vector(15.0f, 0.1f, 15.0f);
+
+	Collider* floorCollider = new AABB_Collider(gameObject->GetTransform(), floorMinPoints, floorMaxPoints);
+	gameObject->GetPhysicsModel()->SetCollider(floorCollider);
+	gameObject->_collisionEnabled = false;
+
 	_gameObjects.push_back(gameObject);
 
 	for (auto i = 0; i < 4; i++)
@@ -544,7 +552,10 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 			Vector(-2.0f + (i * 2.5f), 1.0f, 10.0f),
 			Vector(1.0f, 1.0f, 1.0f), Vector(0.0f, 0.0f, 0.0f), 1, false);
 
-		Collider* collider = new SphereCollider(gameObject->GetTransform(), 1.0f);
+		Vector minPoints = gameObject->GetTransform()->GetPosition() - Vector(1.0f, 1.0f, 1.0f);
+		Vector maxPoints = gameObject->GetTransform()->GetPosition() + Vector(1.0f, 1.0f, 1.0f);
+
+		Collider* collider = new AABB_Collider(gameObject->GetTransform(), minPoints, maxPoints);
 
 		gameObject->GetPhysicsModel()->SetCollider(collider);
 
@@ -555,6 +566,22 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 		Vector(-5.0f, 0.5f, 10.0f),
 		Vector(1.0f, 1.0f, 1.0f),
 		Vector(0.0f, 0.0f, 0.0f), 1.0f, false);
+
+	Collider* donutCollider = new SphereCollider(gameObject->GetTransform(), 1.0f);
+
+	gameObject->GetPhysicsModel()->SetCollider(donutCollider);
+
+	_gameObjects.push_back(gameObject);
+
+	gameObject = new GameObject("Donut", "Resources\\OBJ\\donut.obj", shinyMaterial, StoneTextureRV, *_device,
+		Vector(-9.0f, 0.5f, 10.0f),
+		Vector(1.0f, 1.0f, 1.0f),
+		Vector(0.0f, 0.0f, 0.0f), 1.0f, false);
+
+	Collider* donutCollider2 = new SphereCollider(gameObject->GetTransform(), 1.0f);
+
+	gameObject->GetPhysicsModel()->SetCollider(donutCollider2);
+
 	_gameObjects.push_back(gameObject);
 
 	_gameObjectSize = _gameObjects.size();
@@ -770,6 +797,9 @@ void DX11PhysicsFramework::DetectCollisions() const
 				_gameObjects[i]->GetPhysicsModel()->GetCollider()->CollidesWith(
 					*_gameObjects[j]->GetPhysicsModel()->GetCollider()))
 			{
+				if (!_gameObjects[i]->_collisionEnabled) continue;
+				if (!_gameObjects[j]->_collisionEnabled) continue;
+
 				_gameObjects[i]->_objectHasCollided = true;
 				_gameObjects[j]->_objectHasCollided = true;
 			}
@@ -845,7 +875,8 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 		std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().y).c_str());
 	ImGui::Text("Velocity Z: %s",
 		std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().z).c_str());
-
+	ImGui::Separator();
+	ImGui::Checkbox("Enable Collisions", &_gameObjects[objectSelected]->_collisionEnabled);
 	if (_gameObjects[objectSelected]->_objectHasCollided)
 	{
 		ImGui::Text("Collided State: True");

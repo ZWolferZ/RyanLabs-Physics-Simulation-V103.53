@@ -14,6 +14,11 @@ bool SphereCollider::CollidesWith(SphereCollider& other)
 	return true;
 }
 
+bool SphereCollider::CollidesWith(AABB_Collider& other)
+{
+	return false;
+}
+
 Vector SphereCollider::GetCollisionNormal(const Collider& other)
 {
 	Vector collisionNormal = this->GetPosition() - other.GetPosition();

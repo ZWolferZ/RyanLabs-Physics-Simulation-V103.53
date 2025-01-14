@@ -369,6 +369,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AABB_Collider.cpp" />
     <ClCompile Include="Appearance.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="DX11PhysicsFramework.cpp" />
@@ -401,6 +402,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AABB_Collider.h" />
     <ClInclude Include="Appearance.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Debug.h" />

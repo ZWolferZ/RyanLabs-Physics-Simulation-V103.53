@@ -39,6 +39,7 @@ public:
 	void Update(float dt) const;
 
 	bool _objectHasCollided = false;
+	bool _collisionEnabled = true;
 
 protected:
 	GameObject* _parent = nullptr;
