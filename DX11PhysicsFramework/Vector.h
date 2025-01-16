@@ -32,7 +32,10 @@ public:
 
 	Vector operator+=(const Vector b)
 	{
-		return Vector{ this->x += b.x, this->y += b.y, this->z += b.z };
+		x += b.x;
+		y += b.y;
+		z += b.z;
+		return *this;
 	}
 
 	// Minus Operator Overload
@@ -43,7 +46,10 @@ public:
 
 	Vector operator-=(const Vector b)
 	{
-		return Vector{ this->x -= b.x, this->y -= b.y, this->z -= b.z };
+		x -= b.x;
+		y -= b.y;
+		z -= b.z;
+		return *this;
 	}
 
 	// Multiply Operator Overload
@@ -64,26 +70,35 @@ public:
 
 	Vector operator*=(const float scalar)
 	{
-		return Vector{ this->x *= scalar, this->y *= scalar, this->z *= scalar };
+		x *= scalar;
+		y *= scalar;
+		z *= scalar;
+		return *this;
 	}
 
 	Vector operator*=(const int scalar)
 	{
-		return Vector{ this->x *= scalar, this->y *= scalar, this->z *= scalar };
+		x *= scalar;
+		y *= scalar;
+		z *= scalar;
+		return *this;
 	}
 
 	Vector operator*=(const Vector b)
 	{
-		return Vector{ this->x *= b.x, this->y *= b.y, this->z *= b.z };
+		x *= b.x;
+		y *= b.y;
+		z *= b.z;
+		return *this;
 	}
 
 	// Divide Operator Overload
-	Vector operator/(const float scalar) const
+	Vector operator/( float scalar) const
 	{
 		return Vector{ this->x / scalar, this->y / scalar, this->z / scalar };
 	}
 
-	Vector operator/(const int scalar) const
+	Vector operator/( int scalar) const
 	{
 		return Vector{ this->x / scalar, this->y / scalar, this->z / scalar };
 	}
@@ -93,20 +108,29 @@ public:
 		return Vector{ this->x / b.x, this->y / b.y, this->z / b.z };
 	}
 
-	Vector operator/=(const float scalar) const
+	Vector operator/=( float scalar) 
 	{
-		return Vector{ this->x / scalar, this->y / scalar, this->z / scalar };
+		x /= scalar;
+		y /= scalar;
+		z /= scalar;
+		return *this;
 	}
 
-	Vector operator/=(const int scalar) const
+	Vector operator/=( int scalar) 
 	{
-		return Vector{ this->x / scalar, this->y / scalar, this->z / scalar };
+		x /= scalar;
+		y /= scalar;
+		z /= scalar;
+		return *this;
 	}
 
 	// Copy Operator Overload
-	Vector operator=(const Vector b)
+	Vector operator=(const Vector b) 
 	{
-		return Vector{ this->x = b.x, this->y = b.y, this->z = b.z };
+		x = b.x;
+		y = b.y;
+		z = b.z;
+		return *this;
 	}
 
 	// Comparison Operator Overload

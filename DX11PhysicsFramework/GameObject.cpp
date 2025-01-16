@@ -7,14 +7,15 @@ GameObject::GameObject(const string& type, const Geometry& geometry, const Mater
 	_parent = nullptr;
 	_transform = new Transform(position, rotation, scale, type);
 	_appearance = new Appearance(geometry, textureRV, material);
+	_mass = mass;
 
 	if (isparticle)
 	{
-		_physicsModel = new ParticleModel(_transform, mass);
+		_physicsModel = new ParticleModel(_transform, _mass);
 	}
 	else
 	{
-		_physicsModel = new RigidBodyModel(_transform, mass);
+		_physicsModel = new RigidBodyModel(_transform, _mass);
 	}
 }
 
@@ -25,14 +26,14 @@ GameObject::GameObject(const string& type, const string& meshpath, const Materia
 	_parent = nullptr;
 	_transform = new Transform(position, rotation, scale, type);
 	_appearance = new Appearance(meshpath, device, textureRV, material);
-
+	_mass = mass;
 	if (isparticle)
 	{
-		_physicsModel = new ParticleModel(_transform, mass);
+		_physicsModel = new ParticleModel(_transform, _mass);
 	}
 	else
 	{
-		_physicsModel = new RigidBodyModel(_transform, mass);
+		_physicsModel = new RigidBodyModel(_transform, _mass);
 	}
 }
 
@@ -84,9 +85,10 @@ void GameObject::WallCollided(NormalCollided collided) const
 	{
 	case Top:
 		if (currentVelocity.y < 0)
+		{
 			currentVelocity.y = 0;
-
-		_physicsModel->_simulateGravity = false;
+			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x, this->GetTransform()->GetPosition().y + 0.004f, this->GetTransform()->GetPosition().z);
+		}
 		break;
 
 	case Bottom:

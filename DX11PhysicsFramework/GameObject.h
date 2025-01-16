@@ -53,4 +53,5 @@ protected:
 	Appearance* _appearance = nullptr;
 
 	PhysicsModel* _physicsModel = nullptr;
+	float _mass;
 };

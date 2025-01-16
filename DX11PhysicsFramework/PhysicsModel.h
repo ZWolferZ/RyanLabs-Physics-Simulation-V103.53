@@ -19,7 +19,7 @@ public:
 	virtual Vector GetAcceleration() const;
 	virtual Vector SetAcceleration(const Vector& newAcceleration);
 	virtual void AddForce(const Vector& force);
-	virtual Vector GravityForce();
+	 Vector GravityForce();
 	virtual Vector Dragforce();
 	virtual Vector FrictionForce();
 
