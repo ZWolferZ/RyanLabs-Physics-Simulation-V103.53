@@ -17,7 +17,7 @@ Vector AABB_Collider::GetCollisionNormal(const Collider& other)
 {
 	Vector normal = { 0, 0, 0 };
 
-	// WE CASTING SPELLS HERE (This is a joke about casting, I give up)
+	//SHADOW WIZARD MONEY GANG, WE LOVE CASTING SPELLS HERE (This is a joke about casting, I give up)
 	if (auto otherAABB = dynamic_cast<const AABB_Collider*>(&other))
 	{
 		float faceDistances[6] = {

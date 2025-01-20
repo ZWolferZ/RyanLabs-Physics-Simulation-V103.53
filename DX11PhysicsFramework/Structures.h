@@ -21,6 +21,7 @@
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
 #include <windowsx.h>
+#include "Quaternion.h"
 
 using namespace DirectX;
 using namespace std;

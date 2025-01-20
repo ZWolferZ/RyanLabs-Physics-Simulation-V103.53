@@ -6,6 +6,9 @@ void Collider::HandleCollision(const GameObject* gameObjectA, const GameObject* 
 
 	// Get the other object's collision normal
 	Vector collisionNormal = this->GetCollisionNormal(*gameObjectB->GetPhysicsModel()->GetCollider());
+	Vector velocity = gameObjectB->GetPhysicsModel()->GetVelocity();
+	float mass = gameObjectB->GetPhysicsModel()->GetMass();
+
 	NormalCollided collided = None;
 
 	if (collisionNormal == Vector(0, 1, 0))
@@ -39,5 +42,5 @@ void Collider::HandleCollision(const GameObject* gameObjectA, const GameObject* 
 		collided = Back;
 	}
 
-	gameObjectA->WallCollided(collided);
+	gameObjectA->WallCollided(collided, collisionNormal,mass, velocity);
 }

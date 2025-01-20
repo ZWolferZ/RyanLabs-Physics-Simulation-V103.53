@@ -28,15 +28,12 @@ public:
 		_scale.z = z;
 	}
 
-	Vector GetRotation() const { return _rotation; }
-	void SetRotation(const Vector& newRotation) { _rotation = newRotation; }
+	Vector GetRotation() { return MakeEulerAnglesFromQ(_orientation); }
+	void SetRotation(const Vector& newRotation) { _orientation = MakeQFromEulerAngles(newRotation.x, newRotation.y, newRotation.z); }
+	void SetRotation(const float x, const float y, const float z){	_orientation = MakeQFromEulerAngles(x, y, z);}
 
-	void SetRotation(const float x, const float y, const float z)
-	{
-		_rotation.x = x;
-		_rotation.y = y;
-		_rotation.z = z;
-	}
+	void SetOrientation(Quaternion orientation) { _orientation = orientation; }
+	Quaternion GetOrientation() {return _orientation; }
 
 	void Move(const Vector& direction, float deltaTime, float moveSpeed);
 	void Rotate(const Vector& rotation, float deltaTime, float moveSpeed);
@@ -50,7 +47,7 @@ public:
 private:
 	Vector _position;
 	Vector _scale;
-	Vector _rotation;
+	Quaternion _orientation;
 
 	Vector _originPosition;
 	Vector _originScale;

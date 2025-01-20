@@ -77,44 +77,73 @@ void GameObject::Update(const float dt) const
 	}
 }
 
-void GameObject::WallCollided(NormalCollided collided) const
+void GameObject::WallCollided(NormalCollided collided, Vector collisionNormal, float objectBmass, Vector objectBVelocity) const
 {
 	Vector currentVelocity = _physicsModel->GetVelocity();
 
+	Vector relativevelocity = currentVelocity - objectBVelocity;
+
+	float vj =  collisionNormal.Magnitude() * relativevelocity.Magnitude() * ( - (1.0f + 2.71828f));
+
+	float J = vj * (-GetPhysicsModel()->GetMass() + -objectBmass);
 	switch (collided)
 	{
 	case Top:
 		if (currentVelocity.y < 0)
 		{
 			currentVelocity.y = 0;
+
 			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x, this->GetTransform()->GetPosition().y + 0.004f, this->GetTransform()->GetPosition().z);
 		}
+		
 		break;
 
 	case Bottom:
 		if (currentVelocity.y > 0)
+		{
 			currentVelocity.y = 0;
 
+			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x, this->GetTransform()->GetPosition().y - 0.004f, this->GetTransform()->GetPosition().z);
+		}
+		
 		break;
 
 	case Left:
 		if (currentVelocity.x > 0)
+		{
 			currentVelocity.x = 0;
+		}
+	
+			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x - 0.004f, this->GetTransform()->GetPosition().y, this->GetTransform()->GetPosition().z);
+		
 		break;
 
 	case Right:
 		if (currentVelocity.x < 0)
+		{
 			currentVelocity.x = 0;
+		}
+		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x + 0.004f, this->GetTransform()->GetPosition().y, this->GetTransform()->GetPosition().z);
+		
 		break;
 
 	case Front:
 		if (currentVelocity.z < 0)
+		{
 			currentVelocity.z = 0;
+		}
+			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x , this->GetTransform()->GetPosition().y, this->GetTransform()->GetPosition().z + 0.004f);
+		
 		break;
 
 	case Back:
 		if (currentVelocity.z > 0)
+		{
 			currentVelocity.z = 0;
+		}
+			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x, this->GetTransform()->GetPosition().y, this->GetTransform()->GetPosition().z - 0.004f);
+		
+			
 		break;
 
 	case None:
@@ -124,6 +153,6 @@ void GameObject::WallCollided(NormalCollided collided) const
 	default:
 		break;
 	}
-
+	GetPhysicsModel()->ApplyImpulse(collisionNormal * (-GetPhysicsModel()->GetMass() * J));
 	_physicsModel->SetVelocity(currentVelocity);
 }
