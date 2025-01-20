@@ -12,6 +12,7 @@ public:
 	bool CollidesWith(SphereCollider& other) override;
 	bool CollidesWith(AABB_Collider& other) override;
 	Vector GetCollisionNormal(const Collider& other) override;
+	std::string GetType() const override { return "SphereCollider"; }
 
 	void Update() override
 	{

@@ -29,6 +29,9 @@ public:
 	}
 
 	Vector GetRotation() { return MakeEulerAnglesFromQ(_orientation); }
+	XMVECTOR GetRotationQuaternion() {
+		return XMVectorSet(_orientation.GetVector().x, _orientation.GetVector().y, _orientation.GetVector().z, _orientation.GetScalar());
+	}
 
 	void SetRotation(const Vector& newRotation)
 	{

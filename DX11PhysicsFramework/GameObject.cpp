@@ -82,11 +82,12 @@ void GameObject::WallCollided(NormalCollided collided, Vector collisionNormal, f
 {
 	Vector currentVelocity = _physicsModel->GetVelocity();
 
-	Vector relativevelocity = currentVelocity - objectBVelocity;
+	Vector relativeVelocity = currentVelocity - objectBVelocity;
 
-	float vj = collisionNormal.Magnitude() * relativevelocity.Magnitude() * (-(1.0f + 2.71828f));
+	float vj = collisionNormal.Magnitude() * relativeVelocity.Magnitude() * (-(1.0f + 2.71828f));
 
 	float J = vj * (-GetPhysicsModel()->GetMass() + -objectBmass);
+
 	switch (collided)
 	{
 	case Top:
@@ -114,9 +115,9 @@ void GameObject::WallCollided(NormalCollided collided, Vector collisionNormal, f
 		break;
 
 	case Left:
-		if (currentVelocity.x > 0)
+		if (currentVelocity.x > 0.3f)
 		{
-			currentVelocity.x = 0;
+			currentVelocity.x = 0.3f;
 		}
 
 		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x - 0.004f,
@@ -125,9 +126,9 @@ void GameObject::WallCollided(NormalCollided collided, Vector collisionNormal, f
 		break;
 
 	case Right:
-		if (currentVelocity.x < 0)
+		if (currentVelocity.x > 0.3f)
 		{
-			currentVelocity.x = 0;
+			currentVelocity.x = 0.3f;
 		}
 		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x + 0.004f,
 			this->GetTransform()->GetPosition().y, this->GetTransform()->GetPosition().z);
@@ -135,9 +136,9 @@ void GameObject::WallCollided(NormalCollided collided, Vector collisionNormal, f
 		break;
 
 	case Front:
-		if (currentVelocity.z < 0)
+		if (currentVelocity.z > 0.3f)
 		{
-			currentVelocity.z = 0;
+			currentVelocity.z = 0.3f;
 		}
 		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x, this->GetTransform()->GetPosition().y,
 			this->GetTransform()->GetPosition().z + 0.004f);
@@ -145,9 +146,9 @@ void GameObject::WallCollided(NormalCollided collided, Vector collisionNormal, f
 		break;
 
 	case Back:
-		if (currentVelocity.z > 0)
+		if (currentVelocity.z > 0.3f)
 		{
-			currentVelocity.z = 0;
+			currentVelocity.z = 0.3f;
 		}
 		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x, this->GetTransform()->GetPosition().y,
 			this->GetTransform()->GetPosition().z - 0.004f);

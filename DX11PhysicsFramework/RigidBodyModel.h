@@ -4,9 +4,15 @@
 class RigidBodyModel : public PhysicsModel
 {
 public:
+	XMFLOAT3X3 _inertiaTensorBOX;
+	XMFLOAT3X3 _inertiaTensorSPHERE;
+	float _angularDamping = 0.99f;
+
 	explicit RigidBodyModel(Transform* transform, float mass) : PhysicsModel(transform, mass)
 	{
 		_transform = transform;
 		_mass = mass;
 	}
+
+	void AddRelativeForce(const Vector& force, const Vector& point) override;
 };

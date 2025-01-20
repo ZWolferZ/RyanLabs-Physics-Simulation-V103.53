@@ -19,6 +19,7 @@ public:
 	virtual Vector GetCollisionNormal(const Collider& other) = 0;
 	void HandleCollision(const GameObject* gameObjectA, const GameObject* gameObjectB);
 	virtual void Update() = 0;
+	virtual std::string GetType() const = 0;
 
 	Vector GetPosition() const { return _transform->GetPosition(); }
 };

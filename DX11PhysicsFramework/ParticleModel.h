@@ -9,4 +9,5 @@ public:
 		_transform = transform;
 		_mass = mass;
 	}
+	void AddRelativeForce(const Vector& force, const Vector& point) override;
 };

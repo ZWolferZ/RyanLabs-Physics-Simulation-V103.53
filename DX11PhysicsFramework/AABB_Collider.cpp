@@ -1,32 +1,47 @@
 #include "AABB_Collider.h"
+#include "SphereCollider.h"
 
 bool AABB_Collider::CollidesWith(SphereCollider& other)
 {
+	// TODO:
+	// Implement AABB to Sphere collision detection
 	return false;
 }
 
 bool AABB_Collider::CollidesWith(AABB_Collider& other)
 {
-	// Check if the two AABBs are colliding
-	return (_minPoints.x <= other._maxPoints.x && _maxPoints.x >= other._minPoints.x) &&
-		(_minPoints.y <= other._maxPoints.y && _maxPoints.y >= other._minPoints.y) &&
-		(_minPoints.z <= other._maxPoints.z && _maxPoints.z >= other._minPoints.z);
+	// Pretty sure you can just use positions for this but what do I know.
+	Vector centerA = GetMinPoints() + GetHalfExtents();
+	Vector centerB = other.GetMinPoints() + other.GetHalfExtents();
+	Vector halfExtentsA = GetHalfExtents();
+	Vector halfExtentsB = other.GetHalfExtents();
+
+	// Check for overlap
+	return (abs(centerA.x - centerB.x) <= (halfExtentsA.x + halfExtentsB.x)) &&
+		(abs(centerA.y - centerB.y) <= (halfExtentsA.y + halfExtentsB.y)) &&
+		(abs(centerA.z - centerB.z) <= (halfExtentsA.z + halfExtentsB.z));
 }
 
 Vector AABB_Collider::GetCollisionNormal(const Collider& other)
 {
 	Vector normal = { 0, 0, 0 };
 
-	//SHADOW WIZARD MONEY GANG, WE LOVE CASTING SPELLS HERE (This is a joke about casting, I give up)
+	// SHADOW WIZARD MONEY GANG, WE LOVE CASTING SPELLS HERE (This is a joke about casting, I give up)
 	if (auto otherAABB = dynamic_cast<const AABB_Collider*>(&other))
 	{
+		Vector centerA = _minPoints + _halfExtents;
+		Vector centerB = otherAABB->GetMinPoints() + otherAABB->GetHalfExtents();
+		Vector halfExtentsA = GetHalfExtents();
+		Vector halfExtentsB = otherAABB->GetHalfExtents();
+
+		//AHHHHHHHHHHHHHHHHHHH WHAT I AM EVEN LOOKING AT
 		float faceDistances[6] = {
-			_maxPoints.x - otherAABB->GetMinPoints().x, // Left face
-			otherAABB->GetMaxPoints().x - _minPoints.x, // Right face
-			_maxPoints.y - otherAABB->GetMinPoints().y, // Bottom face
-			otherAABB->GetMaxPoints().y - _minPoints.y, // Top face
-			_maxPoints.z - otherAABB->GetMinPoints().z, // Back face
-			otherAABB->GetMaxPoints().z - _minPoints.z // Front face
+			(centerA.x + halfExtentsA.x) - (centerB.x - halfExtentsB.x), // Left face
+			(centerB.x + halfExtentsB.x) - (centerA.x - halfExtentsA.x), // Right face
+			(centerA.y + halfExtentsA.y) - (centerB.y - halfExtentsB.y), // Bottom face
+			(centerB.y + halfExtentsB.y) - (centerA.y - halfExtentsA.y), // Top face
+			(centerA.z + halfExtentsA.z) - (centerB.z - halfExtentsB.z), // Back face
+			(centerB.z + halfExtentsB.z) - (centerA.z - halfExtentsA.z) // Front face
 		};
 
 		// Cube Normals
@@ -54,8 +69,13 @@ Vector AABB_Collider::GetCollisionNormal(const Collider& other)
 
 		normal = normals[index];
 	}
+	else
+	{
+		auto otherSphere = dynamic_cast<const SphereCollider*>(&other);
+		// TODO: Implement Sphere to AABB collision normal
+	}
 
-	return normal;
+	return normal.Normalise();
 }
 
 void AABB_Collider::Update()
@@ -63,4 +83,9 @@ void AABB_Collider::Update()
 	// Update the collider values based on where the hell the object is
 	_minPoints = _transform->GetPosition() + _minExtent;
 	_maxPoints = _minPoints + Vector(dx, dy, dz);
+
+	dx = _maxPoints.x - _minPoints.x;
+	dy = _maxPoints.y - _minPoints.y;
+	dz = _maxPoints.z - _minPoints.z;
+	_halfExtents = Vector(dx / 2, dy / 2, dz / 2);
 }

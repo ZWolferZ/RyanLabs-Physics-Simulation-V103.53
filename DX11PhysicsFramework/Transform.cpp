@@ -17,36 +17,8 @@ void Transform::Update()
 {
 	_previousWorld = _world;
 
-	// Reset the rotation if it goes over 360 degrees or under 0
-	if (GetRotation().x >= 360.0f)
-	{
-		SetRotation(GetRotation().x - 360.0f, GetRotation().y, GetRotation().z);
-	}
-	else if (GetRotation().x < 0.0f)
-	{
-		SetRotation(GetRotation().x + 360.0f, GetRotation().y, GetRotation().z);
-	}
-
-	if (GetRotation().y >= 360.0f)
-	{
-		SetRotation(GetRotation().x, GetRotation().y - 360.0f, GetRotation().z);
-	}
-	else if (GetRotation().y < 0.0f)
-	{
-		SetRotation(GetRotation().x, GetRotation().y + 360.0f, GetRotation().z);
-	}
-
-	if (GetRotation().z >= 360.0f)
-	{
-		SetRotation(GetRotation().x, GetRotation().y, GetRotation().z - 360.0f);
-	}
-	else if (GetRotation().z < 0.0f)
-	{
-		SetRotation(GetRotation().x, GetRotation().y, GetRotation().z + 360.0f);
-	}
-
 	XMMATRIX scale = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
-	XMMATRIX rotation = XMMatrixRotationRollPitchYaw(GetRotation().x, GetRotation().y, GetRotation().z);
+	XMMATRIX rotation = XMMatrixRotationQuaternion(GetRotationQuaternion());
 	XMMATRIX translation = XMMatrixTranslation(_position.x, _position.y, _position.z);
 
 	XMStoreFloat4x4(&_world, scale * rotation * translation);

@@ -534,7 +534,7 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 
 	auto gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial, GroundTextureRV,
 		Vector(0.0f, 0.0f, 0.0f),
-		Vector(15.0f, 15.0f, 15.0f), Vector(XMConvertToRadians(90.0f), 0.0f, 0.0f), 1,
+		Vector(15.0f, 15.0f, 15.0f), Vector(90.0f, 0.0f, 0.0f), 1,
 		false);
 
 	Vector floorMinPoints = gameObject->GetTransform()->GetPosition() - Vector(15.0f, 0.1f, 15.0f);
@@ -885,6 +885,7 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 	ImGui::Begin("Object Movement Control");
 	ImGui::Separator();
 	ImGui::Text("Object Statistics:");
+	ImGui::Separator();
 	ImGui::Text("VELOCITY:");
 	ImGui::Text("Velocity X: %s",
 		std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().x).c_str());
@@ -892,6 +893,22 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 		std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().y).c_str());
 	ImGui::Text("Velocity Z: %s",
 		std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().z).c_str());
+	ImGui::Separator();
+	ImGui::Text("POSITION:");
+	ImGui::Text("Position x: %s",
+		std::to_string(_gameObjects[objectSelected]->GetTransform()->GetPosition().x).c_str());
+	ImGui::Text("Position y: %s",
+		std::to_string(_gameObjects[objectSelected]->GetTransform()->GetPosition().y).c_str());
+	ImGui::Text("Position z: %s",
+		std::to_string(_gameObjects[objectSelected]->GetTransform()->GetPosition().z).c_str());
+	ImGui::Separator();
+	ImGui::Text("ROTATION:");
+	ImGui::Text("Rotation x: %s",
+		std::to_string(_gameObjects[objectSelected]->GetTransform()->GetRotation().x).c_str());
+	ImGui::Text("Rotation y: %s",
+		std::to_string(_gameObjects[objectSelected]->GetTransform()->GetRotation().y).c_str());
+	ImGui::Text("Rotation z: %s",
+		std::to_string(_gameObjects[objectSelected]->GetTransform()->GetRotation().z).c_str());
 	ImGui::Separator();
 	ImGui::Checkbox("Enable Collisions", &_gameObjects[objectSelected]->_collisionEnabled);
 	if (_gameObjects[objectSelected]->_objectHasCollided)
@@ -907,7 +924,7 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 	ImGui::Text("Control the transform speeds of the selected object:");
 
 	ImGui::SliderFloat("Move Speed", &_objectMoveSpeed, 0.1f, 10.0f);
-	ImGui::SliderFloat("Rotate Speed", &_objectRotateSpeed, 0.1f, 10.0f);
+	ImGui::SliderFloat("Rotate Speed", &_objectRotateSpeed, 50.0f, 100.0f);
 	ImGui::SliderFloat("Scale Speed", &_objectScaleSpeed, 0.1f, 10.0f);
 
 	ImGui::Separator();

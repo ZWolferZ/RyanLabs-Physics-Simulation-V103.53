@@ -13,7 +13,7 @@ class DX11PhysicsFramework
 	int WindowHeight = 1080;
 
 	float _objectMoveSpeed = 4.0f;
-	float _objectRotateSpeed = 3.0f;
+	float _objectRotateSpeed = 50.0f;
 	float _objectScaleSpeed = 1.0f;
 
 	float _addForceNumber = 10.0f;
