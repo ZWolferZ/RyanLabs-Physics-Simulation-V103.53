@@ -772,15 +772,12 @@ void DX11PhysicsFramework::Update()
 
 void DX11PhysicsFramework::PhysicsUpdate() const
 {
-
 	DetectCollisions();
 
 	for (auto gameObject : _gameObjects)
 	{
 		gameObject->Update(FPS60);
 	}
-
-	
 }
 
 // This function killed me to figure out, but essentially it's a nested for loop that checks for collisions between all objects,

@@ -29,11 +29,16 @@ public:
 	}
 
 	Vector GetRotation() { return MakeEulerAnglesFromQ(_orientation); }
-	void SetRotation(const Vector& newRotation) { _orientation = MakeQFromEulerAngles(newRotation.x, newRotation.y, newRotation.z); }
-	void SetRotation(const float x, const float y, const float z){	_orientation = MakeQFromEulerAngles(x, y, z);}
+
+	void SetRotation(const Vector& newRotation)
+	{
+		_orientation = MakeQFromEulerAngles(newRotation.x, newRotation.y, newRotation.z);
+	}
+
+	void SetRotation(const float x, const float y, const float z) { _orientation = MakeQFromEulerAngles(x, y, z); }
 
 	void SetOrientation(Quaternion orientation) { _orientation = orientation; }
-	Quaternion GetOrientation() {return _orientation; }
+	Quaternion GetOrientation() { return _orientation; }
 
 	void Move(const Vector& direction, float deltaTime, float moveSpeed);
 	void Rotate(const Vector& rotation, float deltaTime, float moveSpeed);

@@ -42,5 +42,5 @@ void Collider::HandleCollision(const GameObject* gameObjectA, const GameObject* 
 		collided = Back;
 	}
 
-	gameObjectA->WallCollided(collided, collisionNormal,mass, velocity);
+	gameObjectA->WallCollided(collided, collisionNormal, mass, velocity);
 }

@@ -24,8 +24,6 @@ void PhysicsModel::Update(float deltaTime)
 	if (_simulateGravity)
 	{
 		_netForce += GravityForce();
-
-		
 	}
 
 	if (_simulateDrag)
@@ -69,7 +67,6 @@ void PhysicsModel::Update(float deltaTime)
 	{
 		_velocity = Vector(0.0f, -9.81f, 0.0f);
 	}
-
 }
 
 Vector PhysicsModel::GetVelocity() const

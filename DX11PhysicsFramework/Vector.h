@@ -93,12 +93,12 @@ public:
 	}
 
 	// Divide Operator Overload
-	Vector operator/( float scalar) const
+	Vector operator/(float scalar) const
 	{
 		return Vector{ this->x / scalar, this->y / scalar, this->z / scalar };
 	}
 
-	Vector operator/( int scalar) const
+	Vector operator/(int scalar) const
 	{
 		return Vector{ this->x / scalar, this->y / scalar, this->z / scalar };
 	}
@@ -108,7 +108,7 @@ public:
 		return Vector{ this->x / b.x, this->y / b.y, this->z / b.z };
 	}
 
-	Vector operator/=( float scalar) 
+	Vector operator/=(float scalar)
 	{
 		x /= scalar;
 		y /= scalar;
@@ -116,7 +116,7 @@ public:
 		return *this;
 	}
 
-	Vector operator/=( int scalar) 
+	Vector operator/=(int scalar)
 	{
 		x /= scalar;
 		y /= scalar;
@@ -125,7 +125,7 @@ public:
 	}
 
 	// Copy Operator Overload
-	Vector operator=(const Vector b) 
+	Vector operator=(const Vector b)
 	{
 		x = b.x;
 		y = b.y;

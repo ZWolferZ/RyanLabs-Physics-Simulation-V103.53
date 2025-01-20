@@ -29,7 +29,7 @@ void Transform::Update()
 
 	if (GetRotation().y >= 360.0f)
 	{
-		SetRotation(GetRotation().x , GetRotation().y - 360.0f, GetRotation().z);
+		SetRotation(GetRotation().x, GetRotation().y - 360.0f, GetRotation().z);
 	}
 	else if (GetRotation().y < 0.0f)
 	{
@@ -38,7 +38,7 @@ void Transform::Update()
 
 	if (GetRotation().z >= 360.0f)
 	{
-		SetRotation(GetRotation().x, GetRotation().y , GetRotation().z - 360.0f);
+		SetRotation(GetRotation().x, GetRotation().y, GetRotation().z - 360.0f);
 	}
 	else if (GetRotation().z < 0.0f)
 	{
@@ -61,7 +61,6 @@ void Transform::Move(const Vector& direction, float deltaTime, float moveSpeed)
 void Transform::Rotate(const Vector& rotation, float deltaTime, float moveSpeed)
 {
 	SetRotation(GetRotation() += (Vector::Normalise(rotation) * moveSpeed) * deltaTime);
-
 }
 
 void Transform::Scale(const Vector& scale, float deltaTime, float moveSpeed)

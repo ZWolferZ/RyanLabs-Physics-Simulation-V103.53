@@ -19,10 +19,10 @@ public:
 	virtual Vector GetAcceleration() const;
 	virtual Vector SetAcceleration(const Vector& newAcceleration);
 	virtual void AddForce(const Vector& force);
-	 Vector GravityForce();
+	Vector GravityForce();
 	virtual Vector Dragforce();
 	virtual Vector FrictionForce();
-	void ApplyImpulse(Vector impulse) {_velocity += impulse;}
+	void ApplyImpulse(Vector impulse) { _velocity += impulse; }
 	bool IsCollideable() const { return _collider != nullptr; }
 	Collider* GetCollider() const { return _collider; }
 	Collider* SetCollider(Collider* collider) { return _collider = collider; }

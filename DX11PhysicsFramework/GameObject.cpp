@@ -77,13 +77,14 @@ void GameObject::Update(const float dt) const
 	}
 }
 
-void GameObject::WallCollided(NormalCollided collided, Vector collisionNormal, float objectBmass, Vector objectBVelocity) const
+void GameObject::WallCollided(NormalCollided collided, Vector collisionNormal, float objectBmass,
+	Vector objectBVelocity) const
 {
 	Vector currentVelocity = _physicsModel->GetVelocity();
 
 	Vector relativevelocity = currentVelocity - objectBVelocity;
 
-	float vj =  collisionNormal.Magnitude() * relativevelocity.Magnitude() * ( - (1.0f + 2.71828f));
+	float vj = collisionNormal.Magnitude() * relativevelocity.Magnitude() * (-(1.0f + 2.71828f));
 
 	float J = vj * (-GetPhysicsModel()->GetMass() + -objectBmass);
 	switch (collided)
@@ -93,9 +94,11 @@ void GameObject::WallCollided(NormalCollided collided, Vector collisionNormal, f
 		{
 			currentVelocity.y = 0;
 
-			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x, this->GetTransform()->GetPosition().y + 0.004f, this->GetTransform()->GetPosition().z);
+			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x,
+				this->GetTransform()->GetPosition().y + 0.004f,
+				this->GetTransform()->GetPosition().z);
 		}
-		
+
 		break;
 
 	case Bottom:
@@ -103,9 +106,11 @@ void GameObject::WallCollided(NormalCollided collided, Vector collisionNormal, f
 		{
 			currentVelocity.y = 0;
 
-			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x, this->GetTransform()->GetPosition().y - 0.004f, this->GetTransform()->GetPosition().z);
+			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x,
+				this->GetTransform()->GetPosition().y - 0.004f,
+				this->GetTransform()->GetPosition().z);
 		}
-		
+
 		break;
 
 	case Left:
@@ -113,9 +118,10 @@ void GameObject::WallCollided(NormalCollided collided, Vector collisionNormal, f
 		{
 			currentVelocity.x = 0;
 		}
-	
-			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x - 0.004f, this->GetTransform()->GetPosition().y, this->GetTransform()->GetPosition().z);
-		
+
+		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x - 0.004f,
+			this->GetTransform()->GetPosition().y, this->GetTransform()->GetPosition().z);
+
 		break;
 
 	case Right:
@@ -123,8 +129,9 @@ void GameObject::WallCollided(NormalCollided collided, Vector collisionNormal, f
 		{
 			currentVelocity.x = 0;
 		}
-		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x + 0.004f, this->GetTransform()->GetPosition().y, this->GetTransform()->GetPosition().z);
-		
+		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x + 0.004f,
+			this->GetTransform()->GetPosition().y, this->GetTransform()->GetPosition().z);
+
 		break;
 
 	case Front:
@@ -132,8 +139,9 @@ void GameObject::WallCollided(NormalCollided collided, Vector collisionNormal, f
 		{
 			currentVelocity.z = 0;
 		}
-			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x , this->GetTransform()->GetPosition().y, this->GetTransform()->GetPosition().z + 0.004f);
-		
+		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x, this->GetTransform()->GetPosition().y,
+			this->GetTransform()->GetPosition().z + 0.004f);
+
 		break;
 
 	case Back:
@@ -141,9 +149,9 @@ void GameObject::WallCollided(NormalCollided collided, Vector collisionNormal, f
 		{
 			currentVelocity.z = 0;
 		}
-			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x, this->GetTransform()->GetPosition().y, this->GetTransform()->GetPosition().z - 0.004f);
-		
-			
+		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x, this->GetTransform()->GetPosition().y,
+			this->GetTransform()->GetPosition().z - 0.004f);
+
 		break;
 
 	case None:
