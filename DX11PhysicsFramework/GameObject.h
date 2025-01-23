@@ -38,7 +38,8 @@ public:
 
 	void Update(float dt) const;
 
-	void WallCollided(NormalCollided collided, Vector collisionNormal, float objectBmass, Vector objectBVelocity) const;
+	void WallCollided(NormalCollided collided, const Vector& collisionNormal, float objectBmass,
+		const Vector& objectBVelocity) const;
 
 	bool _objectHasCollided = false;
 	bool _collisionEnabled = true;

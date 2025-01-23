@@ -68,7 +68,7 @@ void GameObject::Update(const float dt) const
 {
 	_physicsModel->Update(dt);
 
-	_transform->Update();
+	_transform->Update(_physicsModel->GetIntegratedPosition(dt));
 
 	if (_parent != nullptr)
 	{
@@ -77,8 +77,8 @@ void GameObject::Update(const float dt) const
 	}
 }
 
-void GameObject::WallCollided(NormalCollided collided, Vector collisionNormal, float objectBmass,
-	Vector objectBVelocity) const
+void GameObject::WallCollided(NormalCollided collided, const Vector& collisionNormal, float objectBmass,
+	const Vector& objectBVelocity) const
 {
 	Vector currentVelocity = _physicsModel->GetVelocity();
 

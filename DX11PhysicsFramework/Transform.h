@@ -6,7 +6,7 @@ class Transform
 public:
 	Transform(const Vector& position, const Vector& rotation, const Vector& scale, const std::string& objectType);
 
-	void Update();
+	void Update(const Vector& integratedPosition);
 
 	Vector GetPosition() const { return _position; }
 	void SetPosition(const Vector& newPosition) { _position = newPosition; }
@@ -29,8 +29,11 @@ public:
 	}
 
 	Vector GetRotation() { return MakeEulerAnglesFromQ(_orientation); }
-	XMVECTOR GetRotationQuaternion() {
-		return XMVectorSet(_orientation.GetVector().x, _orientation.GetVector().y, _orientation.GetVector().z, _orientation.GetScalar());
+
+	XMVECTOR GetRotationQuaternion()
+	{
+		return XMVectorSet(_orientation.GetVector().x, _orientation.GetVector().y, _orientation.GetVector().z,
+			_orientation.GetScalar());
 	}
 
 	void SetRotation(const Vector& newRotation)
@@ -51,9 +54,11 @@ public:
 	XMFLOAT4X4* GetWorldFloat4X4() { return &_world; }
 	XMMATRIX GetWorldMatrix() const { return XMLoadFloat4x4(&_world); }
 	XMMATRIX GetPreviousWorldMatrix() const { return XMLoadFloat4x4(&_previousWorld); }
+	Vector GetPreviousPosition() const { return _previousPosition; }
 
 private:
 	Vector _position;
+	Vector _previousPosition;
 	Vector _scale;
 	Quaternion _orientation;
 

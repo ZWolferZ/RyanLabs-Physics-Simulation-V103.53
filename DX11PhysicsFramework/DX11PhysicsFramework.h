@@ -67,7 +67,7 @@ class DX11PhysicsFramework
 
 	float _runtimeTimer = 0.0f;
 
-	bool objectSelected[6] = { false, false, false, false, false, false };
+	bool objectSelected[7] = { false, false, false, false, false, false,false };
 	bool floorCollision = false;
 	int _gameObjectSize = 0;
 	float deltaTime = 0.0f;
@@ -97,6 +97,7 @@ public:
 	void DrawStatsWindow() const;
 	void DrawObjectMovementControlWindow(float deltaTime, int objectSelected);
 	void DrawCameraWindow() const;
+	void DrawIntegrationWindow(int objectSelected) const;
 	void DrawUI();
 	void Draw(double alphaScalar);
 

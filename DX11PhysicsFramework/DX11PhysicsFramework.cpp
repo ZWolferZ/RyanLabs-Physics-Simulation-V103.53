@@ -834,7 +834,7 @@ void DX11PhysicsFramework::GeneralUpdate(float deltaTime)
 {
 	_camera->HandleMovement(deltaTime);
 
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < _gameObjectSize; i++)
 	{
 		if (GetAsyncKeyState('0' + i) & 0x0001)
 		{
@@ -855,7 +855,7 @@ void DX11PhysicsFramework::GeneralUpdate(float deltaTime)
 		PostQuitMessage(0);
 	}
 
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < _gameObjectSize; i++)
 	{
 		if (objectSelected[i])
 		{
@@ -1155,6 +1155,28 @@ void DX11PhysicsFramework::DrawCameraWindow() const
 	ImGui::End();
 }
 
+void DX11PhysicsFramework::DrawIntegrationWindow(int objectSelected) const
+{
+	// Integration Window
+	ImGui::SetNextWindowPos(ImVec2(10, 520), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(420, 220), ImGuiCond_FirstUseEver);
+	ImGui::Begin("Integration Controls");
+	ImGui::Text("Use this Window To Control Integration!");
+	ImGui::NewLine();
+	ImGui::Text("Current Integration Method: %s", _gameObjects[objectSelected]->GetPhysicsModel()->GetIntegrationMethodName().c_str());
+	ImGui::Text("Select Integration Method:");
+
+	const char* integrationMethods[] = { "Explicit Euler", "Semi-Implicit Euler", "Verlet", "Stormer-Verlet", "RK4" };
+	static int selectedMethod = 5; // Default is RK4
+
+	if (ImGui::Combo("Integration Method", &selectedMethod, integrationMethods, IM_ARRAYSIZE(integrationMethods)))
+	{
+		_gameObjects[objectSelected]->GetPhysicsModel()->SetIntegrationMethod(selectedMethod);
+	}
+
+	ImGui::End();
+}
+
 void DX11PhysicsFramework::DrawObjectSelectWindow()
 {
 	// Object Selection Window
@@ -1237,11 +1259,12 @@ void DX11PhysicsFramework::DrawUI()
 
 	DrawCameraWindow();
 
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < _gameObjectSize; i++)
 	{
 		if (objectSelected[i])
 		{
 			DrawObjectMovementControlWindow(deltaTime, i);
+			DrawIntegrationWindow(i);
 		}
 	}
 

@@ -105,3 +105,12 @@ enum NormalCollided
 	Back,
 	None
 };
+
+enum IntegrationMethods
+{
+	ExplicitEuler,
+	SemiImplicitEuler,
+	Verlet,
+	StormerVerlet,
+	RK4
+};

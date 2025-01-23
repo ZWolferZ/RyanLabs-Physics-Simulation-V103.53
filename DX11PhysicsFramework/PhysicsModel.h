@@ -29,6 +29,13 @@ public:
 	float GetMass() { return _mass; }
 	virtual void AddRelativeForce(const Vector& force, const Vector& point) = 0;
 
+	Vector GetIntegratedPosition(float deltaTime) const;
+
+	IntegrationMethods GetIntegrationMethod() const { return _integrationMethod; }
+	string GetIntegrationMethodName() const;
+
+	void SetIntegrationMethod(int method);
+
 	bool _simulateGravity = false;
 	bool _simulateDrag = false;
 	bool _simulateFriction = false;
@@ -47,4 +54,11 @@ protected:
 	float _airCoefficient = 0.3f; // Air drag coefficient
 	float _fluidDensity = 1.225f; // Air density
 	float _objectArea = 1.0f; // Cross-section area of the object
+	IntegrationMethods _integrationMethod = RK4; // Set the starting integration method to RK4
+private:
+	Vector CalculateExplicitEuler(float deltaTime) const;
+	Vector CalculateSemiImplicitEuler(float deltaTime) const;
+	Vector CalculateVerlet(float deltaTime) const;
+	Vector CalculateStormerVerlet(float deltaTime) const;
+	Vector CalculateRK4(float deltaTime) const;
 };

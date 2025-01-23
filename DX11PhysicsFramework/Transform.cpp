@@ -13,13 +13,14 @@ Transform::Transform(const Vector& position, const Vector& rotation, const Vecto
 	_objectType = objectType;
 }
 
-void Transform::Update()
+void Transform::Update(const Vector& integratedPosition)
 {
+	_previousPosition = _position;
 	_previousWorld = _world;
 
 	XMMATRIX scale = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
 	XMMATRIX rotation = XMMatrixRotationQuaternion(GetRotationQuaternion());
-	XMMATRIX translation = XMMatrixTranslation(_position.x, _position.y, _position.z);
+	XMMATRIX translation = XMMatrixTranslation(integratedPosition.x, integratedPosition.y, integratedPosition.z);
 
 	XMStoreFloat4x4(&_world, scale * rotation * translation);
 }

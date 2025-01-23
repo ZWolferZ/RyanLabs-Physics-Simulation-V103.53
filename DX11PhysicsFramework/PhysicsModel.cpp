@@ -121,3 +121,96 @@ Vector PhysicsModel::FrictionForce()
 
 	return friction;
 }
+
+Vector PhysicsModel::GetIntegratedPosition(const float deltaTime) const
+{
+	Vector integratedPosition;
+
+	switch (GetIntegrationMethod())
+	{
+	case ExplicitEuler:
+		integratedPosition = CalculateExplicitEuler(deltaTime);
+		break;
+	case SemiImplicitEuler:
+		integratedPosition = CalculateSemiImplicitEuler(deltaTime);
+		break;
+	case Verlet:
+		integratedPosition = CalculateVerlet(deltaTime);
+		break;
+	case StormerVerlet:
+		integratedPosition = CalculateStormerVerlet(deltaTime);
+		break;
+	case RK4:
+		integratedPosition = CalculateRK4(deltaTime);
+		break;
+
+	default: break;
+	}
+
+	return integratedPosition;
+}
+
+string PhysicsModel::GetIntegrationMethodName() const
+{
+	switch (_integrationMethod)
+	{
+	case ExplicitEuler: return "Explicit Euler";
+	case SemiImplicitEuler: return "Semi-Implicit Euler";
+	case Verlet: return "Verlet";
+	case StormerVerlet: return "Stormer Verlet";
+	case RK4: return "RK4";
+	default: return "Unknown";
+	}
+}
+
+void PhysicsModel::SetIntegrationMethod(int method)
+{
+	switch (method)
+	{
+	case 0: _integrationMethod = ExplicitEuler; break;
+	case 1: _integrationMethod = SemiImplicitEuler; break;
+	case 2: _integrationMethod = Verlet; break;
+	case 3: _integrationMethod = StormerVerlet; break;
+	case 4: _integrationMethod = RK4; break;
+	default: break;
+	}
+}
+
+Vector PhysicsModel::CalculateExplicitEuler(float deltaTime) const
+{
+	return _transform->GetPosition() + GetVelocity() * deltaTime;
+}
+
+Vector PhysicsModel::CalculateSemiImplicitEuler(float deltaTime) const
+{
+	Vector newVelocity = GetVelocity() + (GetAcceleration() * deltaTime);
+
+	return _transform->GetPosition() + newVelocity * deltaTime;
+}
+
+Vector PhysicsModel::CalculateVerlet(float deltaTime) const
+{
+	return _transform->GetPosition() * 2 - _transform->GetPreviousPosition() + (_acceleration * deltaTime * deltaTime);
+}
+
+Vector PhysicsModel::CalculateStormerVerlet(float deltaTime) const
+{
+	Vector newVelocity = GetVelocity() + (GetAcceleration() * deltaTime * 0.5f);
+	Vector newPosition = _transform->GetPosition() + (newVelocity * deltaTime);
+	newVelocity += (GetAcceleration() * deltaTime * 0.5f);
+
+	return newPosition;
+}
+
+Vector PhysicsModel::CalculateRK4(const float deltaTime) const
+{
+	Vector currentVelocity = GetVelocity();
+	Vector currentAcceleration = GetAcceleration();
+
+	Vector K1 = currentVelocity * deltaTime;
+	Vector K2 = (currentVelocity + currentAcceleration * deltaTime / 2.0f) * deltaTime;
+	Vector K3 = (currentVelocity + currentAcceleration * deltaTime / 2.0f) * deltaTime;
+	Vector K4 = (currentVelocity + currentAcceleration * deltaTime) * deltaTime;
+
+	return _transform->GetPosition() + (K1 + (K2 * 2.0f) + (K3 * 2.0f) + K4) / 6.0f;
+}
