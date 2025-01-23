@@ -6,7 +6,7 @@ class Transform
 public:
 	Transform(const Vector& position, const Vector& rotation, const Vector& scale, const std::string& objectType);
 
-	void Update(const Vector& integratedPosition);
+	void Update(const Vector& integratedPosition, float deltaTime);
 
 	Vector GetPosition() const { return _position; }
 	void SetPosition(const Vector& newPosition) { _position = newPosition; }
@@ -46,6 +46,9 @@ public:
 	void SetOrientation(Quaternion orientation) { _orientation = orientation; }
 	Quaternion GetOrientation() { return _orientation; }
 
+	Vector SetAngularVelocity(Vector velocity) { return _angularVelocity = velocity; }
+	Vector GetAngularVelocity() { return _angularVelocity; }
+
 	void Move(const Vector& direction, float deltaTime, float moveSpeed);
 	void Rotate(const Vector& rotation, float deltaTime, float moveSpeed);
 	void Scale(const Vector& scale, float deltaTime, float moveSpeed);
@@ -61,6 +64,8 @@ private:
 	Vector _previousPosition;
 	Vector _scale;
 	Quaternion _orientation;
+	Vector _angularVelocity;
+	float _angularDamping = 0.80f;
 
 	Vector _originPosition;
 	Vector _originScale;

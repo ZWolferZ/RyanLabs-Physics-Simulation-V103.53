@@ -1,14 +1,22 @@
-#include "AABB_Collider.h"
+#include "AABBCollider.h"
 #include "SphereCollider.h"
 
-bool AABB_Collider::CollidesWith(SphereCollider& other)
+bool AABBCollider::CollidesWith(SphereCollider& other)
 {
-	// TODO:
-	// Implement AABB to Sphere collision detection
-	return false;
+	Vector closestPoint = Vector(
+		max(GetMinPoints().x, min(other.GetPosition().x, GetMaxPoints().x)),
+		max(GetMinPoints().y, min(other.GetPosition().y, GetMaxPoints().y)),
+		max(GetMinPoints().z, min(other.GetPosition().z, GetMaxPoints().z))
+	);
+
+	Vector distance = other.GetPosition() - closestPoint;
+	float distance2 = distance.Magnitude() * distance.Magnitude();
+
+	// Check for overlap
+	return distance2 < (other.GetRadius() * other.GetRadius());
 }
 
-bool AABB_Collider::CollidesWith(AABB_Collider& other)
+bool AABBCollider::CollidesWith(AABBCollider& other)
 {
 	// Pretty sure you can just use positions for this but what do I know.
 	Vector centerA = GetMinPoints() + GetHalfExtents();
@@ -22,12 +30,12 @@ bool AABB_Collider::CollidesWith(AABB_Collider& other)
 		(abs(centerA.z - centerB.z) <= (halfExtentsA.z + halfExtentsB.z));
 }
 
-Vector AABB_Collider::GetCollisionNormal(const Collider& other)
+Vector AABBCollider::GetCollisionNormal(const Collider& other)
 {
 	Vector normal = { 0, 0, 0 };
 
 	// SHADOW WIZARD MONEY GANG, WE LOVE CASTING SPELLS HERE (This is a joke about casting, I give up)
-	if (auto otherAABB = dynamic_cast<const AABB_Collider*>(&other))
+	if (auto otherAABB = dynamic_cast<const AABBCollider*>(&other))
 	{
 		Vector centerA = _minPoints + _halfExtents;
 		Vector centerB = otherAABB->GetMinPoints() + otherAABB->GetHalfExtents();
@@ -69,16 +77,22 @@ Vector AABB_Collider::GetCollisionNormal(const Collider& other)
 
 		normal = normals[index];
 	}
-	else
+	else if (auto otherSphere = dynamic_cast<const SphereCollider*>(&other))
 	{
-		auto otherSphere = dynamic_cast<const SphereCollider*>(&other);
-		// TODO: Implement Sphere to AABB collision normal
+		// AABB to Sphere
+		Vector closestPoint = Vector(
+			max(_minPoints.x, min(otherSphere->GetPosition().x, _minPoints.x + _halfExtents.x * 2)),
+			max(_minPoints.y, min(otherSphere->GetPosition().y, _minPoints.y + _halfExtents.y * 2)),
+			max(_minPoints.z, min(otherSphere->GetPosition().z, _minPoints.z + _halfExtents.z * 2))
+		);
+
+		normal = otherSphere->GetPosition() - closestPoint;
 	}
 
 	return normal.Normalise();
 }
 
-void AABB_Collider::Update()
+void AABBCollider::Update()
 {
 	// Update the collider values based on where the hell the object is
 	_minPoints = _transform->GetPosition() + _minExtent;

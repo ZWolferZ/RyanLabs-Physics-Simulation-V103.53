@@ -77,7 +77,7 @@
     <ClInclude Include="SphereCollider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AABB_Collider.h">
+    <ClInclude Include="AABBCollider.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Quaternion.h">
@@ -145,7 +145,7 @@
     <ClCompile Include="SphereCollider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AABB_Collider.cpp">
+    <ClCompile Include="AABBCollider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

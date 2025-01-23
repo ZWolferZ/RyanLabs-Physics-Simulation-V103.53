@@ -10,7 +10,7 @@ public:
 
 	bool CollidesWith(Collider& other) override { return other.CollidesWith(*this); }
 	bool CollidesWith(SphereCollider& other) override;
-	bool CollidesWith(AABB_Collider& other) override;
+	bool CollidesWith(AABBCollider& other) override;
 	Vector GetCollisionNormal(const Collider& other) override;
 	std::string GetType() const override { return "SphereCollider"; }
 

@@ -27,7 +27,7 @@ public:
 	Collider* GetCollider() const { return _collider; }
 	Collider* SetCollider(Collider* collider) { return _collider = collider; }
 	float GetMass() { return _mass; }
-	virtual void AddRelativeForce(const Vector& force, const Vector& point) = 0;
+	virtual void AddRelativeForce(const Vector& force, const Vector& point, float deltaTime) = 0;
 
 	Vector GetIntegratedPosition(float deltaTime) const;
 

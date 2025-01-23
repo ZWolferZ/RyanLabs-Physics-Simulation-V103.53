@@ -8,6 +8,8 @@ void Collider::HandleCollision(const GameObject* gameObjectA, const GameObject* 
 	Vector collisionNormal = this->GetCollisionNormal(*gameObjectB->GetPhysicsModel()->GetCollider());
 	Vector velocity = gameObjectB->GetPhysicsModel()->GetVelocity();
 	float mass = gameObjectB->GetPhysicsModel()->GetMass();
+	bool SPHEREandAABB = false;
+	bool SPHEREandSPHERE = false;
 
 	NormalCollided collided = None;
 
@@ -42,5 +44,14 @@ void Collider::HandleCollision(const GameObject* gameObjectA, const GameObject* 
 		collided = Back;
 	}
 
-	gameObjectA->WallCollided(collided, collisionNormal, mass, velocity);
+	if (gameObjectA->GetPhysicsModel()->GetCollider()->GetType() == "SphereCollider" && gameObjectB->GetPhysicsModel()->GetCollider()->GetType() == "AABB_Collider")
+	{
+		SPHEREandAABB = true;
+	}
+	if (gameObjectA->GetPhysicsModel()->GetCollider()->GetType() == "SphereCollider" && gameObjectB->GetPhysicsModel()->GetCollider()->GetType() == "SphereCollider")
+	{
+		SPHEREandSPHERE = true;
+	}
+
+	gameObjectA->WallCollided(collided, collisionNormal, mass, velocity, SPHEREandAABB, SPHEREandSPHERE);
 }

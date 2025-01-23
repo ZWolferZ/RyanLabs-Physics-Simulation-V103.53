@@ -1,6 +1,6 @@
 #include "DX11PhysicsFramework.h"
 #include "SphereCollider.h"
-#include "AABB_Collider.h"
+#include "AABBCollider.h"
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -540,8 +540,11 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 	Vector floorMinPoints = gameObject->GetTransform()->GetPosition() - Vector(15.0f, 0.1f, 15.0f);
 	Vector floorMaxPoints = gameObject->GetTransform()->GetPosition() + Vector(15.0f, 0.1f, 15.0f);
 
-	Collider* floorCollider = new AABB_Collider(gameObject->GetTransform(), floorMinPoints, floorMaxPoints);
+	Collider* floorCollider = new AABBCollider(gameObject->GetTransform(), floorMinPoints, floorMaxPoints);
 	gameObject->GetPhysicsModel()->SetCollider(floorCollider);
+
+	gameObject->GetPhysicsModel()->_simulateDrag = true;
+	gameObject->GetPhysicsModel()->_simulateFriction = true;
 
 	_gameObjects.push_back(gameObject);
 
@@ -554,17 +557,19 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 		Vector minPoints = gameObject->GetTransform()->GetPosition() - Vector(1.0f, 1.0f, 1.0f);
 		Vector maxPoints = gameObject->GetTransform()->GetPosition() + Vector(1.0f, 1.0f, 1.0f);
 
-		Collider* collider = new AABB_Collider(gameObject->GetTransform(), minPoints, maxPoints);
+		Collider* collider = new AABBCollider(gameObject->GetTransform(), minPoints, maxPoints);
 
 		gameObject->GetPhysicsModel()->SetCollider(collider);
 
 		gameObject->GetPhysicsModel()->_simulateGravity = true;
+		gameObject->GetPhysicsModel()->_simulateDrag = true;
+		gameObject->GetPhysicsModel()->_simulateFriction = true;
 
 		_gameObjects.push_back(gameObject);
 	}
 
 	gameObject = new GameObject("Donut", "Resources\\OBJ\\donut.obj", shinyMaterial, StoneTextureRV, *_device,
-		Vector(-5.0f, 0.5f, 10.0f),
+		Vector(-5.0f, 1.0f, 10.0f),
 		Vector(1.0f, 1.0f, 1.0f),
 		Vector(0.0f, 0.0f, 0.0f), 1.0f, false);
 
@@ -572,16 +577,24 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 
 	gameObject->GetPhysicsModel()->SetCollider(donutCollider);
 
+	gameObject->GetPhysicsModel()->_simulateGravity = true;
+	gameObject->GetPhysicsModel()->_simulateDrag = true;
+	gameObject->GetPhysicsModel()->_simulateFriction = true;
+
 	_gameObjects.push_back(gameObject);
 
 	gameObject = new GameObject("Donut", "Resources\\OBJ\\donut.obj", shinyMaterial, StoneTextureRV, *_device,
-		Vector(-9.0f, 0.5f, 10.0f),
+		Vector(-9.0f, 1.0f, 10.0f),
 		Vector(1.0f, 1.0f, 1.0f),
 		Vector(0.0f, 0.0f, 0.0f), 1.0f, false);
 
 	Collider* donutCollider2 = new SphereCollider(gameObject->GetTransform(), 1.0f);
 
 	gameObject->GetPhysicsModel()->SetCollider(donutCollider2);
+
+	gameObject->GetPhysicsModel()->_simulateGravity = true;
+	gameObject->GetPhysicsModel()->_simulateDrag = true;
+	gameObject->GetPhysicsModel()->_simulateFriction = true;
 
 	_gameObjects.push_back(gameObject);
 
@@ -798,9 +811,10 @@ void DX11PhysicsFramework::DetectCollisions() const
 	std::vector<std::pair<GameObject*, GameObject*>> collisions;
 
 	// Nested for loop Hell
-	for (int i = 0; i < _gameObjects.size(); ++i)
+	for (int i = 0; i < _gameObjects.size(); i++)
 	{
-		for (int j = i + 1; j < _gameObjects.size(); ++j)
+		// Move the loop ahead by one so we don't check the same object against itself
+		for (int j = i + 1; j < _gameObjects.size(); j++)
 		{
 			if (_gameObjects[i]->GetPhysicsModel()->IsCollideable() &&
 				_gameObjects[j]->GetPhysicsModel()->IsCollideable() &&
@@ -1127,6 +1141,13 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 		ImGui::Checkbox("Simulate Drag", &_gameObjects[objectSelected]->GetPhysicsModel()->_simulateDrag);
 		ImGui::Checkbox("Simulate Friction", &_gameObjects[objectSelected]->GetPhysicsModel()->_simulateFriction);
 		ImGui::Separator();
+
+		ImGui::Text("Rotational Force: (Kinda Works)");
+		ImGui::Button("Add Relative Force");
+		if (ImGui::IsItemActive())
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->AddRelativeForce(Vector(0, 0, -10), Vector(0, 1, -1), deltaTime);
+		}
 	}
 
 	ImGui::End();

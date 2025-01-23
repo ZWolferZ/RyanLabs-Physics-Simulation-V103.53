@@ -45,8 +45,6 @@ void PhysicsModel::Update(float deltaTime)
 
 	_velocity += _acceleration * deltaTime;
 
-	Debug::Debug_WriteNumber("Gravity", _velocity.y);
-
 	position += _velocity * deltaTime;
 
 	_transform->SetPosition(position);

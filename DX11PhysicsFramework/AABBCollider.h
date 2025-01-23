@@ -1,7 +1,7 @@
 #pragma once
 #include "Collider.h"
 
-class AABB_Collider : public Collider
+class AABBCollider : public Collider
 
 {
 	Vector _halfExtents;
@@ -11,7 +11,7 @@ class AABB_Collider : public Collider
 	float dx, dy, dz;
 
 public:
-	AABB_Collider(Transform* transform, Vector minPoints, Vector maxPoints) : Collider(transform)
+	AABBCollider(Transform* transform, Vector minPoints, Vector maxPoints) : Collider(transform)
 	{
 		_minPoints = minPoints;
 		_maxPoints = maxPoints;
@@ -25,7 +25,7 @@ public:
 
 	bool CollidesWith(Collider& other) override { return other.CollidesWith(*this); }
 	bool CollidesWith(SphereCollider& other) override;
-	bool CollidesWith(AABB_Collider& other) override;
+	bool CollidesWith(AABBCollider& other) override;
 	Vector GetCollisionNormal(const Collider& other) override;
 	Vector GetMinPoints() const { return _minPoints; }
 	Vector GetMaxPoints() const { return _maxPoints; }

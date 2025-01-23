@@ -13,10 +13,19 @@ Transform::Transform(const Vector& position, const Vector& rotation, const Vecto
 	_objectType = objectType;
 }
 
-void Transform::Update(const Vector& integratedPosition)
+void Transform::Update(const Vector& integratedPosition, float deltaTime)
 {
 	_previousPosition = _position;
 	_previousWorld = _world;
+
+	_orientation += _orientation * MakeQFromEulerAngles(_angularVelocity.x, _angularVelocity.y, _angularVelocity.z) * 0.5f * deltaTime;
+
+	_angularVelocity *= pow(_angularDamping, deltaTime);
+
+	if (_orientation.Magnitude() != 1.0f)
+	{
+		_orientation /= _orientation.Magnitude();
+	}
 
 	XMMATRIX scale = XMMatrixScaling(_scale.x, _scale.y, _scale.z);
 	XMMATRIX rotation = XMMatrixRotationQuaternion(GetRotationQuaternion());

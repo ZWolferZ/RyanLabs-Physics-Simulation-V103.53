@@ -10,5 +10,5 @@ public:
 		_mass = mass;
 	}
 
-	void AddRelativeForce(const Vector& force, const Vector& point) override;
+	void AddRelativeForce(const Vector& force, const Vector& point, float deltaTime) override;
 };

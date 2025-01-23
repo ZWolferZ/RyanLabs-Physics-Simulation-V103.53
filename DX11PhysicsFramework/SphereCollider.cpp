@@ -1,6 +1,6 @@
 #include "SphereCollider.h"
 
-#include "AABB_Collider.h"
+#include "AABBCollider.h"
 
 bool SphereCollider::CollidesWith(SphereCollider& other)
 {
@@ -8,6 +8,7 @@ bool SphereCollider::CollidesWith(SphereCollider& other)
 
 	Vector distance = this->GetPosition() - other.GetPosition();
 
+	// Check for overlap
 	if (combinedradii < distance.Magnitude())
 	{
 		return false;
@@ -16,25 +17,38 @@ bool SphereCollider::CollidesWith(SphereCollider& other)
 	return true;
 }
 
-bool SphereCollider::CollidesWith(AABB_Collider& other)
+bool SphereCollider::CollidesWith(AABBCollider& other)
 {
-	// TODO: Implement Sphere to AABB collision detection
-	return false;
-}
+	Vector closestPoint = Vector(
+		max(other.GetMinPoints().x, min(GetPosition().x, other.GetMaxPoints().x)),
+		max(other.GetMinPoints().y, min(GetPosition().y, other.GetMaxPoints().y)),
+		max(other.GetMinPoints().z, min(GetPosition().z, other.GetMaxPoints().z))
+	);
 
+	Vector distance = GetPosition() - closestPoint;
+	float distance2 = distance.Magnitude() * distance.Magnitude();
+
+	return distance2 < (GetRadius() * GetRadius());
+}
 Vector SphereCollider::GetCollisionNormal(const Collider& other)
 {
 	Vector normal = { 0, 0, 0 };
 
-	// SHADOW WIZARD MONEY GANG, WE LOVE CASTING SPELLS HERE (This is a joke about casting, I give up)
 	if (auto otherSphere = dynamic_cast<const SphereCollider*>(&other))
 	{
+		// This is super based compared to the AABB one
 		normal = this->GetPosition() - otherSphere->GetPosition();
 	}
-	else
+	else if (auto otherAABB = dynamic_cast<const AABBCollider*>(&other))
 	{
-		// TODO: Implement Sphere to AABB collision normal
-		auto otherAABB = dynamic_cast<const AABB_Collider*>(&other);
+		// Sphere to AABB
+		Vector closestPoint = Vector(
+			max(otherAABB->GetMinPoints().x, min(this->GetPosition().x, otherAABB->GetMaxPoints().x)),
+			max(otherAABB->GetMinPoints().y, min(this->GetPosition().y, otherAABB->GetMaxPoints().y)),
+			max(otherAABB->GetMinPoints().z, min(this->GetPosition().z, otherAABB->GetMaxPoints().z))
+		);
+
+		normal = this->GetPosition() - closestPoint;
 	}
 
 	return normal.Normalise();

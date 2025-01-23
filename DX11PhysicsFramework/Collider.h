@@ -3,7 +3,7 @@
 #include "RigidBodyModel.h"
 
 class SphereCollider;
-class AABB_Collider;
+class AABBCollider;
 
 class Collider abstract
 {
@@ -15,7 +15,7 @@ public:
 
 	virtual bool CollidesWith(Collider& other) = 0;
 	virtual bool CollidesWith(SphereCollider& other) = 0;
-	virtual bool CollidesWith(AABB_Collider& other) = 0;
+	virtual bool CollidesWith(AABBCollider& other) = 0;
 	virtual Vector GetCollisionNormal(const Collider& other) = 0;
 	void HandleCollision(const GameObject* gameObjectA, const GameObject* gameObjectB);
 	virtual void Update() = 0;
