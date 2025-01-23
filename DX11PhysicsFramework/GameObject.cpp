@@ -127,7 +127,8 @@ void GameObject::WallCollided(NormalCollided collided, const Vector& collisionNo
 		if (SPHEREandAABB)
 		{
 			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x - 0.2f,
-				this->GetTransform()->GetPosition().y, this->GetTransform()->GetPosition().z);
+				this->GetTransform()->GetPosition().y,
+				this->GetTransform()->GetPosition().z);
 		}
 
 		break;
@@ -143,7 +144,8 @@ void GameObject::WallCollided(NormalCollided collided, const Vector& collisionNo
 		if (SPHEREandAABB)
 		{
 			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x + 0.2f,
-				this->GetTransform()->GetPosition().y, this->GetTransform()->GetPosition().z);
+				this->GetTransform()->GetPosition().y,
+				this->GetTransform()->GetPosition().z);
 		}
 		break;
 
@@ -157,7 +159,8 @@ void GameObject::WallCollided(NormalCollided collided, const Vector& collisionNo
 
 		if (SPHEREandAABB)
 		{
-			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x, this->GetTransform()->GetPosition().y,
+			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x,
+				this->GetTransform()->GetPosition().y,
 				this->GetTransform()->GetPosition().z + 0.2f);
 		}
 
@@ -173,7 +176,8 @@ void GameObject::WallCollided(NormalCollided collided, const Vector& collisionNo
 
 		if (SPHEREandAABB)
 		{
-			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x, this->GetTransform()->GetPosition().y,
+			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x,
+				this->GetTransform()->GetPosition().y,
 				this->GetTransform()->GetPosition().z - 0.2f);
 		}
 

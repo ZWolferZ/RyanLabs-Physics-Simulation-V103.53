@@ -6,7 +6,7 @@ class RigidBodyModel : public PhysicsModel
 public:
 	XMFLOAT3X3 _inertiaTensor;
 
-	Vector _angularVelocity = { 0,0,0 };
+	Vector _angularVelocity = { 0, 0, 0 };
 
 	bool _tensorSet = false;
 

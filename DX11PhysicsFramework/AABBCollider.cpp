@@ -3,7 +3,7 @@
 
 bool AABBCollider::CollidesWith(SphereCollider& other)
 {
-	Vector closestPoint = Vector(
+	auto closestPoint = Vector(
 		max(GetMinPoints().x, min(other.GetPosition().x, GetMaxPoints().x)),
 		max(GetMinPoints().y, min(other.GetPosition().y, GetMaxPoints().y)),
 		max(GetMinPoints().z, min(other.GetPosition().z, GetMaxPoints().z))
@@ -80,7 +80,7 @@ Vector AABBCollider::GetCollisionNormal(const Collider& other)
 	else if (auto otherSphere = dynamic_cast<const SphereCollider*>(&other))
 	{
 		// AABB to Sphere
-		Vector closestPoint = Vector(
+		auto closestPoint = Vector(
 			max(_minPoints.x, min(otherSphere->GetPosition().x, _minPoints.x + _halfExtents.x * 2)),
 			max(_minPoints.y, min(otherSphere->GetPosition().y, _minPoints.y + _halfExtents.y * 2)),
 			max(_minPoints.z, min(otherSphere->GetPosition().z, _minPoints.z + _halfExtents.z * 2))

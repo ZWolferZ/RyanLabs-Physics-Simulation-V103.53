@@ -50,7 +50,7 @@ Vector RigidBodyModel::CalculateAngularVelocity(Vector torque, float deltaTime) 
 
 	XMVECTOR angularAcceleration = XMVector3Transform(XMVectorSet(torque.x, torque.y, torque.z, 0.0f), inverseTensor);
 
-	Vector angularAccelerationVector = Vector(
+	auto angularAccelerationVector = Vector(
 		XMVectorGetX(angularAcceleration),
 		XMVectorGetY(angularAcceleration),
 		XMVectorGetZ(angularAcceleration));

@@ -165,11 +165,16 @@ void PhysicsModel::SetIntegrationMethod(int method)
 {
 	switch (method)
 	{
-	case 0: _integrationMethod = ExplicitEuler; break;
-	case 1: _integrationMethod = SemiImplicitEuler; break;
-	case 2: _integrationMethod = Verlet; break;
-	case 3: _integrationMethod = StormerVerlet; break;
-	case 4: _integrationMethod = RK4; break;
+	case 0: _integrationMethod = ExplicitEuler;
+		break;
+	case 1: _integrationMethod = SemiImplicitEuler;
+		break;
+	case 2: _integrationMethod = Verlet;
+		break;
+	case 3: _integrationMethod = StormerVerlet;
+		break;
+	case 4: _integrationMethod = RK4;
+		break;
 	default: break;
 	}
 }

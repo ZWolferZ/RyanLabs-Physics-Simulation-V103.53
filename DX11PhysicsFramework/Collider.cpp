@@ -44,11 +44,13 @@ void Collider::HandleCollision(const GameObject* gameObjectA, const GameObject* 
 		collided = Back;
 	}
 
-	if (gameObjectA->GetPhysicsModel()->GetCollider()->GetType() == "SphereCollider" && gameObjectB->GetPhysicsModel()->GetCollider()->GetType() == "AABB_Collider")
+	if (gameObjectA->GetPhysicsModel()->GetCollider()->GetType() == "SphereCollider" && gameObjectB->GetPhysicsModel()->
+		GetCollider()->GetType() == "AABB_Collider")
 	{
 		SPHEREandAABB = true;
 	}
-	if (gameObjectA->GetPhysicsModel()->GetCollider()->GetType() == "SphereCollider" && gameObjectB->GetPhysicsModel()->GetCollider()->GetType() == "SphereCollider")
+	if (gameObjectA->GetPhysicsModel()->GetCollider()->GetType() == "SphereCollider" && gameObjectB->GetPhysicsModel()->
+		GetCollider()->GetType() == "SphereCollider")
 	{
 		SPHEREandSPHERE = true;
 	}

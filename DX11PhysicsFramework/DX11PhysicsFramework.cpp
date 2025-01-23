@@ -1146,7 +1146,8 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 		ImGui::Button("Add Relative Force");
 		if (ImGui::IsItemActive())
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->AddRelativeForce(Vector(0, 0, -10), Vector(0, 1, -1), deltaTime);
+			_gameObjects[objectSelected]->GetPhysicsModel()->AddRelativeForce(
+				Vector(0, 0, -10), Vector(0, 1, -1), deltaTime);
 		}
 	}
 
@@ -1184,7 +1185,8 @@ void DX11PhysicsFramework::DrawIntegrationWindow(int objectSelected) const
 	ImGui::Begin("Integration Controls");
 	ImGui::Text("Use this Window To Control Integration!");
 	ImGui::NewLine();
-	ImGui::Text("Current Integration Method: %s", _gameObjects[objectSelected]->GetPhysicsModel()->GetIntegrationMethodName().c_str());
+	ImGui::Text("Current Integration Method: %s",
+		_gameObjects[objectSelected]->GetPhysicsModel()->GetIntegrationMethodName().c_str());
 	ImGui::Text("Select Integration Method:");
 
 	const char* integrationMethods[] = { "Explicit Euler", "Semi-Implicit Euler", "Verlet", "Stormer-Verlet", "RK4" };
