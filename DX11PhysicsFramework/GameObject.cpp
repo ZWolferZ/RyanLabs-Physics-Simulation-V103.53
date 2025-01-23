@@ -126,9 +126,9 @@ void GameObject::WallCollided(NormalCollided collided, const Vector& collisionNo
 		break;
 
 	case Right:
-		if (currentVelocity.x > 0.3f)
+		if (currentVelocity.x < -0.3f)
 		{
-			currentVelocity.x = 0.3f;
+			currentVelocity.x = -0.3f;
 		}
 		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x + 0.004f,
 			this->GetTransform()->GetPosition().y, this->GetTransform()->GetPosition().z);
@@ -136,15 +136,15 @@ void GameObject::WallCollided(NormalCollided collided, const Vector& collisionNo
 		break;
 
 	case Front:
-		if (currentVelocity.z > 0.3f)
+		if (currentVelocity.z < -0.3f)
 		{
-			currentVelocity.z = 0.3f;
+			currentVelocity.z = -0.3f;
 		}
 		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x, this->GetTransform()->GetPosition().y,
 			this->GetTransform()->GetPosition().z + 0.004f);
 
 		break;
-
+		
 	case Back:
 		if (currentVelocity.z > 0.3f)
 		{

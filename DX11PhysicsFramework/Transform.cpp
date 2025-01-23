@@ -33,7 +33,20 @@ void Transform::Move(const Vector& direction, float deltaTime, float moveSpeed)
 
 void Transform::Rotate(const Vector& rotation, float deltaTime, float moveSpeed)
 {
-	SetRotation(GetRotation() += (Vector::Normalise(rotation) * moveSpeed) * deltaTime);
+
+	Quaternion rotr = MakeQFromEulerAngles(rotation.x, rotation.y, rotation.z);
+
+	Quaternion postRotate = GetOrientation() * (rotr);
+	if (postRotate.Magnitude() != 1.0f)
+	{
+		postRotate /= postRotate.Magnitude();
+	}
+
+
+	SetOrientation(postRotate);
+
+
+	//SetRotation(GetRotation() += (Vector::Normalise(rotation) * moveSpeed) * deltaTime);
 }
 
 void Transform::Scale(const Vector& scale, float deltaTime, float moveSpeed)
