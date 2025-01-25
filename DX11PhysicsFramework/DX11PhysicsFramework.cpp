@@ -1190,7 +1190,7 @@ void DX11PhysicsFramework::DrawIntegrationWindow(int objectSelected) const
 	ImGui::Text("Select Integration Method:");
 
 	const char* integrationMethods[] = { "Explicit Euler", "Semi-Implicit Euler", "Verlet", "Stormer-Verlet", "RK4" };
-	static int selectedMethod = 5; // Default is RK4
+	static int selectedMethod = 3; // Default is Stormer-Verlet
 
 	if (ImGui::Combo("Integration Method", &selectedMethod, integrationMethods, IM_ARRAYSIZE(integrationMethods)))
 	{

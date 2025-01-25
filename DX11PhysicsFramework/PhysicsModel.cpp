@@ -200,20 +200,27 @@ Vector PhysicsModel::CalculateStormerVerlet(float deltaTime) const
 {
 	Vector newVelocity = GetVelocity() + (GetAcceleration() * deltaTime * 0.5f);
 	Vector newPosition = _transform->GetPosition() + (newVelocity * deltaTime);
-	newVelocity += (GetAcceleration() * deltaTime * 0.5f);
 
 	return newPosition;
 }
 
+// I think this is correct, but I'm not sure.
+// This makes my interpenetration bug worse which could mean that this is correct!
 Vector PhysicsModel::CalculateRK4(const float deltaTime) const
 {
+	Vector currentPosition = _transform->GetPosition();
 	Vector currentVelocity = GetVelocity();
 	Vector currentAcceleration = GetAcceleration();
 
-	Vector K1 = currentVelocity * deltaTime;
-	Vector K2 = (currentVelocity + currentAcceleration * deltaTime / 2.0f) * deltaTime;
-	Vector K3 = (currentVelocity + currentAcceleration * deltaTime / 2.0f) * deltaTime;
-	Vector K4 = (currentVelocity + currentAcceleration * deltaTime) * deltaTime;
+	Vector K1Position = currentVelocity + currentPosition;
+	Vector K1Acceleration = currentAcceleration;
 
-	return _transform->GetPosition() + (K1 + (K2 * 2.0f) + (K3 * 2.0f) + K4) / 6.0f;
+	Vector K2Position = currentPosition + (currentVelocity + K1Acceleration) * deltaTime / 2.0f;
+	Vector K2K3Acceleration = currentAcceleration * deltaTime / 2.0f;
+
+	Vector K3Position = currentPosition + (currentVelocity + K2K3Acceleration) * deltaTime / 2.0f;
+
+	Vector K4Position = currentPosition + (currentVelocity + K2K3Acceleration) * deltaTime;
+
+	return (K1Position + (K2Position * 2.0f) + (K3Position * 2.0f) + K4Position) / 6.0f;
 }
