@@ -617,7 +617,7 @@ void DX11PhysicsFramework::LoadSceneCameraVariables()
 	file >> m_sceneCameraVariables;
 
 	//Camera
-	 float aspect = (float)WindowWidth / (float)WindowHeight;
+	float aspect = (float)WindowWidth / (float)WindowHeight;
 
 	//////////////////////////////////////
 
@@ -792,6 +792,8 @@ void DX11PhysicsFramework::PhysicsUpdate() const
 		gameObject->Update(FPS60);
 	}
 }
+
+// BROAD PHASE COLLISION DETECTION
 
 // This function killed me to figure out, but essentially it's a nested for loop that checks for collisions between all objects,
 // Once a collision is detected it will store the pair of objects that collided in a vector, which is sorted out after the collision detection loop.
@@ -1068,7 +1070,6 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 		if (ImGui::Button("Set Velocity Down (Y-)"))
 		{
 			_gameObjects[objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.0f, -0.1f, 0.0f));
-			
 		}
 
 		ImGui::Separator();
