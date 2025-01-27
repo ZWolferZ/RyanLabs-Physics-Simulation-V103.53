@@ -6,7 +6,7 @@ void RigidBodyModel::AddRelativeForce(const Vector& force, const Vector& point, 
 {
 	if (!_tensorSet) SetInertiaTensor();
 
-	Vector torque = Vector::Cross(point - _transform->GetPosition(), force);
+	Vector torque = Vector::Cross(point, force);
 
 	_angularVelocity = _transform->GetAngularVelocity() + CalculateAngularVelocity(torque, deltaTime);
 

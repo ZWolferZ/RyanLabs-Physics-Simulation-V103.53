@@ -617,7 +617,7 @@ void DX11PhysicsFramework::LoadSceneCameraVariables()
 	file >> m_sceneCameraVariables;
 
 	//Camera
-	const int aspect = WindowWidth / WindowHeight;
+	 float aspect = (float)WindowWidth / (float)WindowHeight;
 
 	//////////////////////////////////////
 
@@ -1068,6 +1068,7 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 		if (ImGui::Button("Set Velocity Down (Y-)"))
 		{
 			_gameObjects[objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.0f, -0.1f, 0.0f));
+			
 		}
 
 		ImGui::Separator();
@@ -1147,7 +1148,7 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 		if (ImGui::IsItemActive())
 		{
 			_gameObjects[objectSelected]->GetPhysicsModel()->AddRelativeForce(
-				Vector(0, 0, -10), Vector(0, 1, -1), deltaTime);
+				Vector(10, 0, 0), Vector(-1, 0, -1), deltaTime);
 		}
 	}
 
