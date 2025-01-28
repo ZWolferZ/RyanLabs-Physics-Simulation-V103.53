@@ -55,4 +55,11 @@ protected:
 
 	PhysicsModel* _physicsModel = nullptr;
 	float _mass;
+
+private:
+
+	const float _restitution = 0.5f;
+	const float _positionCorrection = 0.004f;
+	const float _spherePositionCorrection = 0.2f;
+	const float _velocityClamp = 0.3f;
 };

@@ -81,12 +81,18 @@ void GameObject::WallCollided(NormalCollided collided, const Vector& collisionNo
 	const Vector& objectBVelocity, bool SPHEREandAABB, bool SPHEREandSPHERE) const
 {
 	Vector currentVelocity = _physicsModel->GetVelocity();
-
 	Vector relativeVelocity = currentVelocity - objectBVelocity;
 
-	float vj = collisionNormal.Magnitude() * relativeVelocity.Magnitude() * (-(1.0f + 2.71828f));
+	float normalVelocity = Vector::Dot(relativeVelocity, collisionNormal);
 
-	float J = vj * (-GetPhysicsModel()->GetMass() + -objectBmass);
+	// What the hell is denominator?
+	float denominator = (1.0f / _physicsModel->GetMass()) + (1.0f / objectBmass);
+
+	float impulseMagnitude = (-(1.0f + _restitution) * normalVelocity) / denominator;
+
+	Vector impulse = collisionNormal * impulseMagnitude;
+
+	_physicsModel->ApplyImpulse(impulse);
 
 	switch (collided)
 	{
@@ -96,7 +102,7 @@ void GameObject::WallCollided(NormalCollided collided, const Vector& collisionNo
 			currentVelocity.y = 0;
 
 			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x,
-				this->GetTransform()->GetPosition().y + 0.004f,
+				this->GetTransform()->GetPosition().y + _positionCorrection,
 				this->GetTransform()->GetPosition().z);
 		}
 
@@ -108,7 +114,7 @@ void GameObject::WallCollided(NormalCollided collided, const Vector& collisionNo
 			currentVelocity.y = 0;
 
 			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x,
-				this->GetTransform()->GetPosition().y - 0.004f,
+				this->GetTransform()->GetPosition().y - _positionCorrection,
 				this->GetTransform()->GetPosition().z);
 		}
 
@@ -116,17 +122,17 @@ void GameObject::WallCollided(NormalCollided collided, const Vector& collisionNo
 
 	case Left:
 
-		if (currentVelocity.x > 0.3f)
+		if (currentVelocity.x > _velocityClamp)
 		{
-			currentVelocity.x = 0.3f;
+			currentVelocity.x = _velocityClamp;
 		}
 
-		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x - 0.004f,
+		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x - _positionCorrection,
 			this->GetTransform()->GetPosition().y, this->GetTransform()->GetPosition().z);
 
 		if (SPHEREandAABB)
 		{
-			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x - 0.2f,
+			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x - _spherePositionCorrection,
 				this->GetTransform()->GetPosition().y,
 				this->GetTransform()->GetPosition().z);
 		}
@@ -134,51 +140,51 @@ void GameObject::WallCollided(NormalCollided collided, const Vector& collisionNo
 		break;
 
 	case Right:
-		if (currentVelocity.x < -0.3f)
+		if (currentVelocity.x < -_velocityClamp)
 		{
-			currentVelocity.x = -0.3f;
+			currentVelocity.x = -_velocityClamp;
 		}
-		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x + 0.004f,
+		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x + _positionCorrection,
 			this->GetTransform()->GetPosition().y, this->GetTransform()->GetPosition().z);
 
 		if (SPHEREandAABB)
 		{
-			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x + 0.2f,
+			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x + _spherePositionCorrection,
 				this->GetTransform()->GetPosition().y,
 				this->GetTransform()->GetPosition().z);
 		}
 		break;
 
 	case Front:
-		if (currentVelocity.z < -0.3f)
+		if (currentVelocity.z < -_velocityClamp)
 		{
-			currentVelocity.z = -0.3f;
+			currentVelocity.z = -_velocityClamp;
 		}
 		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x, this->GetTransform()->GetPosition().y,
-			this->GetTransform()->GetPosition().z + 0.004f);
+			this->GetTransform()->GetPosition().z + _positionCorrection);
 
 		if (SPHEREandAABB)
 		{
 			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x,
 				this->GetTransform()->GetPosition().y,
-				this->GetTransform()->GetPosition().z + 0.2f);
+				this->GetTransform()->GetPosition().z + _spherePositionCorrection);
 		}
 
 		break;
 
 	case Back:
-		if (currentVelocity.z > 0.3f)
+		if (currentVelocity.z > _velocityClamp)
 		{
-			currentVelocity.z = 0.3f;
+			currentVelocity.z = _velocityClamp;
 		}
 		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x, this->GetTransform()->GetPosition().y,
-			this->GetTransform()->GetPosition().z - 0.004f);
+			this->GetTransform()->GetPosition().z - _positionCorrection);
 
 		if (SPHEREandAABB)
 		{
 			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x,
 				this->GetTransform()->GetPosition().y,
-				this->GetTransform()->GetPosition().z - 0.2f);
+				this->GetTransform()->GetPosition().z - _spherePositionCorrection);
 		}
 
 		break;
@@ -207,6 +213,5 @@ void GameObject::WallCollided(NormalCollided collided, const Vector& collisionNo
 		}
 	}
 
-	GetPhysicsModel()->ApplyImpulse(collisionNormal * (-GetPhysicsModel()->GetMass() * J));
 	_physicsModel->SetVelocity(currentVelocity);
 }
