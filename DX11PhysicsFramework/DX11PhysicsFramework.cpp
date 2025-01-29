@@ -793,8 +793,6 @@ void DX11PhysicsFramework::PhysicsUpdate() const
 	}
 }
 
-// BROAD PHASE COLLISION DETECTION
-
 // This function killed me to figure out, but essentially it's a nested for loop that checks for collisions between all objects,
 // Once a collision is detected it will store the pair of objects that collided in a vector, which is sorted out after the collision detection loop.
 // If you don't store them in a pair and resolve them this way, the multiple collisions that happen at the same time will spit out garbage normal data for some reason.
@@ -815,9 +813,13 @@ void DX11PhysicsFramework::DetectCollisions() const
 	// Nested for loop Hell
 	for (int i = 0; i < _gameObjects.size(); i++)
 	{
-		// Move the loop ahead by one so we don't check the same object against itself
+		// Move the loop ahead by one, so we don't check the same object against itself
 		for (int j = i + 1; j < _gameObjects.size(); j++)
 		{
+			// BROAD PHASE COLLISION DETECTION
+			float distance = _gameObjects[i]->GetTransform()->GetPosition().Magnitude() - _gameObjects[j]->GetTransform()->GetPosition().Magnitude();
+			if (-distance > _broadPhaseDetectionRadius) continue;
+
 			if (_gameObjects[i]->GetPhysicsModel()->IsCollideable() &&
 				_gameObjects[j]->GetPhysicsModel()->IsCollideable() &&
 				_gameObjects[i]->GetPhysicsModel()->GetCollider()->CollidesWith(

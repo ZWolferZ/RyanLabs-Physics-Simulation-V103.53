@@ -72,6 +72,8 @@ class DX11PhysicsFramework
 	int _gameObjectSize = 0;
 	float deltaTime = 0.0f;
 
+	float _broadPhaseDetectionRadius = 15.0f;
+
 	HRESULT CreateWindowHandle(HINSTANCE hInstance, int nCmdShow);
 	HRESULT CreateD3DDevice();
 	HRESULT CreateSwapChainAndFrameBuffer();
