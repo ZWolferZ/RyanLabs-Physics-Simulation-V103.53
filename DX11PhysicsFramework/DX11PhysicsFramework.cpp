@@ -1144,12 +1144,42 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 		ImGui::Checkbox("Simulate Friction", &_gameObjects[objectSelected]->GetPhysicsModel()->_simulateFriction);
 		ImGui::Separator();
 
-		ImGui::Text("Rotational Force: (Kinda Works)");
-		ImGui::Button("Add Relative Force");
+		ImGui::Text("Rotational Force:");
+		ImGui::Button("Add Relative Force Right (X+)");
 		if (ImGui::IsItemActive())
 		{
 			_gameObjects[objectSelected]->GetPhysicsModel()->AddRelativeForce(
 				Vector(10, 0, 0), Vector(-1, 0, -1), deltaTime);
+		}
+		ImGui::Button("Add Relative Force Left (X-)");
+		if (ImGui::IsItemActive())
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->AddRelativeForce(
+				Vector(-10, 0, 0), Vector(-1, 0, -1), deltaTime);
+		}
+		ImGui::Button("Add Relative Force Up (Y+)");
+		if (ImGui::IsItemActive())
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->AddRelativeForce(
+				Vector(0, 10, 0), Vector(0, 0, -1), deltaTime);
+		}
+		ImGui::Button("Add Relative Force Down (Y-)");
+		if (ImGui::IsItemActive())
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->AddRelativeForce(
+				Vector(0, -10, 0), Vector(0, 0, -1), deltaTime);
+		}
+		ImGui::Button("Add Relative Force Forward (Z+)");
+		if (ImGui::IsItemActive())
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->AddRelativeForce(
+				Vector(10, 0, 0), Vector(0, -1, 0), deltaTime);
+		}
+		ImGui::Button("Add Relative Force Backward (Z-)");
+		if (ImGui::IsItemActive())
+		{
+			_gameObjects[objectSelected]->GetPhysicsModel()->AddRelativeForce(
+				Vector(-10, 0, 0), Vector(0, -1, 0), deltaTime);
 		}
 	}
 
