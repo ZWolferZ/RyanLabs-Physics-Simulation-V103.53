@@ -534,7 +534,7 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 
 	auto gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial, GroundTextureRV,
 		Vector(0.0f, 0.0f, 0.0f),
-		Vector(15.0f, 15.0f, 15.0f), Vector(90.0f, 0.0f, 0.0f), 1,
+		Vector(15.0f, 15.0f, 15.0f), Vector(90.0f, 0.0f, 0.0f), 1.0f,
 		false);
 
 	Vector floorMinPoints = gameObject->GetTransform()->GetPosition() - Vector(15.0f, 0.1f, 15.0f);
@@ -552,7 +552,7 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 	{
 		gameObject = new GameObject("Cube", cubeGeometry, shinyMaterial, StoneTextureRV,
 			Vector(-2.0f + (i * 2.5f), 1.0f, 10.0f),
-			Vector(1.0f, 1.0f, 1.0f), Vector(0.0f, 0.0f, 0.0f), 1, false);
+			Vector(1.0f, 1.0f, 1.0f), Vector(0.0f, 0.0f, 0.0f), 1.0f, false);
 
 		Vector minPoints = gameObject->GetTransform()->GetPosition() - Vector(1.0f, 1.0f, 1.0f);
 		Vector maxPoints = gameObject->GetTransform()->GetPosition() + Vector(1.0f, 1.0f, 1.0f);
@@ -816,9 +816,12 @@ void DX11PhysicsFramework::DetectCollisions() const
 		// Move the loop ahead by one, so we don't check the same object against itself
 		for (int j = i + 1; j < _gameObjects.size(); j++)
 		{
-			// BROAD PHASE COLLISION DETECTION
-			float distance = _gameObjects[i]->GetTransform()->GetPosition().Magnitude() - _gameObjects[j]->GetTransform()->GetPosition().Magnitude();
-			if (-distance > _broadPhaseDetectionRadius) continue;
+			// BROAD PHASE COLLISION DETECTION (Should not work with plane so we ignore it)
+			if (i != 0)
+			{
+				float distance = _gameObjects[i]->GetTransform()->GetPosition().Magnitude() - _gameObjects[j]->GetTransform()->GetPosition().Magnitude();
+				if (-distance > _broadPhaseDetectionRadius) continue;
+			}
 
 			if (_gameObjects[i]->GetPhysicsModel()->IsCollideable() &&
 				_gameObjects[j]->GetPhysicsModel()->IsCollideable() &&

@@ -32,7 +32,7 @@ bool AABBCollider::CollidesWith(AABBCollider& other)
 
 Vector AABBCollider::GetCollisionNormal(const Collider& other)
 {
-	Vector normal = { 0, 0, 0 };
+	Vector normal = { 0.0f, 0.0f, 0.0f };
 
 	// SHADOW WIZARD MONEY GANG, WE LOVE CASTING SPELLS HERE (This is a joke about casting, I give up)
 	if (auto otherAABB = dynamic_cast<const AABBCollider*>(&other))
@@ -54,12 +54,12 @@ Vector AABBCollider::GetCollisionNormal(const Collider& other)
 
 		// Cube Normals
 		Vector normals[6] = {
-			Vector(-1, 0, 0), // Left face
-			Vector(1, 0, 0), // Right face
-			Vector(0, -1, 0), // Bottom face
-			Vector(0, 1, 0), // Top face
-			Vector(0, 0, -1), // Back face
-			Vector(0, 0, 1) // Front face
+			Vector(-1.0f, 0.0f,0.0f), // Left face
+			Vector(1.0f, 0.0f, 0.0f), // Right face
+			Vector(0.0f, -1.0f, 0.0f), // Bottom face
+			Vector(0.0f, 1.0f, 0.0f), // Top face
+			Vector(0.0f, 0.0f, -1.0f), // Back face
+			Vector(0.0f, 0.0f, 1.0f) // Front face
 		};
 
 		float closestFace = faceDistances[0];
@@ -81,9 +81,9 @@ Vector AABBCollider::GetCollisionNormal(const Collider& other)
 	{
 		// AABB to Sphere
 		auto closestPoint = Vector(
-			max(_minPoints.x, min(otherSphere->GetPosition().x, _minPoints.x + _halfExtents.x * 2)),
-			max(_minPoints.y, min(otherSphere->GetPosition().y, _minPoints.y + _halfExtents.y * 2)),
-			max(_minPoints.z, min(otherSphere->GetPosition().z, _minPoints.z + _halfExtents.z * 2))
+			max(_minPoints.x, min(otherSphere->GetPosition().x, _minPoints.x + _halfExtents.x * 2.0f)),
+			max(_minPoints.y, min(otherSphere->GetPosition().y, _minPoints.y + _halfExtents.y * 2.0f)),
+			max(_minPoints.z, min(otherSphere->GetPosition().z, _minPoints.z + _halfExtents.z * 2.0f))
 		);
 
 		normal = otherSphere->GetPosition() - closestPoint;
@@ -101,5 +101,5 @@ void AABBCollider::Update()
 	dx = _maxPoints.x - _minPoints.x;
 	dy = _maxPoints.y - _minPoints.y;
 	dz = _maxPoints.z - _minPoints.z;
-	_halfExtents = Vector(dx / 2, dy / 2, dz / 2);
+	_halfExtents = Vector(dx / 2.0f, dy / 2.0f, dz / 2.0f);
 }

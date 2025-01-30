@@ -20,7 +20,7 @@ public:
 		dy = _maxPoints.y - _minPoints.y;
 		dz = _maxPoints.z - _minPoints.z;
 
-		_halfExtents = Vector(dx / 2, dy / 2, dz / 2);
+		_halfExtents = Vector(dx / 2.0f, dy / 2.0f, dz / 2.0f);
 	}
 
 	bool CollidesWith(Collider& other) override { return other.CollidesWith(*this); }

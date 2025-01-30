@@ -213,5 +213,9 @@ void GameObject::WallCollided(NormalCollided collided, const Vector& collisionNo
 		}
 	}
 
-	_physicsModel->SetVelocity(currentVelocity);
+	
+		_physicsModel->SetVelocity(currentVelocity);
+		
+	
+	
 }

@@ -13,32 +13,32 @@ void Collider::HandleCollision(const GameObject* gameObjectA, const GameObject* 
 
 	NormalCollided collided = None;
 
-	if (collisionNormal == Vector(0, 1, 0))
+	if (collisionNormal == Vector(0, 1.0f, 0))
 	{
 		// Top collision
 		collided = Top;
 	}
-	else if (collisionNormal == Vector(0, -1, 0))
+	else if (collisionNormal == Vector(0, -1.0f, 0))
 	{
 		// Bottom collision
 		collided = Bottom;
 	}
-	else if (collisionNormal == Vector(1, 0, 0))
+	else if (collisionNormal == Vector(1.0f, 0, 0))
 	{
 		// Right collision
 		collided = Right;
 	}
-	else if (collisionNormal == Vector(-1, 0, 0))
+	else if (collisionNormal == Vector(-1.0f, 0, 0))
 	{
 		// Left collision
 		collided = Left;
 	}
-	else if (collisionNormal == Vector(0, 0, 1))
+	else if (collisionNormal == Vector(0, 0, 1.0f))
 	{
 		// Front collision
 		collided = Front;
 	}
-	else if (collisionNormal == Vector(0, 0, -1))
+	else if (collisionNormal == Vector(0, 0, -1.0f))
 	{
 		// Back collision
 		collided = Back;
