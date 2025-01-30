@@ -54,7 +54,7 @@ Vector AABBCollider::GetCollisionNormal(const Collider& other)
 
 		// Cube Normals
 		Vector normals[6] = {
-			Vector(-1.0f, 0.0f,0.0f), // Left face
+			Vector(-1.0f, 0.0f, 0.0f), // Left face
 			Vector(1.0f, 0.0f, 0.0f), // Right face
 			Vector(0.0f, -1.0f, 0.0f), // Bottom face
 			Vector(0.0f, 1.0f, 0.0f), // Top face

@@ -95,17 +95,6 @@ struct MeshData
 	UINT IndexCount;
 };
 
-enum NormalCollided
-{
-	Top,
-	Bottom,
-	Left,
-	Right,
-	Front,
-	Back,
-	None
-};
-
 enum IntegrationMethods
 {
 	ExplicitEuler,

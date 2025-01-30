@@ -1,4 +1,8 @@
 #include "Collider.h"
+#include "SphereCollider.h"
+#include "AABBCollider.h"
+
+// I am only resolving the game object A collision because the game object B collision will be resolved in another pass.
 
 void Collider::HandleCollision(const GameObject* gameObjectA, const GameObject* gameObjectB)
 {
@@ -6,54 +10,70 @@ void Collider::HandleCollision(const GameObject* gameObjectA, const GameObject* 
 
 	// Get the other object's collision normal
 	Vector collisionNormal = this->GetCollisionNormal(*gameObjectB->GetPhysicsModel()->GetCollider());
-	Vector velocity = gameObjectB->GetPhysicsModel()->GetVelocity();
-	float mass = gameObjectB->GetPhysicsModel()->GetMass();
-	bool SPHEREandAABB = false;
-	bool SPHEREandSPHERE = false;
 
-	NormalCollided collided = None;
+	if ((gameObjectA->GetPhysicsModel()->GetCollider()->GetType() == "SphereCollider" &&
+		gameObjectB->GetPhysicsModel()->GetCollider()->GetType() == "AABB_Collider") ||
+		(gameObjectB->GetPhysicsModel()->GetCollider()->GetType() == "SphereCollider" &&
+			gameObjectA->GetPhysicsModel()->GetCollider()->GetType() == "AABB_Collider")
+		)
+	{
+		if ((gameObjectA->GetPhysicsModel()->GetCollider()->GetType() == "SphereCollider"))
+		{
+			auto sphere = dynamic_cast<const SphereCollider*>(gameObjectA->GetPhysicsModel()->GetCollider());
+			auto aabb = dynamic_cast<const AABBCollider*>(gameObjectB->GetPhysicsModel()->GetCollider());
 
-	if (collisionNormal == Vector(0, 1.0f, 0))
-	{
-		// Top collision
-		collided = Top;
-	}
-	else if (collisionNormal == Vector(0, -1.0f, 0))
-	{
-		// Bottom collision
-		collided = Bottom;
-	}
-	else if (collisionNormal == Vector(1.0f, 0, 0))
-	{
-		// Right collision
-		collided = Right;
-	}
-	else if (collisionNormal == Vector(-1.0f, 0, 0))
-	{
-		// Left collision
-		collided = Left;
-	}
-	else if (collisionNormal == Vector(0, 0, 1.0f))
-	{
-		// Front collision
-		collided = Front;
-	}
-	else if (collisionNormal == Vector(0, 0, -1.0f))
-	{
-		// Back collision
-		collided = Back;
+			gameObjectA->HandleSphereAABB(
+				collisionNormal,
+				gameObjectB->GetPhysicsModel()->GetMass(),
+				gameObjectB->GetPhysicsModel()->GetVelocity(),
+				sphere->GetPosition(),
+				sphere->GetRadius(),
+				aabb->GetMinPoints(),
+				aabb->GetMaxPoints());
+		}
+
+		// I can't get the sphere to push the aabb,
+		// I think its super easy but im so tired right now.
 	}
 
-	if (gameObjectA->GetPhysicsModel()->GetCollider()->GetType() == "SphereCollider" && gameObjectB->GetPhysicsModel()->
-		GetCollider()->GetType() == "AABB_Collider")
+	if (
+		(gameObjectA->GetPhysicsModel()->GetCollider()->GetType() == "SphereCollider" &&
+			gameObjectB->GetPhysicsModel()->GetCollider()->GetType() == "SphereCollider") ||
+		(gameObjectB->GetPhysicsModel()->GetCollider()->GetType() == "SphereCollider" &&
+			gameObjectA->GetPhysicsModel()->GetCollider()->GetType() == "SphereCollider")
+		)
 	{
-		SPHEREandAABB = true;
-	}
-	if (gameObjectA->GetPhysicsModel()->GetCollider()->GetType() == "SphereCollider" && gameObjectB->GetPhysicsModel()->
-		GetCollider()->GetType() == "SphereCollider")
-	{
-		SPHEREandSPHERE = true;
+		auto sphere1 = dynamic_cast<const SphereCollider*>(gameObjectA->GetPhysicsModel()->GetCollider());
+		auto sphere2 = dynamic_cast<const SphereCollider*>(gameObjectB->GetPhysicsModel()->GetCollider());
+
+		gameObjectA->HandleSphereSphere(
+			collisionNormal,
+			gameObjectB->GetPhysicsModel()->GetMass(),
+			gameObjectB->GetPhysicsModel()->GetVelocity(),
+			sphere1->GetRadius(),
+			sphere2->GetRadius(),
+			sphere1->GetPosition(),
+			sphere2->GetPosition());
 	}
 
-	gameObjectA->WallCollided(collided, collisionNormal, mass, velocity, SPHEREandAABB, SPHEREandSPHERE);
+	if (
+		(gameObjectA->GetPhysicsModel()->GetCollider()->GetType() == "AABB_Collider" &&
+			gameObjectB->GetPhysicsModel()->GetCollider()->GetType() == "AABB_Collider") ||
+		(gameObjectB->GetPhysicsModel()->GetCollider()->GetType() == "AABB_Collider" &&
+			gameObjectA->GetPhysicsModel()->GetCollider()->GetType() == "AABB_Collider")
+		)
+	{
+		auto aabb1 = dynamic_cast<const AABBCollider*>(gameObjectA->GetPhysicsModel()->GetCollider());
+		auto aabb2 = dynamic_cast<const AABBCollider*>(gameObjectB->GetPhysicsModel()->GetCollider());
+
+		gameObjectA->HandleAABBABBB(
+			collisionNormal,
+			gameObjectB->GetPhysicsModel()->GetMass(),
+			gameObjectB->GetPhysicsModel()->GetVelocity(),
+			aabb1->GetMinPoints(),
+			aabb1->GetMaxPoints(),
+			aabb2->GetMinPoints(),
+			aabb2->GetMaxPoints()
+		);
+	}
 }

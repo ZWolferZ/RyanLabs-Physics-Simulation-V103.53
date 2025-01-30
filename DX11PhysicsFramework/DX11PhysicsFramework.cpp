@@ -534,7 +534,7 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 
 	auto gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial, GroundTextureRV,
 		Vector(0.0f, 0.0f, 0.0f),
-		Vector(15.0f, 15.0f, 15.0f), Vector(90.0f, 0.0f, 0.0f), 1.0f,
+		Vector(15.0f, 15.0f, 15.0f), Vector(90.0f, 0.0f, 0.0f), 0.0f,
 		false);
 
 	Vector floorMinPoints = gameObject->GetTransform()->GetPosition() - Vector(15.0f, 0.1f, 15.0f);
@@ -617,7 +617,7 @@ void DX11PhysicsFramework::LoadSceneCameraVariables()
 	file >> m_sceneCameraVariables;
 
 	//Camera
-	float aspect = (float)WindowWidth / (float)WindowHeight;
+	float aspect = static_cast<float>(WindowWidth) / static_cast<float>(WindowHeight);
 
 	//////////////////////////////////////
 
@@ -819,7 +819,8 @@ void DX11PhysicsFramework::DetectCollisions() const
 			// BROAD PHASE COLLISION DETECTION (Should not work with plane so we ignore it)
 			if (i != 0)
 			{
-				float distance = _gameObjects[i]->GetTransform()->GetPosition().Magnitude() - _gameObjects[j]->GetTransform()->GetPosition().Magnitude();
+				float distance = _gameObjects[i]->GetTransform()->GetPosition().Magnitude() - _gameObjects[j]->
+					GetTransform()->GetPosition().Magnitude();
 				if (-distance > _broadPhaseDetectionRadius) continue;
 			}
 
@@ -1114,7 +1115,7 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 
 		ImGui::Separator();
 
-		ImGui::Text("Add Force Controls:");
+		ImGui::Text("Add Force Controls: (Use this for collision response testing)");
 		ImGui::SliderFloat("Force to Add", &_addForceNumber, 10.0f, 20.0f);
 		if (ImGui::Button("Add Force Forward (Z-)"))
 		{

@@ -4,6 +4,11 @@
 
 void RigidBodyModel::AddRelativeForce(const Vector& force, const Vector& point, float deltaTime)
 {
+	if (_mass == 0)
+	{
+		return;
+	}
+
 	if (!_tensorSet) SetInertiaTensor();
 
 	Vector torque = Vector::Cross(point, force);

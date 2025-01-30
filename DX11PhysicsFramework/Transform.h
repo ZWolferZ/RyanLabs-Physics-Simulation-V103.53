@@ -66,6 +66,7 @@ private:
 	Quaternion _orientation;
 	Vector _angularVelocity;
 	float _angularDamping = 0.80f;
+	float _depth = 0.0f;
 
 	Vector _originPosition;
 	Vector _originScale;

@@ -14,6 +14,11 @@ PhysicsModel::PhysicsModel(Transform* transform, float mass)
 
 void PhysicsModel::Update(float deltaTime)
 {
+	if (_mass == 0)
+	{
+		return;
+	}
+
 	// Calls the AABB collider update function
 	// Sphere collider does need an update function but the functionality is there I guess
 	if (IsCollideable())

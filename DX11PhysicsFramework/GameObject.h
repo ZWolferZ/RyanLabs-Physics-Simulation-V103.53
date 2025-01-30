@@ -38,8 +38,17 @@ public:
 
 	void Update(float dt) const;
 
-	void WallCollided(NormalCollided collided, const Vector& collisionNormal, float objectBmass,
-		const Vector& objectBVelocitybool, bool SPHEREandAABB, bool SPHEREandSPHERE) const;
+	void HandleAABBABBB(const Vector& collisionNormal, float objectBMass, const Vector& objectBVelocity,
+		const Vector& objectAMin, const Vector& objectAMax, const Vector& objectBMin,
+		const Vector& objectBMax) const;
+
+	void HandleSphereAABB(const Vector& collisionNormal, float objectBMass, const Vector& objectBVelocity,
+		const Vector& objectACenter, float objectARadius, const Vector& objectBMin,
+		const Vector& objectBMax) const;
+
+	void HandleSphereSphere(const Vector& collisionNormal, float objectBMass, const Vector& objectBVelocity,
+		float objectARadius, float objectBRadius, const Vector& objectAPosition,
+		const Vector& objectBPosition) const;
 
 	bool _objectHasCollided = false;
 	bool _collisionEnabled = true;
@@ -57,9 +66,5 @@ protected:
 	float _mass;
 
 private:
-
-	const float _restitution = 0.5f;
-	const float _positionCorrection = 0.004f;
-	const float _spherePositionCorrection = 0.2f;
-	const float _velocityClamp = 0.3f;
+	const float _restitution = 0.2f;
 };

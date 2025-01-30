@@ -77,145 +77,98 @@ void GameObject::Update(const float dt) const
 	}
 }
 
-void GameObject::WallCollided(NormalCollided collided, const Vector& collisionNormal, float objectBmass,
-	const Vector& objectBVelocity, bool SPHEREandAABB, bool SPHEREandSPHERE) const
+// I was going to fold the maths at the start of these functions into a helper function,
+// but my brain stopped working.
+
+// I have been looking at this shit for like 8 hours,
+// this is good enough.
+
+void GameObject::HandleAABBABBB(const Vector& collisionNormal, float objectBMass, const Vector& objectBVelocity,
+	const Vector& objectAMin, const Vector& objectAMax, const Vector& objectBMin,
+	const Vector& objectBMax) const
 {
-	Vector currentVelocity = _physicsModel->GetVelocity();
-	Vector relativeVelocity = currentVelocity - objectBVelocity;
+	if (_physicsModel->GetMass() == 0) { return; }
 
-	float normalVelocity = Vector::Dot(relativeVelocity, collisionNormal);
+	Vector relativeVelocity = _physicsModel->GetVelocity() - objectBVelocity;
 
-	// What the hell is denominator?
-	float denominator = (1.0f / _physicsModel->GetMass()) + (1.0f / objectBmass);
+	// The e constant breaks this for some reason
+	float vj = Vector::Dot(relativeVelocity, collisionNormal);
 
-	float impulseMagnitude = (-(1.0f + _restitution) * normalVelocity) / denominator;
+	float inverseMassA = 1.0f / _physicsModel->GetMass();
+	float inverseMassB = (objectBMass != 0.0f) ? 1.0f / objectBMass : 0.0f;
 
-	Vector impulse = collisionNormal * impulseMagnitude;
+	float j = -(1.0f - _restitution) * vj / (inverseMassA + inverseMassB);
+
+	Vector impulse = collisionNormal * j;
+
+	float overlapX = min(objectAMax.x, objectBMax.x) - max(objectAMin.x, objectBMin.x);
+	float overlapY = min(objectAMax.y, objectBMax.y) - max(objectAMin.y, objectBMin.y);
+	float overlapZ = min(objectAMax.z, objectBMax.z) - max(objectAMin.z, objectBMin.z);
+
+	auto newPosition = Vector(overlapX * collisionNormal.x, overlapY * collisionNormal.y, overlapZ * collisionNormal.z);
+
+	GetTransform()->SetPosition(GetTransform()->GetPosition() + newPosition);
 
 	_physicsModel->ApplyImpulse(impulse);
+}
 
-	switch (collided)
-	{
-	case Top:
-		if (currentVelocity.y < 0)
-		{
-			currentVelocity.y = 0;
+void GameObject::HandleSphereAABB(const Vector& collisionNormal, float objectBMass, const Vector& objectBVelocity,
+	const Vector& objectACenter, float objectARadius, const Vector& objectBMin,
+	const Vector& objectBMax) const
+{
+	if (_physicsModel->GetMass() == 0) { return; }
 
-			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x,
-				this->GetTransform()->GetPosition().y + _positionCorrection,
-				this->GetTransform()->GetPosition().z);
-		}
+	Vector relativeVelocity = _physicsModel->GetVelocity() - objectBVelocity;
 
-		break;
+	float vj = Vector::Dot(relativeVelocity, collisionNormal);
 
-	case Bottom:
-		if (currentVelocity.y > 0)
-		{
-			currentVelocity.y = 0;
+	float inverseMassA = 1.0f / _physicsModel->GetMass();
+	float inverseMassB = (objectBMass != 0.0f) ? 1.0f / objectBMass : 0.0f;
 
-			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x,
-				this->GetTransform()->GetPosition().y - _positionCorrection,
-				this->GetTransform()->GetPosition().z);
-		}
+	float j = -(1.0f - _restitution) * vj / (inverseMassA + inverseMassB);
 
-		break;
+	Vector impulse = collisionNormal * j;
 
-	case Left:
+	auto closestPoint = Vector(
+		max(objectBMin.x, min(objectACenter.x, objectBMax.x)),
+		max(objectBMin.y, min(objectACenter.y, objectBMax.y)),
+		max(objectBMin.z, min(objectACenter.z, objectBMax.z))
+	);
 
-		if (currentVelocity.x > _velocityClamp)
-		{
-			currentVelocity.x = _velocityClamp;
-		}
+	// Clean as fuck vector maths
+	float distance = (objectACenter - closestPoint).Magnitude();
 
-		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x - _positionCorrection,
-			this->GetTransform()->GetPosition().y, this->GetTransform()->GetPosition().z);
+	float penetrationDepth = objectARadius - distance;
 
-		if (SPHEREandAABB)
-		{
-			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x - _spherePositionCorrection,
-				this->GetTransform()->GetPosition().y,
-				this->GetTransform()->GetPosition().z);
-		}
+	Vector newPosition = collisionNormal * penetrationDepth;
 
-		break;
+	GetTransform()->SetPosition(GetTransform()->GetPosition() + newPosition);
 
-	case Right:
-		if (currentVelocity.x < -_velocityClamp)
-		{
-			currentVelocity.x = -_velocityClamp;
-		}
-		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x + _positionCorrection,
-			this->GetTransform()->GetPosition().y, this->GetTransform()->GetPosition().z);
+	_physicsModel->ApplyImpulse(impulse);
+}
 
-		if (SPHEREandAABB)
-		{
-			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x + _spherePositionCorrection,
-				this->GetTransform()->GetPosition().y,
-				this->GetTransform()->GetPosition().z);
-		}
-		break;
+void GameObject::HandleSphereSphere(const Vector& collisionNormal, float objectBMass, const Vector& objectBVelocity,
+	float objectARadius, float objectBRadius, const Vector& objectAPosition,
+	const Vector& objectBPosition) const
+{
+	if (_physicsModel->GetMass() == 0) { return; }
 
-	case Front:
-		if (currentVelocity.z < -_velocityClamp)
-		{
-			currentVelocity.z = -_velocityClamp;
-		}
-		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x, this->GetTransform()->GetPosition().y,
-			this->GetTransform()->GetPosition().z + _positionCorrection);
+	Vector relativeVelocity = _physicsModel->GetVelocity() - objectBVelocity;
 
-		if (SPHEREandAABB)
-		{
-			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x,
-				this->GetTransform()->GetPosition().y,
-				this->GetTransform()->GetPosition().z + _spherePositionCorrection);
-		}
+	float vj = Vector::Dot(relativeVelocity, collisionNormal);
 
-		break;
+	float inverseMassA = 1.0f / _physicsModel->GetMass();
+	float inverseMassB = (objectBMass != 0.0f) ? 1.0f / objectBMass : 0.0f;
 
-	case Back:
-		if (currentVelocity.z > _velocityClamp)
-		{
-			currentVelocity.z = _velocityClamp;
-		}
-		this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x, this->GetTransform()->GetPosition().y,
-			this->GetTransform()->GetPosition().z - _positionCorrection);
+	float j = -(1.0f - _restitution) * vj / (inverseMassA + inverseMassB);
 
-		if (SPHEREandAABB)
-		{
-			this->GetTransform()->SetPosition(this->GetTransform()->GetPosition().x,
-				this->GetTransform()->GetPosition().y,
-				this->GetTransform()->GetPosition().z - _spherePositionCorrection);
-		}
+	Vector impulse = collisionNormal * j;
 
-		break;
+	float distance = (objectAPosition - objectBPosition).Magnitude();
+	float penetrationDepth = (objectARadius + objectBRadius) - distance;
 
-	case None:
-		Debug::Debug_WriteString(GetType() + " : NONE");
-		break;
+	Vector newPosition = collisionNormal * (penetrationDepth * (inverseMassA / (inverseMassA + inverseMassB)));
 
-	default:
-		break;
-	}
-
-	if (SPHEREandSPHERE)
-	{
-		if (currentVelocity.y < 0 || currentVelocity.y > 0)
-		{
-			currentVelocity.y = 0;
-		}
-		if (currentVelocity.x < 0 || currentVelocity.x > 0)
-		{
-			currentVelocity.x = 0;
-		}
-		if (currentVelocity.z < 0 || currentVelocity.z > 0)
-		{
-			currentVelocity.z = 0;
-		}
-	}
-
-	
-		_physicsModel->SetVelocity(currentVelocity);
-		
-	
-	
+	GetTransform()->SetPosition(GetTransform()->GetPosition() + newPosition);
+	_physicsModel->ApplyImpulse(impulse);
 }

@@ -158,14 +158,14 @@ public:
 
 	Vector Zero(Vector vector)
 	{
-		return { x = 0, y = 0, z = 0 };
+		return { x = 0.0f, y = 0.0f, z = 0.0f };
 	}
 
 	void Zero()
 	{
-		x = 0;
-		y = 0;
-		z = 0;
+		x = 0.0f;
+		y = 0.0f;
+		z = 0.0f;
 	}
 
 	/// <summary>
@@ -191,7 +191,7 @@ public:
 		return
 			mag > tol
 			? a / mag
-			: Vector(0, 0, 0); // Super cool ternary expression to check if magnitude is greater than 0
+			: Vector(0.0f, 0.0f, 0.0f); // Super cool ternary expression to check if magnitude is greater than 0
 	}
 
 	Vector Normalise() const
@@ -202,7 +202,7 @@ public:
 		return
 			mag > tol
 			? thisVector / mag
-			: Vector(0, 0, 0); // Super cool ternary expression to check if magnitude is greater than 0
+			: Vector(0.0f, 0.0f, 0.0f); // Super cool ternary expression to check if magnitude is greater than 0
 	}
 
 	/// <summary>
