@@ -568,6 +568,23 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 		_gameObjects.push_back(gameObject);
 	}
 
+	gameObject = new GameObject("HeavyCube", cubeGeometry, shinyMaterial, StoneTextureRV,
+		Vector(-2.0f + (4 * 2.5f), 1.0f, 10.0f),
+		Vector(1.0f, 1.0f, 1.0f), Vector(0.0f, 0.0f, 0.0f), 2.0f, false);
+
+	Vector minPoints = gameObject->GetTransform()->GetPosition() - Vector(1.0f, 1.0f, 1.0f);
+	Vector maxPoints = gameObject->GetTransform()->GetPosition() + Vector(1.0f, 1.0f, 1.0f);
+
+	Collider* collider = new AABBCollider(gameObject->GetTransform(), minPoints, maxPoints);
+
+	gameObject->GetPhysicsModel()->SetCollider(collider);
+
+	gameObject->GetPhysicsModel()->_simulateGravity = true;
+	gameObject->GetPhysicsModel()->_simulateDrag = true;
+	gameObject->GetPhysicsModel()->_simulateFriction = true;
+
+	_gameObjects.push_back(gameObject);
+
 	gameObject = new GameObject("Donut", "Resources\\OBJ\\donut.obj", shinyMaterial, StoneTextureRV, *_device,
 		Vector(-5.0f, 1.0f, 10.0f),
 		Vector(1.0f, 1.0f, 1.0f),
@@ -1186,6 +1203,20 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 		{
 			_gameObjects[objectSelected]->GetPhysicsModel()->AddRelativeForce(
 				Vector(-10, 0, 0), Vector(0, -1, 0), deltaTime);
+		}
+
+		ImGui::Separator();
+		ImGui::Text("Mass Options:");
+		ImGui::Text("Current Mass: %s", to_string(_gameObjects[objectSelected]->GetTransform()->GetMass()).c_str());
+		if (ImGui::Button("Add Mass"))
+		{
+			if (_gameObjects[objectSelected]->GetTransform()->GetMass() < 2.0f)
+				_gameObjects[objectSelected]->GetTransform()->SetMass(_gameObjects[objectSelected]->GetTransform()->GetMass() + 0.1f);
+		}
+		if (ImGui::Button("Remove Mass"))
+		{
+			if (_gameObjects[objectSelected]->GetTransform()->GetMass() > 1.0f)
+				_gameObjects[objectSelected]->GetTransform()->SetMass(_gameObjects[objectSelected]->GetTransform()->GetMass() - 0.1f);
 		}
 	}
 

@@ -14,6 +14,8 @@ PhysicsModel::PhysicsModel(Transform* transform, float mass)
 
 void PhysicsModel::Update(float deltaTime)
 {
+	_mass = _transform->GetMass();
+
 	if (_mass == 0)
 	{
 		return;

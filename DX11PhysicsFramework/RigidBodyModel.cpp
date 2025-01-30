@@ -4,6 +4,12 @@
 
 void RigidBodyModel::AddRelativeForce(const Vector& force, const Vector& point, float deltaTime)
 {
+	if (_mass != _transform->GetMass())
+	{
+		_mass = _transform->GetMass();
+		_tensorSet = false;
+	}
+
 	if (_mass == 0)
 	{
 		return;

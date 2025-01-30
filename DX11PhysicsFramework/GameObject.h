@@ -54,6 +54,7 @@ public:
 	bool _collisionEnabled = true;
 
 protected:
+
 	GameObject* _parent = nullptr;
 
 	string _type;
@@ -63,6 +64,7 @@ protected:
 	Appearance* _appearance = nullptr;
 
 	PhysicsModel* _physicsModel = nullptr;
+
 	float _mass;
 
 private:

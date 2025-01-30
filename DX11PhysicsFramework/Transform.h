@@ -58,6 +58,8 @@ public:
 	XMMATRIX GetWorldMatrix() const { return XMLoadFloat4x4(&_world); }
 	XMMATRIX GetPreviousWorldMatrix() const { return XMLoadFloat4x4(&_previousWorld); }
 	Vector GetPreviousPosition() const { return _previousPosition; }
+	float GetMass() { return _mass; }
+	float SetMass(float newMass) { return _mass = newMass; }
 
 private:
 	Vector _position;
@@ -67,6 +69,7 @@ private:
 	Vector _angularVelocity;
 	float _angularDamping = 0.80f;
 	float _depth = 0.0f;
+	float _mass = 0.0f;
 
 	Vector _originPosition;
 	Vector _originScale;

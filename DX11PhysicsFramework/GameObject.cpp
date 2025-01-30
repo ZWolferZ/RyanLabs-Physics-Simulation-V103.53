@@ -9,6 +9,8 @@ GameObject::GameObject(const string& type, const Geometry& geometry, const Mater
 	_appearance = new Appearance(geometry, textureRV, material);
 	_mass = mass;
 
+	_transform->SetMass(_mass);
+
 	if (isparticle)
 	{
 		_physicsModel = new ParticleModel(_transform, _mass);
@@ -27,6 +29,7 @@ GameObject::GameObject(const string& type, const string& meshpath, const Materia
 	_transform = new Transform(position, rotation, scale, type);
 	_appearance = new Appearance(meshpath, device, textureRV, material);
 	_mass = mass;
+	_transform->SetMass(_mass);
 	if (isparticle)
 	{
 		_physicsModel = new ParticleModel(_transform, _mass);
