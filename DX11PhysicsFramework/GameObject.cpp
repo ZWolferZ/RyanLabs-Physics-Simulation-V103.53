@@ -170,7 +170,7 @@ void GameObject::HandleSphereSphere(const Vector& collisionNormal, float objectB
 	float distance = (objectAPosition - objectBPosition).Magnitude();
 	float penetrationDepth = (objectARadius + objectBRadius) - distance;
 
-	Vector newPosition = collisionNormal * (penetrationDepth * (inverseMassA / (inverseMassA + inverseMassB)));
+	Vector newPosition = collisionNormal * penetrationDepth;
 
 	GetTransform()->SetPosition(GetTransform()->GetPosition() + newPosition);
 	_physicsModel->ApplyImpulse(impulse);

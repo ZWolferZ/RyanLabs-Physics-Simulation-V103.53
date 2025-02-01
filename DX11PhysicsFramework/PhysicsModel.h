@@ -54,7 +54,7 @@ protected:
 	float _airCoefficient = 0.3f; // Air drag coefficient
 	float _fluidDensity = 1.225f; // Air density
 	float _objectArea = 1.0f; // Cross-section area of the object
-	IntegrationMethods _integrationMethod = StormerVerlet; // Set the starting integration method to StormerVerlet
+	IntegrationMethods _integrationMethod = RK4; // Set the starting integration method to RK4
 private:
 	Vector CalculateExplicitEuler(float deltaTime) const;
 	Vector CalculateSemiImplicitEuler(float deltaTime) const;
