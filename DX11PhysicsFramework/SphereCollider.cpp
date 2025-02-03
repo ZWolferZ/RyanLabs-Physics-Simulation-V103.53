@@ -1,5 +1,4 @@
 #include "SphereCollider.h"
-
 #include "AABBCollider.h"
 
 bool SphereCollider::CollidesWith(SphereCollider& other)

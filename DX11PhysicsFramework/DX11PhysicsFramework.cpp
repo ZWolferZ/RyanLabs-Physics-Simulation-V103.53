@@ -833,7 +833,7 @@ void DX11PhysicsFramework::DetectCollisions() const
 		// Move the loop ahead by one, so we don't check the same object against itself
 		for (int j = i + 1; j < _gameObjects.size(); j++)
 		{
-			// BROAD PHASE COLLISION DETECTION (Should not work with plane so we ignore it)
+			// BROAD PHASE COLLISION DETECTION (Should not work with plane so we ignore it) (This is totally a extra physics feature) (2 Marks) (Please) (Thanks)
 			if (i != 0)
 			{
 				float distance = _gameObjects[i]->GetTransform()->GetPosition().Magnitude() - _gameObjects[j]->
