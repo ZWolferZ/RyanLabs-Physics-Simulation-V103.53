@@ -1,11 +1,11 @@
+#pragma once
 #pragma region Includes
 // Include{s}
-#pragma once
 #include "Collider.h"
 #pragma endregion
 
 /// <summary>
-/// Stores and calculates data for axis alligned bounding boxes
+/// Stores and calculates data for axis aligned bounding boxes
 /// </summary>
 class AABBCollider : public Collider
 
@@ -26,9 +26,9 @@ public:
 	/// <summary>
 	/// Creates the AABB from the transform of the object as the center and the minium and maxium points specifed.
 	/// </summary>
-	/// <param name="Transform of the Gameobject"></param>
-	/// <param name="Minimum Points of the bounding box"></param>
-	/// <param name="Maximum Points of the bounding box"></param>
+	/// <param name="transform">Transform of the Gameobject</param>
+	/// <param name="minPoints">Minimum Points of the bounding box</param>
+	/// <param name="maxPoints">Maximum Points of the bounding box</param>
 	AABBCollider(Transform* transform, Vector minPoints, Vector maxPoints) : Collider(transform)
 	{
 		_minPoints = minPoints;
@@ -41,31 +41,34 @@ public:
 		_halfExtents = Vector(dx / 2.0f, dy / 2.0f, dz / 2.0f);
 	}
 
+#pragma region Collider Check Functions
 	/// <summary>
 	/// General base class overider
 	/// </summary>
-	/// <param name="other collider"></param>
+	/// <param name="other">other collider</param>
 	/// /// <returns>True if collision, False if not</returns>
 	bool CollidesWith(Collider& other) override { return other.CollidesWith(*this); }
 
 	/// <summary>
 	/// AABB / Sphere Collider Test
 	/// </summary>
-	/// <param name="other sphere collider"></param>
+	/// <param name="other">other sphere collider</param>
 	/// <returns>True if collision, False if not</returns>
 	bool CollidesWith(SphereCollider& other) override;
 
 	/// <summary>
 	/// AABB / AABB
 	/// </summary>
-	/// <param name="other AABB Collider"></param>
-    /// <returns>True if collision, False if not</returns>
+	/// <param name="other">other AABB Collider</param>
+	/// <returns>True if collision, False if not</returns>
 	bool CollidesWith(AABBCollider& other) override;
+#pragma endregion
 
+#pragma  region GettersandSetters
 	/// <summary>
 	/// Generate the collision normal between AABB's
 	/// </summary>
-	/// <param name="other collider"></param>
+	/// <param name="other">other collider</param>
 	/// <returns>The collision normal</returns>
 	Vector GetCollisionNormal(const Collider& other) override;
 
@@ -80,7 +83,7 @@ public:
 	Vector GetMaxPoints() const { return _maxPoints; }
 
 	/// <summary>
-	/// Return the half extents of the AABB 
+	/// Return the half extents of the AABB
 	/// </summary>
 	Vector GetHalfExtents() const { return _halfExtents; }
 
@@ -89,6 +92,8 @@ public:
 	/// </summary>
 	/// <returns>String of the name of the collider</returns>
 	std::string GetType() const override { return "AABB_Collider"; }
+
+#pragma endregion
 
 	/// <summary>
 	/// Updates the position of the AABB collider
