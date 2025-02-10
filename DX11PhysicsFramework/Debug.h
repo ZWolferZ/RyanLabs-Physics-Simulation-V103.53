@@ -1,10 +1,14 @@
 #pragma once
+#pragma region Includes
+// Include{s}
 #include <windows.h>
 #include <string>
-
+#pragma endregion
 class Debug
 {
 public:
+
+	
 	static void Debug_WriteString(const std::string& message)
 	{
 		OutputDebugStringA((message + "\n").c_str());
