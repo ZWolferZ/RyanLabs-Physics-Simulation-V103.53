@@ -34,7 +34,6 @@ void Collider::HandleCollision(const GameObject* gameObjectA, const GameObject* 
 			};
 
 			gameObjectA->HandleSphereAABB(collisionData);
-				
 		}
 
 		// I can't get the sphere to push the aabb,
@@ -56,22 +55,13 @@ void Collider::HandleCollision(const GameObject* gameObjectA, const GameObject* 
 			collisionData.CollisionNormal = collisionNormal,
 			collisionData.ObjectBMass = gameObjectB->GetPhysicsModel()->GetMass(),
 			collisionData.ObjectBVelocity = gameObjectB->GetPhysicsModel()->GetVelocity(),
-	        collisionData.SphereARadius = sphere1->GetRadius(),
+			collisionData.SphereARadius = sphere1->GetRadius(),
 			collisionData.SphereBRadius = sphere2->GetRadius(),
 			collisionData.SphereACenter = sphere1->GetPosition(),
 			collisionData.SphereBCenter = sphere2->GetPosition()
 		};
-		
 
-
-		gameObjectA->HandleSphereSphere(
-			collisionNormal,
-			gameObjectB->GetPhysicsModel()->GetMass(),
-			gameObjectB->GetPhysicsModel()->GetVelocity(),
-			sphere1->GetRadius(),
-			sphere2->GetRadius(),
-			sphere1->GetPosition(),
-			sphere2->GetPosition());
+		gameObjectA->HandleSphereSphere(collisionData);
 	}
 
 	if (
@@ -84,14 +74,17 @@ void Collider::HandleCollision(const GameObject* gameObjectA, const GameObject* 
 		auto aabb1 = dynamic_cast<const AABBCollider*>(gameObjectA->GetPhysicsModel()->GetCollider());
 		auto aabb2 = dynamic_cast<const AABBCollider*>(gameObjectB->GetPhysicsModel()->GetCollider());
 
-		gameObjectA->HandleAABBABBB(
-			collisionNormal,
-			gameObjectB->GetPhysicsModel()->GetMass(),
-			gameObjectB->GetPhysicsModel()->GetVelocity(),
-			aabb1->GetMinPoints(),
-			aabb1->GetMaxPoints(),
-			aabb2->GetMinPoints(),
-			aabb2->GetMaxPoints()
-		);
+		AABBAABBCollisionManifold collisionData =
+		{
+			collisionData.CollisionNormal = collisionNormal,
+			collisionData.ObjectBMass = gameObjectB->GetPhysicsModel()->GetMass(),
+			collisionData.ObjectBVelocity = gameObjectB->GetPhysicsModel()->GetVelocity(),
+			collisionData.ObjectAMinPoints = aabb1->GetMinPoints(),
+			collisionData.ObjectAMaxPoints = aabb1->GetMaxPoints(),
+			collisionData.ObjectBMinPoints = aabb2->GetMinPoints(),
+			collisionData.ObjectBMaxPoints = aabb2->GetMaxPoints()
+		};
+
+		gameObjectA->HandleAABBABBB(collisionData);
 	}
 }

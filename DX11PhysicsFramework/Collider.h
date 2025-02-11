@@ -11,13 +11,12 @@
 class SphereCollider;
 
 /// <summary>
-/// Forward Declartion of AABB Collider Class 
+/// Forward Declartion of AABB Collider Class
 /// </summary>
 class AABBCollider;
 
-
 /// <summary>
-/// Base Class of the Collider 
+/// Base Class of the Collider
 /// </summary>
 class Collider abstract
 {
@@ -61,10 +60,10 @@ public:
 	virtual bool CollidesWith(AABBCollider& other) = 0;
 
 	/// <summary>
-    /// Identifies the type of collsion that has taken place
-    /// </summary>
-    /// <param name="gameObjectA">The first gameobject collider</param>
-    /// <param name="gameObjectB">The second gameobject collider</param>
+	/// Identifies the type of collsion that has taken place
+	/// </summary>
+	/// <param name="gameObjectA">The first gameobject collider</param>
+	/// <param name="gameObjectB">The second gameobject collider</param>
 	void HandleCollision(const GameObject* gameObjectA, const GameObject* gameObjectB);
 #pragma endregion
 

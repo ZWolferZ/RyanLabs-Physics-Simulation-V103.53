@@ -839,7 +839,7 @@ void DX11PhysicsFramework::DetectCollisions() const
 				if (i != 0)
 				{
 					float distance = _gameObjects[i]->GetTransform()->GetPosition().Magnitude() - _gameObjects[j]->GetTransform()->GetPosition().Magnitude();
-		
+
 					if (-distance > _broadPhaseDetectionRadius) continue;
 				}
 			}
@@ -1225,7 +1225,7 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 	ImGui::End();
 }
 
-void DX11PhysicsFramework::DrawCameraWindow() 
+void DX11PhysicsFramework::DrawCameraWindow()
 {
 	// Camera Window
 	ImGui::SetNextWindowPos(ImVec2(635, 10), ImGuiCond_FirstUseEver);
@@ -1295,8 +1295,6 @@ void DX11PhysicsFramework::DrawObjectSelectWindow()
 	ImGui::Text("Use this Window To Select Objects!");
 	ImGui::NewLine();
 	ImGui::Checkbox("Toggle Broad-Phase Collision Detection", &_toggleBroadPhase);
-	
-
 
 	for (int i = 0; i < _gameObjectSize; i++)
 	{
@@ -1406,7 +1404,6 @@ void DX11PhysicsFramework::Draw(const double alphaScalar)
 	_immediateContext->PSSetConstantBuffers(0, 1, &_constantBuffer);
 	_immediateContext->PSSetSamplers(0, 1, &_samplerLinear);
 
-
 	XMMATRIX currentView = _camera->GetViewMatrix();
 
 	if (_cameraMatrixInterpolation)
@@ -1422,8 +1419,6 @@ void DX11PhysicsFramework::Draw(const double alphaScalar)
 		_cbData.View = XMMatrixTranspose(currentView);
 	}
 
-
-	
 	_cbData.Projection = XMMatrixTranspose(_camera->GetProjectionMatrix());
 
 	_cbData.light = basicLight;
@@ -1432,7 +1427,6 @@ void DX11PhysicsFramework::Draw(const double alphaScalar)
 	// Render all scene objects
 	for (auto gameObject : _gameObjects)
 	{
-		
 		XMMATRIX currentWorld = gameObject->GetTransform()->GetWorldMatrix();
 
 		if (_gameobjectsMatrixInterpolation)
@@ -1448,7 +1442,6 @@ void DX11PhysicsFramework::Draw(const double alphaScalar)
 		{
 			_cbData.World = XMMatrixTranspose(currentWorld);
 		}
-	
 
 		Material material = gameObject->GetAppearance()->GetMaterial();
 

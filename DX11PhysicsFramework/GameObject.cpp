@@ -86,34 +86,31 @@ void GameObject::Update(const float dt) const
 // I have been looking at this shit for like 8 hours,
 // this is good enough.
 
-void GameObject::HandleAABBABBB(const Vector& collisionNormal, float objectBMass, const Vector& objectBVelocity,
-	const Vector& objectAMin, const Vector& objectAMax, const Vector& objectBMin,
-	const Vector& objectBMax) const
+void GameObject::HandleAABBABBB(const AABBAABBCollisionManifold& collisionData) const
 {
 	if (_physicsModel->GetMass() == 0) { return; }
 
-	Vector relativeVelocity = _physicsModel->GetVelocity() - objectBVelocity;
+	Vector relativeVelocity = _physicsModel->GetVelocity() - collisionData.ObjectBVelocity;
 
 	// The e constant breaks this for some reason
-	float vj = Vector::Dot(relativeVelocity, collisionNormal);
+	float vj = Vector::Dot(relativeVelocity, collisionData.CollisionNormal);
 
 	float inverseMassA = 1.0f / _physicsModel->GetMass();
-	float inverseMassB = (objectBMass != 0.0f) ? 1.0f / objectBMass : 0.0f;
+	float inverseMassB = (collisionData.ObjectBMass != 0.0f) ? 1.0f / collisionData.ObjectBMass : 0.0f;
 
 	float j = -(1.0f - _restitution) * vj / (inverseMassA + inverseMassB);
 
-	Vector impulse = collisionNormal * j;
+	Vector impulse = collisionData.CollisionNormal * j;
 
-	float overlapX = min(objectAMax.x, objectBMax.x) - max(objectAMin.x, objectBMin.x);
-	float overlapY = min(objectAMax.y, objectBMax.y) - max(objectAMin.y, objectBMin.y);
-	float overlapZ = min(objectAMax.z, objectBMax.z) - max(objectAMin.z, objectBMin.z);
+	float overlapX = min(collisionData.ObjectAMaxPoints.x, collisionData.ObjectBMaxPoints.x) - max(collisionData.ObjectAMinPoints.x, collisionData.ObjectBMinPoints.x);
+	float overlapY = min(collisionData.ObjectAMaxPoints.y, collisionData.ObjectBMaxPoints.y) - max(collisionData.ObjectAMinPoints.y, collisionData.ObjectBMinPoints.y);
+	float overlapZ = min(collisionData.ObjectAMaxPoints.z, collisionData.ObjectBMaxPoints.z) - max(collisionData.ObjectAMinPoints.z, collisionData.ObjectBMinPoints.z);
 
-	Vector newPosition = Vector(overlapX * collisionNormal.x, overlapY * collisionNormal.y, overlapZ * collisionNormal.z);
+	Vector newPosition = Vector(overlapX * collisionData.CollisionNormal.x, overlapY * collisionData.CollisionNormal.y, overlapZ * collisionData.CollisionNormal.z);
 
 	GetTransform()->SetPosition(GetTransform()->GetPosition() + newPosition);
 
 	_physicsModel->ApplyImpulse(impulse);
-
 }
 
 void GameObject::HandleSphereAABB(const SPHEREAABBCollisionManifold& collisionData) const
@@ -149,27 +146,25 @@ void GameObject::HandleSphereAABB(const SPHEREAABBCollisionManifold& collisionDa
 	_physicsModel->ApplyImpulse(impulse);
 }
 
-void GameObject::HandleSphereSphere(const Vector& collisionNormal, float objectBMass, const Vector& objectBVelocity,
-	float objectARadius, float objectBRadius, const Vector& objectAPosition,
-	const Vector& objectBPosition) const
+void GameObject::HandleSphereSphere(const SPHERESPHERECollisionManifold& collisionData) const
 {
 	if (_physicsModel->GetMass() == 0) { return; }
 
-	Vector relativeVelocity = _physicsModel->GetVelocity() - objectBVelocity;
+	Vector relativeVelocity = _physicsModel->GetVelocity() - collisionData.ObjectBVelocity;
 
-	float vj = Vector::Dot(relativeVelocity, collisionNormal);
+	float vj = Vector::Dot(relativeVelocity, collisionData.CollisionNormal);
 
 	float inverseMassA = 1.0f / _physicsModel->GetMass();
-	float inverseMassB = (objectBMass != 0.0f) ? 1.0f / objectBMass : 0.0f;
+	float inverseMassB = (collisionData.ObjectBMass != 0.0f) ? 1.0f / collisionData.ObjectBMass : 0.0f;
 
 	float j = -(1.0f - _restitution) * vj / (inverseMassA + inverseMassB);
 
-	Vector impulse = collisionNormal * j;
+	Vector impulse = collisionData.CollisionNormal * j;
 
-	float distance = (objectAPosition - objectBPosition).Magnitude();
-	float penetrationDepth = (objectARadius + objectBRadius) - distance;
+	float distance = (collisionData.SphereACenter - collisionData.SphereBCenter).Magnitude();
+	float penetrationDepth = (collisionData.SphereARadius + collisionData.SphereBRadius) - distance;
 
-	Vector newPosition = collisionNormal * penetrationDepth;
+	Vector newPosition = collisionData.CollisionNormal * penetrationDepth;
 
 	GetTransform()->SetPosition(GetTransform()->GetPosition() + newPosition);
 	_physicsModel->ApplyImpulse(impulse);

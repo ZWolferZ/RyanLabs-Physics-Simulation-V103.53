@@ -106,7 +106,13 @@ enum IntegrationMethods
 
 struct AABBAABBCollisionManifold
 {
-
+	Vector CollisionNormal;
+	float ObjectBMass;
+	Vector ObjectBVelocity;
+	Vector ObjectAMinPoints;
+	Vector ObjectAMaxPoints;
+	Vector ObjectBMinPoints;
+	Vector ObjectBMaxPoints;
 };
 
 struct SPHEREAABBCollisionManifold
@@ -118,7 +124,6 @@ struct SPHEREAABBCollisionManifold
 	float SphereRadius;
 	Vector ObjectBMinPoints;
 	Vector ObjectBMaxPoints;
-
 };
 
 struct SPHERESPHERECollisionManifold

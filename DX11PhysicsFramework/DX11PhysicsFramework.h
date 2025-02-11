@@ -75,7 +75,6 @@ class DX11PhysicsFramework
 	float _broadPhaseDetectionRadius = 4.0f;
 	bool _toggleBroadPhase = true;
 
-	
 	bool _gameobjectsMatrixInterpolation = true;
 	bool _cameraMatrixInterpolation = true;
 
