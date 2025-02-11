@@ -660,62 +660,62 @@ void DX11PhysicsFramework::LoadSceneCameraVariables()
 	file.close();
 }
 
-void DX11PhysicsFramework::BasicObjectMovement(float deltaTime, int objectSelected) const
+void DX11PhysicsFramework::BasicObjectMovement(float deltaTime, int _objectSelected) const
 {
 	if (GetAsyncKeyState(VK_NUMPAD5) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Move(Vector(0.0f, 0.0f, -1.0f), deltaTime, _objectMoveSpeed);
+		_gameObjects[_objectSelected]->GetTransform()->Move(Vector(0.0f, 0.0f, -1.0f), deltaTime, _objectMoveSpeed);
 	}
 	if (GetAsyncKeyState(VK_NUMPAD8) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Move(Vector(0.0f, 0.0f, 1.0f), deltaTime, _objectMoveSpeed);
+		_gameObjects[_objectSelected]->GetTransform()->Move(Vector(0.0f, 0.0f, 1.0f), deltaTime, _objectMoveSpeed);
 	}
 	if (GetAsyncKeyState(VK_NUMPAD4) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Move(Vector(-1.0f, 0.0f, 0.0f), deltaTime, _objectMoveSpeed);
+		_gameObjects[_objectSelected]->GetTransform()->Move(Vector(-1.0f, 0.0f, 0.0f), deltaTime, _objectMoveSpeed);
 	}
 	if (GetAsyncKeyState(VK_NUMPAD6) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Move(Vector(1.0f, 0.0f, 0.0f), deltaTime, _objectMoveSpeed);
+		_gameObjects[_objectSelected]->GetTransform()->Move(Vector(1.0f, 0.0f, 0.0f), deltaTime, _objectMoveSpeed);
 	}
 
 	if (GetAsyncKeyState(VK_NUMPAD7) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Move(Vector(0, 1.0f, 0), deltaTime, _objectMoveSpeed);
+		_gameObjects[_objectSelected]->GetTransform()->Move(Vector(0, 1.0f, 0), deltaTime, _objectMoveSpeed);
 	}
 	if (GetAsyncKeyState(VK_NUMPAD9) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Move(Vector(0, -1.0f, 0), deltaTime, _objectMoveSpeed);
+		_gameObjects[_objectSelected]->GetTransform()->Move(Vector(0, -1.0f, 0), deltaTime, _objectMoveSpeed);
 	}
 
 	if (GetAsyncKeyState(VK_NUMPAD1) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Rotate(Vector(1.0f, 0, 0), deltaTime, _objectRotateSpeed);
+		_gameObjects[_objectSelected]->GetTransform()->Rotate(Vector(1.0f, 0, 0), deltaTime, _objectRotateSpeed);
 	}
 
 	if (GetAsyncKeyState(VK_NUMPAD2) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Rotate(Vector(0, 1.0f, 0.0f), deltaTime, _objectRotateSpeed);
+		_gameObjects[_objectSelected]->GetTransform()->Rotate(Vector(0, 1.0f, 0.0f), deltaTime, _objectRotateSpeed);
 	}
 	if (GetAsyncKeyState(VK_NUMPAD3) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Rotate(Vector(0, 0, 1.0f), deltaTime, _objectRotateSpeed);
+		_gameObjects[_objectSelected]->GetTransform()->Rotate(Vector(0, 0, 1.0f), deltaTime, _objectRotateSpeed);
 	}
 	if (GetAsyncKeyState(VK_ADD) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Scale(
+		_gameObjects[_objectSelected]->GetTransform()->Scale(
 			Vector(1.0f, 1.0f, 1.0f), deltaTime, _objectScaleSpeed);
 	}
 
 	if (GetAsyncKeyState(VK_SUBTRACT) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Scale(
+		_gameObjects[_objectSelected]->GetTransform()->Scale(
 			Vector(-1.0f, -1.0f, -1.0f), deltaTime, _objectScaleSpeed);
 	}
 
 	if (GetAsyncKeyState(VK_NUMPAD0) & 0xFFFF)
 	{
-		_gameObjects[objectSelected]->GetTransform()->Reset();
+		_gameObjects[_objectSelected]->GetTransform()->Reset();
 	}
 }
 
@@ -833,14 +833,16 @@ void DX11PhysicsFramework::DetectCollisions() const
 		// Move the loop ahead by one, so we don't check the same object against itself
 		for (int j = i + 1; j < _gameObjects.size(); j++)
 		{
-			// BROAD PHASE COLLISION DETECTION (Should not work with plane so we ignore it) (This is totally a extra physics feature) (2 Marks) (Please) (Thanks)
-			if (i != 0)
+			if (_toggleBroadPhase)
 			{
-				float distance = _gameObjects[i]->GetTransform()->GetPosition().Magnitude() - _gameObjects[j]->
-					GetTransform()->GetPosition().Magnitude();
-				if (-distance > _broadPhaseDetectionRadius) continue;
+				// BROAD PHASE COLLISION DETECTION (Should not work with plane so we ignore it) (This is totally a extra physics feature) (2 Marks) (Please) (Thanks)
+				if (i != 0)
+				{
+					float distance = _gameObjects[i]->GetTransform()->GetPosition().Magnitude() - _gameObjects[j]->GetTransform()->GetPosition().Magnitude();
+		
+					if (-distance > _broadPhaseDetectionRadius) continue;
+				}
 			}
-
 			if (_gameObjects[i]->GetPhysicsModel()->IsCollideable() &&
 				_gameObjects[j]->GetPhysicsModel()->IsCollideable() &&
 				_gameObjects[i]->GetPhysicsModel()->GetCollider()->CollidesWith(
@@ -877,15 +879,15 @@ void DX11PhysicsFramework::GeneralUpdate(float deltaTime)
 	{
 		if (GetAsyncKeyState('0' + i) & 0x0001)
 		{
-			for (bool& j : objectSelected) { j = false; }
-			objectSelected[i] = true;
+			for (bool& j : _objectSelected) { j = false; }
+			_objectSelected[i] = true;
 			Debug::Debug_WriteString("Object " + std::to_string(i) + " Selected");
 		}
 	}
 
 	if (GetAsyncKeyState(VK_MULTIPLY) & 0x0001)
 	{
-		for (bool& j : objectSelected) { j = false; }
+		for (bool& j : _objectSelected) { j = false; }
 		Debug::Debug_WriteString("Objects Deselected");
 	}
 
@@ -896,7 +898,7 @@ void DX11PhysicsFramework::GeneralUpdate(float deltaTime)
 
 	for (int i = 0; i < _gameObjectSize; i++)
 	{
-		if (objectSelected[i])
+		if (_objectSelected[i])
 		{
 			BasicObjectMovement(deltaTime, i);
 			_gameObjects[i]->GetAppearance()->SetTextureRV(SelectedTexture);
@@ -915,7 +917,7 @@ void DX11PhysicsFramework::GeneralUpdate(float deltaTime)
 	}
 }
 
-void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int objectSelected)
+void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int _objectSelected)
 {
 	// Object Movement Control Window
 	ImGui::SetNextWindowPos(ImVec2(1315, 10), ImGuiCond_FirstUseEver);
@@ -927,30 +929,30 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 	ImGui::Separator();
 	ImGui::Text("VELOCITY:");
 	ImGui::Text("Velocity X: %s",
-		std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().x).c_str());
+		std::to_string(_gameObjects[_objectSelected]->GetPhysicsModel()->GetVelocity().x).c_str());
 	ImGui::Text("Velocity Y: %s",
-		std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().y).c_str());
+		std::to_string(_gameObjects[_objectSelected]->GetPhysicsModel()->GetVelocity().y).c_str());
 	ImGui::Text("Velocity Z: %s",
-		std::to_string(_gameObjects[objectSelected]->GetPhysicsModel()->GetVelocity().z).c_str());
+		std::to_string(_gameObjects[_objectSelected]->GetPhysicsModel()->GetVelocity().z).c_str());
 	ImGui::Separator();
 	ImGui::Text("POSITION:");
 	ImGui::Text("Position x: %s",
-		std::to_string(_gameObjects[objectSelected]->GetTransform()->GetPosition().x).c_str());
+		std::to_string(_gameObjects[_objectSelected]->GetTransform()->GetPosition().x).c_str());
 	ImGui::Text("Position y: %s",
-		std::to_string(_gameObjects[objectSelected]->GetTransform()->GetPosition().y).c_str());
+		std::to_string(_gameObjects[_objectSelected]->GetTransform()->GetPosition().y).c_str());
 	ImGui::Text("Position z: %s",
-		std::to_string(_gameObjects[objectSelected]->GetTransform()->GetPosition().z).c_str());
+		std::to_string(_gameObjects[_objectSelected]->GetTransform()->GetPosition().z).c_str());
 	ImGui::Separator();
 	ImGui::Text("ROTATION:");
 	ImGui::Text("Rotation x: %s",
-		std::to_string(_gameObjects[objectSelected]->GetTransform()->GetRotation().x).c_str());
+		std::to_string(_gameObjects[_objectSelected]->GetTransform()->GetRotation().x).c_str());
 	ImGui::Text("Rotation y: %s",
-		std::to_string(_gameObjects[objectSelected]->GetTransform()->GetRotation().y).c_str());
+		std::to_string(_gameObjects[_objectSelected]->GetTransform()->GetRotation().y).c_str());
 	ImGui::Text("Rotation z: %s",
-		std::to_string(_gameObjects[objectSelected]->GetTransform()->GetRotation().z).c_str());
+		std::to_string(_gameObjects[_objectSelected]->GetTransform()->GetRotation().z).c_str());
 	ImGui::Separator();
-	ImGui::Checkbox("Enable Collisions", &_gameObjects[objectSelected]->_collisionEnabled);
-	if (_gameObjects[objectSelected]->_objectHasCollided)
+	ImGui::Checkbox("Enable Collisions", &_gameObjects[_objectSelected]->_collisionEnabled);
+	if (_gameObjects[_objectSelected]->_objectHasCollided)
 	{
 		ImGui::Text("Collided State: True");
 	}
@@ -968,20 +970,20 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 
 	ImGui::Separator();
 
-	if (objectSelected >= 0 && objectSelected < _gameObjectSize)
+	if (_objectSelected >= 0 && _objectSelected < _gameObjectSize)
 	{
 		ImGui::Text("Reset Controls:");
 		if (ImGui::Button("Reset Transform"))
 		{
-			_gameObjects[objectSelected]->GetTransform()->Reset();
+			_gameObjects[_objectSelected]->GetTransform()->Reset();
 		}
 		if (ImGui::Button("Reset Velocity"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.0f, 0.0f, 0.0f));
+			_gameObjects[_objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.0f, 0.0f, 0.0f));
 		}
 		if (ImGui::Button("Reset Acceleration"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.0f, 0.0f));
+			_gameObjects[_objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.0f, 0.0f));
 		}
 
 		ImGui::Text("Movement Controls: (Does NOT work with Collision Response)");
@@ -989,37 +991,37 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 		ImGui::Button("Move Forward (Z-)");
 		if (ImGui::IsItemActive())
 		{
-			_gameObjects[objectSelected]->GetTransform()->Move(Vector(0.0f, 0.0f, -1.0f), deltaTime, _objectMoveSpeed);
+			_gameObjects[_objectSelected]->GetTransform()->Move(Vector(0.0f, 0.0f, -1.0f), deltaTime, _objectMoveSpeed);
 		}
 
 		ImGui::Button("Move Backward (Z+)");
 		if (ImGui::IsItemActive())
 		{
-			_gameObjects[objectSelected]->GetTransform()->Move(Vector(0.0f, 0.0f, 1.0f), deltaTime, _objectMoveSpeed);
+			_gameObjects[_objectSelected]->GetTransform()->Move(Vector(0.0f, 0.0f, 1.0f), deltaTime, _objectMoveSpeed);
 		}
 
 		ImGui::Button("Move Left (X-)");
 		if (ImGui::IsItemActive())
 		{
-			_gameObjects[objectSelected]->GetTransform()->Move(Vector(-1.0f, 0.0f, 0.0f), deltaTime, _objectMoveSpeed);
+			_gameObjects[_objectSelected]->GetTransform()->Move(Vector(-1.0f, 0.0f, 0.0f), deltaTime, _objectMoveSpeed);
 		}
 
 		ImGui::Button("Move Right (X+)");
 		if (ImGui::IsItemActive())
 		{
-			_gameObjects[objectSelected]->GetTransform()->Move(Vector(1.0f, 0.0f, 0.0f), deltaTime, _objectMoveSpeed);
+			_gameObjects[_objectSelected]->GetTransform()->Move(Vector(1.0f, 0.0f, 0.0f), deltaTime, _objectMoveSpeed);
 		}
 
 		ImGui::Button("Move Up (Y+)");
 		if (ImGui::IsItemActive())
 		{
-			_gameObjects[objectSelected]->GetTransform()->Move(Vector(0.0f, 1.0f, 0.0f), deltaTime, _objectMoveSpeed);
+			_gameObjects[_objectSelected]->GetTransform()->Move(Vector(0.0f, 1.0f, 0.0f), deltaTime, _objectMoveSpeed);
 		}
 
 		ImGui::Button("Move Down (Y-)");
 		if (ImGui::IsItemActive())
 		{
-			_gameObjects[objectSelected]->GetTransform()->Move(Vector(0.0f, -1.0f, 0.0f), deltaTime, _objectMoveSpeed);
+			_gameObjects[_objectSelected]->GetTransform()->Move(Vector(0.0f, -1.0f, 0.0f), deltaTime, _objectMoveSpeed);
 		}
 
 		ImGui::Separator();
@@ -1028,21 +1030,21 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 		ImGui::Button("Rotate X");
 		if (ImGui::IsItemActive())
 		{
-			_gameObjects[objectSelected]->GetTransform()->Rotate(Vector(1.0f, 0.0f, 0.0f), deltaTime,
+			_gameObjects[_objectSelected]->GetTransform()->Rotate(Vector(1.0f, 0.0f, 0.0f), deltaTime,
 				_objectRotateSpeed);
 		}
 
 		ImGui::Button("Rotate Y");
 		if (ImGui::IsItemActive())
 		{
-			_gameObjects[objectSelected]->GetTransform()->Rotate(Vector(0.0f, 1.0f, 0.0f), deltaTime,
+			_gameObjects[_objectSelected]->GetTransform()->Rotate(Vector(0.0f, 1.0f, 0.0f), deltaTime,
 				_objectRotateSpeed);
 		}
 
 		ImGui::Button("Rotate Z");
 		if (ImGui::IsItemActive())
 		{
-			_gameObjects[objectSelected]->GetTransform()->Rotate(Vector(0.0f, 0.0f, 1.0f), deltaTime,
+			_gameObjects[_objectSelected]->GetTransform()->Rotate(Vector(0.0f, 0.0f, 1.0f), deltaTime,
 				_objectRotateSpeed);
 		}
 
@@ -1052,13 +1054,13 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 		ImGui::Button("Scale Up");
 		if (ImGui::IsItemActive())
 		{
-			_gameObjects[objectSelected]->GetTransform()->Scale(Vector(1.0f, 1.0f, 1.0f), deltaTime, _objectScaleSpeed);
+			_gameObjects[_objectSelected]->GetTransform()->Scale(Vector(1.0f, 1.0f, 1.0f), deltaTime, _objectScaleSpeed);
 		}
 
 		ImGui::Button("Scale Down");
 		if (ImGui::IsItemActive())
 		{
-			_gameObjects[objectSelected]->GetTransform()->Scale(Vector(-1.0f, -1.0f, -1.0f), deltaTime,
+			_gameObjects[_objectSelected]->GetTransform()->Scale(Vector(-1.0f, -1.0f, -1.0f), deltaTime,
 				_objectScaleSpeed);
 		}
 
@@ -1067,67 +1069,67 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 		ImGui::Text("Constant Velocity Controls:");
 		if (ImGui::Button("Set Velocity Forward (Z-)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.0f, 0.0f, -0.1f));
+			_gameObjects[_objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.0f, 0.0f, -0.1f));
 		}
 
 		if (ImGui::Button("Set Velocity Backward (Z+)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.0f, 0.0f, 0.1f));
+			_gameObjects[_objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.0f, 0.0f, 0.1f));
 		}
 
 		if (ImGui::Button("Set Velocity Left (X-)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->SetVelocity(Vector(-0.1f, 0.0f, 0.0f));
+			_gameObjects[_objectSelected]->GetPhysicsModel()->SetVelocity(Vector(-0.1f, 0.0f, 0.0f));
 		}
 
 		if (ImGui::Button("Set Velocity Right (X+)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.1f, 0.0f, 0.0f));
+			_gameObjects[_objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.1f, 0.0f, 0.0f));
 		}
 
 		if (ImGui::Button("Set Velocity Up (Y+)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.0f, 0.1f, 0.0f));
+			_gameObjects[_objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.0f, 0.1f, 0.0f));
 		}
 
 		if (ImGui::Button("Set Velocity Down (Y-)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.0f, -0.1f, 0.0f));
+			_gameObjects[_objectSelected]->GetPhysicsModel()->SetVelocity(Vector(0.0f, -0.1f, 0.0f));
 		}
 
 		ImGui::Separator();
 
 		ImGui::Text("Constant Acceleration Controls:");
 		ImGui::Checkbox("Switch On Constant Acceleration",
-			&_gameObjects[objectSelected]->GetPhysicsModel()->_constantAcceleration);
+			&_gameObjects[_objectSelected]->GetPhysicsModel()->_constantAcceleration);
 		if (ImGui::Button("Set Acceleration Forward (Z-)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.0f, -0.1f));
+			_gameObjects[_objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.0f, -0.1f));
 		}
 
 		if (ImGui::Button("Set Acceleration Backward (Z+)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.0f, 0.1f));
+			_gameObjects[_objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.0f, 0.1f));
 		}
 
 		if (ImGui::Button("Set Acceleration Left (X-)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(-0.1f, 0.0f, 0.0f));
+			_gameObjects[_objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(-0.1f, 0.0f, 0.0f));
 		}
 
 		if (ImGui::Button("Set Acceleration Right (X+)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.1f, 0.0f, 0.0f));
+			_gameObjects[_objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.1f, 0.0f, 0.0f));
 		}
 
 		if (ImGui::Button("Set Acceleration Up (Y+)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.1f, 0.0f));
+			_gameObjects[_objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, 0.1f, 0.0f));
 		}
 
 		if (ImGui::Button("Set Acceleration Down (Y-)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, -0.1f, 0.0f));
+			_gameObjects[_objectSelected]->GetPhysicsModel()->SetAcceleration(Vector(0.0f, -0.1f, 0.0f));
 		}
 
 		ImGui::Separator();
@@ -1136,100 +1138,101 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 		ImGui::SliderFloat("Force to Add", &_addForceNumber, 10.0f, 20.0f);
 		if (ImGui::Button("Add Force Forward (Z-)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, 0.0f, -_addForceNumber));
+			_gameObjects[_objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, 0.0f, -_addForceNumber));
 		}
 		if (ImGui::Button("Add Force Backward (Z+)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, 0.0f, _addForceNumber));
+			_gameObjects[_objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, 0.0f, _addForceNumber));
 		}
 		if (ImGui::Button("Add Force Left (X-)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(-_addForceNumber, 0.0f, 0.0f));
+			_gameObjects[_objectSelected]->GetPhysicsModel()->AddForce(Vector(-_addForceNumber, 0.0f, 0.0f));
 		}
 		if (ImGui::Button("Add Force Right (X+)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(_addForceNumber, 0.0f, 0.0f));
+			_gameObjects[_objectSelected]->GetPhysicsModel()->AddForce(Vector(_addForceNumber, 0.0f, 0.0f));
 		}
 		if (ImGui::Button("Add Force Up (Y+)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, _addForceNumber, 0.0f));
+			_gameObjects[_objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, _addForceNumber, 0.0f));
 		}
 		if (ImGui::Button("Add Force Down (Y-)"))
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, -_addForceNumber, 0.0f));
+			_gameObjects[_objectSelected]->GetPhysicsModel()->AddForce(Vector(0.0f, -_addForceNumber, 0.0f));
 		}
 
 		ImGui::Separator();
 		ImGui::Text("Simulate Forces:");
-		ImGui::SliderFloat("Gravity Force", &_gameObjects[objectSelected]->GetPhysicsModel()->_gravity.y, -9.81f, 0);
-		ImGui::Checkbox("Simulate Gravity", &_gameObjects[objectSelected]->GetPhysicsModel()->_simulateGravity);
-		ImGui::Checkbox("Simulate Drag", &_gameObjects[objectSelected]->GetPhysicsModel()->_simulateDrag);
-		ImGui::Checkbox("Simulate Friction", &_gameObjects[objectSelected]->GetPhysicsModel()->_simulateFriction);
+		ImGui::SliderFloat("Gravity Force", &_gameObjects[_objectSelected]->GetPhysicsModel()->_gravity.y, -9.81f, 0);
+		ImGui::Checkbox("Simulate Gravity", &_gameObjects[_objectSelected]->GetPhysicsModel()->_simulateGravity);
+		ImGui::Checkbox("Simulate Drag", &_gameObjects[_objectSelected]->GetPhysicsModel()->_simulateDrag);
+		ImGui::Checkbox("Simulate Friction", &_gameObjects[_objectSelected]->GetPhysicsModel()->_simulateFriction);
 		ImGui::Separator();
 
 		ImGui::Text("Rotational Force:");
 		ImGui::Button("Add Relative Force Right (X+)");
 		if (ImGui::IsItemActive())
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->AddRelativeForce(
+			_gameObjects[_objectSelected]->GetPhysicsModel()->AddRelativeForce(
 				Vector(10, 0, 0), Vector(-1, 0, -1), deltaTime);
 		}
 		ImGui::Button("Add Relative Force Left (X-)");
 		if (ImGui::IsItemActive())
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->AddRelativeForce(
+			_gameObjects[_objectSelected]->GetPhysicsModel()->AddRelativeForce(
 				Vector(-10, 0, 0), Vector(-1, 0, -1), deltaTime);
 		}
 		ImGui::Button("Add Relative Force Up (Y+)");
 		if (ImGui::IsItemActive())
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->AddRelativeForce(
+			_gameObjects[_objectSelected]->GetPhysicsModel()->AddRelativeForce(
 				Vector(0, 10, 0), Vector(0, 0, -1), deltaTime);
 		}
 		ImGui::Button("Add Relative Force Down (Y-)");
 		if (ImGui::IsItemActive())
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->AddRelativeForce(
+			_gameObjects[_objectSelected]->GetPhysicsModel()->AddRelativeForce(
 				Vector(0, -10, 0), Vector(0, 0, -1), deltaTime);
 		}
 		ImGui::Button("Add Relative Force Forward (Z+)");
 		if (ImGui::IsItemActive())
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->AddRelativeForce(
+			_gameObjects[_objectSelected]->GetPhysicsModel()->AddRelativeForce(
 				Vector(10, 0, 0), Vector(0, -1, 0), deltaTime);
 		}
 		ImGui::Button("Add Relative Force Backward (Z-)");
 		if (ImGui::IsItemActive())
 		{
-			_gameObjects[objectSelected]->GetPhysicsModel()->AddRelativeForce(
+			_gameObjects[_objectSelected]->GetPhysicsModel()->AddRelativeForce(
 				Vector(-10, 0, 0), Vector(0, -1, 0), deltaTime);
 		}
 
 		ImGui::Separator();
 		ImGui::Text("Mass Options:");
-		ImGui::Text("Current Mass: %s", to_string(_gameObjects[objectSelected]->GetTransform()->GetMass()).c_str());
+		ImGui::Text("Current Mass: %s", to_string(_gameObjects[_objectSelected]->GetTransform()->GetMass()).c_str());
 		if (ImGui::Button("Add Mass"))
 		{
-			if (_gameObjects[objectSelected]->GetTransform()->GetMass() < 2.0f)
-				_gameObjects[objectSelected]->GetTransform()->SetMass(_gameObjects[objectSelected]->GetTransform()->GetMass() + 0.1f);
+			if (_gameObjects[_objectSelected]->GetTransform()->GetMass() < 2.0f)
+				_gameObjects[_objectSelected]->GetTransform()->SetMass(_gameObjects[_objectSelected]->GetTransform()->GetMass() + 0.1f);
 		}
 		if (ImGui::Button("Remove Mass"))
 		{
-			if (_gameObjects[objectSelected]->GetTransform()->GetMass() > 1.0f)
-				_gameObjects[objectSelected]->GetTransform()->SetMass(_gameObjects[objectSelected]->GetTransform()->GetMass() - 0.1f);
+			if (_gameObjects[_objectSelected]->GetTransform()->GetMass() > 1.0f)
+				_gameObjects[_objectSelected]->GetTransform()->SetMass(_gameObjects[_objectSelected]->GetTransform()->GetMass() - 0.1f);
 		}
 	}
 
 	ImGui::End();
 }
 
-void DX11PhysicsFramework::DrawCameraWindow() const
+void DX11PhysicsFramework::DrawCameraWindow() 
 {
 	// Camera Window
 	ImGui::SetNextWindowPos(ImVec2(635, 10), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(300, 208), ImGuiCond_FirstUseEver);
 
 	ImGui::Begin("Camera Statistics");
+
 	ImGui::Text("Camera POSITION:");
 	ImGui::NewLine();
 	ImGui::Text("Camera Position X: %s", std::to_string(_camera->GetPosition().x).c_str());
@@ -1246,7 +1249,7 @@ void DX11PhysicsFramework::DrawCameraWindow() const
 	ImGui::End();
 }
 
-void DX11PhysicsFramework::DrawIntegrationWindow(int objectSelected) const
+void DX11PhysicsFramework::DrawIntegrationWindow(int _objectSelected) const
 {
 	// Integration Window
 	ImGui::SetNextWindowPos(ImVec2(10, 520), ImGuiCond_FirstUseEver);
@@ -1255,7 +1258,7 @@ void DX11PhysicsFramework::DrawIntegrationWindow(int objectSelected) const
 	ImGui::Text("Use this Window To Control Integration!");
 	ImGui::NewLine();
 	ImGui::Text("Current Integration Method: %s",
-		_gameObjects[objectSelected]->GetPhysicsModel()->GetIntegrationMethodName().c_str());
+		_gameObjects[_objectSelected]->GetPhysicsModel()->GetIntegrationMethodName().c_str());
 	ImGui::Text("Select Integration Method:");
 
 	const char* integrationMethods[] = { "Explicit Euler", "Semi-Implicit Euler", "Verlet", "Stormer-Verlet", "RK4" };
@@ -1263,9 +1266,22 @@ void DX11PhysicsFramework::DrawIntegrationWindow(int objectSelected) const
 
 	if (ImGui::Combo("Integration Method", &selectedMethod, integrationMethods, IM_ARRAYSIZE(integrationMethods)))
 	{
-		_gameObjects[objectSelected]->GetPhysicsModel()->SetIntegrationMethod(selectedMethod);
+		_gameObjects[_objectSelected]->GetPhysicsModel()->SetIntegrationMethod(selectedMethod);
 	}
 
+	ImGui::End();
+}
+
+void DX11PhysicsFramework::DrawMatrixInterpolationWindow()
+{
+	// Object Selection Window
+	ImGui::SetNextWindowPos(ImVec2(10, 750), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(450, 100), ImGuiCond_FirstUseEver);
+
+	ImGui::Begin("Matrix Interpolation");
+	ImGui::Text("Use this Window To Change the Matrix Interpolation Type!");
+	ImGui::Checkbox("Toggle GameObject Matrix Interpolation", &_gameobjectsMatrixInterpolation);
+	ImGui::Checkbox("Toggle Camera Matrix Interpolation", &_cameraMatrixInterpolation);
 	ImGui::End();
 }
 
@@ -1278,6 +1294,9 @@ void DX11PhysicsFramework::DrawObjectSelectWindow()
 	ImGui::Begin("Object Selection");
 	ImGui::Text("Use this Window To Select Objects!");
 	ImGui::NewLine();
+	ImGui::Checkbox("Toggle Broad-Phase Collision Detection", &_toggleBroadPhase);
+	
+
 
 	for (int i = 0; i < _gameObjectSize; i++)
 	{
@@ -1289,7 +1308,7 @@ void DX11PhysicsFramework::DrawObjectSelectWindow()
 		}
 		ImGui::Text("Select Object: %d", i);
 
-		if (objectSelected[i])
+		if (_objectSelected[i])
 		{
 			// Green when selected
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
@@ -1306,17 +1325,17 @@ void DX11PhysicsFramework::DrawObjectSelectWindow()
 
 		if (ImGui::Button(label.c_str(), ImVec2(150, 50)))
 		{
-			if (objectSelected[i])
+			if (_objectSelected[i])
 			{
-				objectSelected[i] = false;
+				_objectSelected[i] = false;
 			}
 			else
 			{
-				for (bool& object : objectSelected)
+				for (bool& object : _objectSelected)
 				{
 					object = false;
 				}
-				objectSelected[i] = true;
+				_objectSelected[i] = true;
 			}
 		}
 
@@ -1355,9 +1374,11 @@ void DX11PhysicsFramework::DrawUI()
 
 	DrawCameraWindow();
 
+	DrawMatrixInterpolationWindow();
+
 	for (int i = 0; i < _gameObjectSize; i++)
 	{
-		if (objectSelected[i])
+		if (_objectSelected[i])
 		{
 			DrawObjectMovementControlWindow(deltaTime, i);
 			DrawIntegrationWindow(i);
@@ -1385,14 +1406,24 @@ void DX11PhysicsFramework::Draw(const double alphaScalar)
 	_immediateContext->PSSetConstantBuffers(0, 1, &_constantBuffer);
 	_immediateContext->PSSetSamplers(0, 1, &_samplerLinear);
 
-	// Use alpha scalar to interpolate matrix to get a smoother movement
-	XMMATRIX previousView = _camera->GetPreviousViewMatrix();
+
 	XMMATRIX currentView = _camera->GetViewMatrix();
 
-	XMMATRIX predictedView = alphaScalar * (currentView - previousView);
-	XMMATRIX interpolatedView = previousView + predictedView;
+	if (_cameraMatrixInterpolation)
+	{
+		// Use alpha scalar to interpolate matrix to get a smoother movement
+		XMMATRIX previousView = _camera->GetPreviousViewMatrix();
+		XMMATRIX predictedView = alphaScalar * (currentView - previousView);
+		XMMATRIX interpolatedView = previousView + predictedView;
+		_cbData.View = XMMatrixTranspose(interpolatedView);
+	}
+	else
+	{
+		_cbData.View = XMMatrixTranspose(currentView);
+	}
 
-	_cbData.View = XMMatrixTranspose(interpolatedView);
+
+	
 	_cbData.Projection = XMMatrixTranspose(_camera->GetProjectionMatrix());
 
 	_cbData.light = basicLight;
@@ -1401,14 +1432,23 @@ void DX11PhysicsFramework::Draw(const double alphaScalar)
 	// Render all scene objects
 	for (auto gameObject : _gameObjects)
 	{
-		// Use alpha scalar to interpolate matrix to get a smoother movement
-		XMMATRIX previousWorld = gameObject->GetTransform()->GetPreviousWorldMatrix();
+		
 		XMMATRIX currentWorld = gameObject->GetTransform()->GetWorldMatrix();
 
-		XMMATRIX predictedMatrix = alphaScalar * (currentWorld - previousWorld);
-		XMMATRIX interpolatedMatrix = previousWorld + predictedMatrix;
+		if (_gameobjectsMatrixInterpolation)
+		{
+			// Use alpha scalar to interpolate matrix to get a smoother movement
+			XMMATRIX previousWorld = gameObject->GetTransform()->GetPreviousWorldMatrix();
+			XMMATRIX predictedMatrix = alphaScalar * (currentWorld - previousWorld);
+			XMMATRIX interpolatedMatrix = previousWorld + predictedMatrix;
 
-		_cbData.World = XMMatrixTranspose(interpolatedMatrix);
+			_cbData.World = XMMatrixTranspose(interpolatedMatrix);
+		}
+		else
+		{
+			_cbData.World = XMMatrixTranspose(currentWorld);
+		}
+	
 
 		Material material = gameObject->GetAppearance()->GetMaterial();
 

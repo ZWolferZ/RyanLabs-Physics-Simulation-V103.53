@@ -42,9 +42,7 @@ public:
 		const Vector& objectAMin, const Vector& objectAMax, const Vector& objectBMin,
 		const Vector& objectBMax) const;
 
-	void HandleSphereAABB(const Vector& collisionNormal, float objectBMass, const Vector& objectBVelocity,
-		const Vector& objectACenter, float objectARadius, const Vector& objectBMin,
-		const Vector& objectBMax) const;
+	void HandleSphereAABB(const SPHEREAABBCollisionManifold& collisionData) const;
 
 	void HandleSphereSphere(const Vector& collisionNormal, float objectBMass, const Vector& objectBVelocity,
 		float objectARadius, float objectBRadius, const Vector& objectAPosition,

@@ -103,3 +103,31 @@ enum IntegrationMethods
 	StormerVerlet,
 	RK4
 };
+
+struct AABBAABBCollisionManifold
+{
+
+};
+
+struct SPHEREAABBCollisionManifold
+{
+	Vector CollisionNormal;
+	float ObjectBMass;
+	Vector ObjectBVelocity;
+	Vector SphereCenter;
+	float SphereRadius;
+	Vector ObjectBMinPoints;
+	Vector ObjectBMaxPoints;
+
+};
+
+struct SPHERESPHERECollisionManifold
+{
+	Vector CollisionNormal;
+	float ObjectBMass;
+	Vector ObjectBVelocity;
+	float SphereARadius;
+	float SphereBRadius;
+	Vector SphereACenter;
+	Vector SphereBCenter;
+};

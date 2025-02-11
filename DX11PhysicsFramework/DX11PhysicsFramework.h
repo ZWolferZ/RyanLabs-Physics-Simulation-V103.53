@@ -67,12 +67,17 @@ class DX11PhysicsFramework
 
 	float _runtimeTimer = 0.0f;
 
-	bool objectSelected[8] = {};
-	bool floorCollision = false;
+	bool _objectSelected[8] = {};
+	bool _floorCollision = false;
 	int _gameObjectSize = 0;
 	float deltaTime = 0.0f;
 
 	float _broadPhaseDetectionRadius = 4.0f;
+	bool _toggleBroadPhase = true;
+
+	
+	bool _gameobjectsMatrixInterpolation = true;
+	bool _cameraMatrixInterpolation = true;
 
 	HRESULT CreateWindowHandle(HINSTANCE hInstance, int nCmdShow);
 	HRESULT CreateD3DDevice();
@@ -98,8 +103,9 @@ public:
 	void DrawObjectSelectWindow();
 	void DrawStatsWindow() const;
 	void DrawObjectMovementControlWindow(float deltaTime, int objectSelected);
-	void DrawCameraWindow() const;
+	void DrawCameraWindow();
 	void DrawIntegrationWindow(int objectSelected) const;
+	void DrawMatrixInterpolationWindow();
 	void DrawUI();
 	void Draw(double alphaScalar);
 

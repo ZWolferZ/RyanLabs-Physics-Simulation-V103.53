@@ -22,14 +22,19 @@ void Collider::HandleCollision(const GameObject* gameObjectA, const GameObject* 
 			auto sphere = dynamic_cast<const SphereCollider*>(gameObjectA->GetPhysicsModel()->GetCollider());
 			auto aabb = dynamic_cast<const AABBCollider*>(gameObjectB->GetPhysicsModel()->GetCollider());
 
-			gameObjectA->HandleSphereAABB(
-				collisionNormal,
-				gameObjectB->GetPhysicsModel()->GetMass(),
-				gameObjectB->GetPhysicsModel()->GetVelocity(),
-				sphere->GetPosition(),
-				sphere->GetRadius(),
-				aabb->GetMinPoints(),
-				aabb->GetMaxPoints());
+			SPHEREAABBCollisionManifold collisionData =
+			{
+			collisionData.CollisionNormal = collisionNormal,
+			collisionData.ObjectBMass = gameObjectB->GetPhysicsModel()->GetMass(),
+			collisionData.ObjectBVelocity = gameObjectB->GetPhysicsModel()->GetVelocity(),
+			collisionData.SphereCenter = sphere->GetPosition(),
+			collisionData.SphereRadius = sphere->GetRadius(),
+			collisionData.ObjectBMinPoints = aabb->GetMinPoints(),
+			collisionData.ObjectBMaxPoints = aabb->GetMaxPoints()
+			};
+
+			gameObjectA->HandleSphereAABB(collisionData);
+				
 		}
 
 		// I can't get the sphere to push the aabb,
@@ -45,6 +50,19 @@ void Collider::HandleCollision(const GameObject* gameObjectA, const GameObject* 
 	{
 		auto sphere1 = dynamic_cast<const SphereCollider*>(gameObjectA->GetPhysicsModel()->GetCollider());
 		auto sphere2 = dynamic_cast<const SphereCollider*>(gameObjectB->GetPhysicsModel()->GetCollider());
+
+		SPHERESPHERECollisionManifold collisionData =
+		{
+			collisionData.CollisionNormal = collisionNormal,
+			collisionData.ObjectBMass = gameObjectB->GetPhysicsModel()->GetMass(),
+			collisionData.ObjectBVelocity = gameObjectB->GetPhysicsModel()->GetVelocity(),
+	        collisionData.SphereARadius = sphere1->GetRadius(),
+			collisionData.SphereBRadius = sphere2->GetRadius(),
+			collisionData.SphereACenter = sphere1->GetPosition(),
+			collisionData.SphereBCenter = sphere2->GetPosition()
+		};
+		
+
 
 		gameObjectA->HandleSphereSphere(
 			collisionNormal,
