@@ -1281,9 +1281,13 @@ void DX11PhysicsFramework::DrawObjectSelectWindow()
 
 	for (int i = 0; i < _gameObjectSize; i++)
 	{
-		ImGui::Text("Select Object: %d", i);
-
 		std::string label = _gameObjects[i]->GetType() + " " + std::to_string(i);
+
+		if (label == "Floor 0")
+		{
+			continue;
+		}
+		ImGui::Text("Select Object: %d", i);
 
 		if (objectSelected[i])
 		{
