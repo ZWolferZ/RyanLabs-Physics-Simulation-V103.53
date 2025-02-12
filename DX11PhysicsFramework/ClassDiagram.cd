@@ -1,144 +1,179 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="AABBCollider" Collapsed="true">
+    <Position X="4.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AASAAAAAAAAAABAAAAAIBAAAQAAACAEUUAAIAAAABAA=</HashCode>
+      <FileName>AABBCollider.h</FileName>
+    </TypeIdentifier>
+  </Class>
   <Class Name="Appearance" Collapsed="true">
-    <Position X="6" Y="2" Width="1.5" />
+    <Position X="9.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAJEAAAAIAAgAAAEAAAAAIAgAQAgAACAAAAAAAAAA=</HashCode>
       <FileName>Appearance.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Camera" Collapsed="true">
-    <Position X="7.75" Y="2" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAACQQxAgCCwBBAAEQAAAASAAKQAQggABAIAICEUA5A=</HashCode>
-      <FileName>Camera.h</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="Collider" Collapsed="true">
-    <Position X="1.25" Y="5" Width="1.5" />
+    <Position X="6" Y="4.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAQAAAAACAAAAAAAQAABAAAQAAAAAAQAAAAAAAAAAA=</HashCode>
+      <HashCode>AAQQAAAAACAAAAAAAQAABAAAQAAAAAEQAAAAAAAAAAA=</HashCode>
       <FileName>Collider.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Debug" Collapsed="true">
-    <Position X="9.5" Y="2" Width="1.5" />
+    <Position X="13" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>BAIAAAAAAABAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAQ=</HashCode>
       <FileName>Debug.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="DX11PhysicsFramework" Collapsed="true">
-    <Position X="6" Y="3" Width="1.5" />
+    <Position X="14.75" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>xC5MgBEIlAUCAyBCASEcQwCRCUGEgEggFABoBDYgQQA=</HashCode>
+      <HashCode>xC9cgBEIlAUCE6BCYSEcQwDRDUGEgUghFABoADZwQQA=</HashCode>
       <FileName>DX11PhysicsFramework.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="GameObject" Collapsed="true">
-    <Position X="7.75" Y="3" Width="1.5" />
+  <Class Name="Camera" Collapsed="true">
+    <Position X="11.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>ABQAAAAQAAEAAAQAAQBAIAAQAAAAAAEACEAAAAMAAAA=</HashCode>
+      <HashCode>AAACQQxAgCCwBBAAEQAAAASAAKQAQggABAIAICEUA5A=</HashCode>
+      <FileName>Camera.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GameObject" Collapsed="true">
+    <Position X="9.5" Y="2.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABQAAAAQAgEAAAQAAQBAJAAQAgAAAAEACEACAAMgAQA=</HashCode>
       <FileName>GameObject.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="ParticleModel" Collapsed="true">
-    <Position X="1.25" Y="3.25" Width="1.5" />
+    <Position X="4.75" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <HashCode>ABQEAAAAAIAABAAAAAAAAAAAAAAAAEAAAAACAAAAAAA=</HashCode>
       <FileName>ParticleModel.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="PhysicsModel" Collapsed="true">
-    <Position X="2.5" Y="2" Width="1.5" />
+    <Position X="6" Y="1.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQEAAEERAIAAAAACQIBAAAQAABAAEgAQlAAJQQAAQU=</HashCode>
+      <HashCode>ABQEAAEERIIAAAAACYIBgAAQAhBAEEgAQlIKNYQAAQU=</HashCode>
       <FileName>PhysicsModel.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="RigidBodyModel" Collapsed="true">
-    <Position X="3.5" Y="3.25" Width="1.5" />
+    <Position X="7" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>ABAEAAAIAICAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAIA=</HashCode>
       <FileName>RigidBodyModel.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SphereCollider" Collapsed="true">
-    <Position X="1.25" Y="6.25" Width="1.5" />
+    <Position X="7" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAACAAAAAABAAAABAAAQAAAAAAAAAAAAAgAAAA=</HashCode>
+      <HashCode>AAQAAAAACAAAAAABAAAABAAAQAAAAAEAAAAAAAgAAAA=</HashCode>
       <FileName>SphereCollider.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Timer" Collapsed="true">
-    <Position X="9.5" Y="3" Width="1.5" />
+    <Position X="11.25" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAgAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAEQAA=</HashCode>
       <FileName>Timer.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Transform" Collapsed="true">
-    <Position X="6" Y="4" Width="1.5" />
+    <Position X="13" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>IAQAAAAIEKCABEAQAAIAAAQAEAAAgggAIAAEghAEAGA=</HashCode>
+      <HashCode>IAQIAAAIEKCALEhAAAIQAAQAEAARggkAIBAEghAEEWA=</HashCode>
       <FileName>Transform.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Vector" Collapsed="true">
-    <Position X="7.75" Y="4" Width="1.5" />
+    <Position X="14.75" Y="2.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAQAACQAAAAAAAEDiAwEAAAA=</HashCode>
       <FileName>Vector.h</FileName>
     </TypeIdentifier>
   </Class>
   <Struct Name="SurfaceInfo" Collapsed="true">
-    <Position X="6" Y="7.25" Width="1.5" />
+    <Position X="11.25" Y="5.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAIAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAABAAA=</HashCode>
       <FileName>Structures.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Light" Collapsed="true">
-    <Position X="9.5" Y="5.25" Width="1.5" />
+    <Position X="14.75" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AEAAAAAAYAAAAAAAAAgAAAAAAAAAAAAAAAAAAAQAAAA=</HashCode>
       <FileName>Structures.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="ConstantBuffer" Collapsed="true">
-    <Position X="6" Y="5.25" Width="1.5" />
+    <Position X="11.25" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>QAAAAAAAEBAAAAAAAAQAAAAAAAIBAAAAAAAAAAAQAAA=</HashCode>
       <FileName>Structures.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Geometry" Collapsed="true">
-    <Position X="7.75" Y="5.25" Width="1.5" />
+    <Position X="13" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAQAAAAAAAAAAAAAAAAAAAAABAAIAQAAAAACAAAAAA=</HashCode>
       <FileName>Structures.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="Material" Collapsed="true">
-    <Position X="6" Y="6.25" Width="1.5" />
+    <Position X="9.5" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>QAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAABAAAA=</HashCode>
       <FileName>Structures.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="SimpleVertex" Collapsed="true">
-    <Position X="9.5" Y="6.25" Width="1.5" />
+    <Position X="13" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAACIAAAAAAAgAABAAAA=</HashCode>
       <FileName>Structures.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="MeshData" Collapsed="true">
-    <Position X="7.75" Y="6.25" Width="1.5" />
+    <Position X="11.25" Y="4.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAgAAAAAAAAAAAAAAEAAAAQAAIAAAAAAAAAAAEAA=</HashCode>
       <FileName>Structures.h</FileName>
     </TypeIdentifier>
   </Struct>
+  <Struct Name="AABBAABBCollisionManifold" Collapsed="true">
+    <Position X="9.5" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BRAAAAAAQAAAAAAAAAgAAAAAAIAAIAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Structures.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="SPHEREAABBCollisionManifold" Collapsed="true">
+    <Position X="14.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>hRAAAAAAQAAAAAAAAAgAAAAAAAAAAAAAAAAAAIAAAAA=</HashCode>
+      <FileName>Structures.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Struct Name="SPHERESPHERECollisionManifold" Collapsed="true">
+    <Position X="9.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAQAAEAAAAAAgAAAAABgAAAAAACAAAAAAAAAA=</HashCode>
+      <FileName>Structures.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="IntegrationMethods" Collapsed="true">
+    <Position X="9.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAABAAAAAAgAAAAAAAAABAAAIAAAAAA=</HashCode>
+      <FileName>Structures.h</FileName>
+    </TypeIdentifier>
+  </Enum>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

@@ -1,4 +1,6 @@
 #pragma once
+#pragma region Include Hell
+// The examiners when they see the includes on this file: https://www.youtube.com/watch?v=-nQn9UkHS4w
 #include <cstring>
 #include <d3d11.h>
 #include <directxmath.h>
@@ -22,10 +24,14 @@
 #include "imgui_impl_dx11.h"
 #include <windowsx.h>
 #include "Quaternion.h"
+#pragma endregion
 
 using namespace DirectX;
 using namespace std;
 
+/// <summary>
+/// Holds the surface lighting information for the surface.
+/// </summary>
 struct SurfaceInfo
 {
 	XMFLOAT4 AmbientMtrl;
@@ -33,6 +39,9 @@ struct SurfaceInfo
 	XMFLOAT4 SpecularMtrl;
 };
 
+/// <summary>
+/// Holds light data.
+/// </summary>
 struct Light
 {
 	XMFLOAT4 AmbientLight;
@@ -43,6 +52,9 @@ struct Light
 	XMFLOAT3 LightVecW;
 };
 
+/// <summary>
+/// Holds a buffer of information to pass into the shader.
+/// </summary>
 struct ConstantBuffer
 {
 	XMMATRIX World;
@@ -57,6 +69,9 @@ struct ConstantBuffer
 	float HasTexture;
 };
 
+/// <summary>
+/// Holds the geometry information for the object.
+/// </summary>
 struct Geometry
 {
 	ID3D11Buffer* vertexBuffer;
@@ -67,6 +82,9 @@ struct Geometry
 	UINT vertexBufferOffset;
 };
 
+/// <summary>
+/// Holds the surface lighting information for the object.
+/// </summary>
 struct Material
 {
 	XMFLOAT4 diffuse;
@@ -74,6 +92,9 @@ struct Material
 	XMFLOAT4 specular;
 };
 
+/// <summary>
+/// Hold the basic vertex information.
+/// </summary>
 struct SimpleVertex
 {
 	XMFLOAT3 Pos;
@@ -86,6 +107,9 @@ struct SimpleVertex
 	};
 };
 
+/// <summary>
+/// Hold the meshdata for a object.
+/// </summary>
 struct MeshData
 {
 	ID3D11Buffer* VertexBuffer;
@@ -95,6 +119,9 @@ struct MeshData
 	UINT IndexCount;
 };
 
+/// <summary>
+/// Stores the types of integration methods.
+/// </summary>
 enum IntegrationMethods
 {
 	ExplicitEuler,
@@ -104,6 +131,9 @@ enum IntegrationMethods
 	RK4
 };
 
+/// <summary>
+/// Stores the collision data for a AABB-AABB collision.
+/// </summary>
 struct AABBAABBCollisionManifold
 {
 	Vector CollisionNormal;
@@ -115,6 +145,9 @@ struct AABBAABBCollisionManifold
 	Vector ObjectBMaxPoints;
 };
 
+/// <summary>
+/// Stores the collision data for a Sphere-AABB collision.
+/// </summary>
 struct SPHEREAABBCollisionManifold
 {
 	Vector CollisionNormal;
@@ -126,6 +159,9 @@ struct SPHEREAABBCollisionManifold
 	Vector ObjectBMaxPoints;
 };
 
+/// <summary>
+/// Stores the collision data for a Sphere-Sphere collision.
+/// </summary>
 struct SPHERESPHERECollisionManifold
 {
 	Vector CollisionNormal;

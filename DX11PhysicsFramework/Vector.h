@@ -1,8 +1,16 @@
 #pragma once
+#pragma region Includes
+// Include{s}
 #include <cmath>
+#pragma endregion
+
+// It's a vector class that I have created, I am not going to add XML comments or regions, use your imagination.
 
 constexpr float tol = 0.0001f;
 
+/// <summary>
+/// This is my own vector class that I have created myself , but it's a piece of shit so this is how I feel : https://www.youtube.com/watch?v=LVuzw5u_kLQ
+/// </summary>
 class Vector
 {
 public:

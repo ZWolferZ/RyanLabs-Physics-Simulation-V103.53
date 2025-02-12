@@ -1,14 +1,21 @@
+#pragma region Includes
+// Include{s}
 #include "AABBCollider.h"
 #include "SphereCollider.h"
+#pragma endregion
+
+#pragma region Collision Dectection
 
 bool AABBCollider::CollidesWith(SphereCollider& other)
 {
-	auto closestPoint = Vector(
+	// Get the closest point on the AABB to the sphere
+	Vector closestPoint = Vector(
 		max(GetMinPoints().x, min(other.GetPosition().x, GetMaxPoints().x)),
 		max(GetMinPoints().y, min(other.GetPosition().y, GetMaxPoints().y)),
 		max(GetMinPoints().z, min(other.GetPosition().z, GetMaxPoints().z))
 	);
 
+	// Get the distance between the closest point and the sphere
 	Vector distance = other.GetPosition() - closestPoint;
 	float distance2 = distance.Magnitude() * distance.Magnitude();
 
@@ -29,6 +36,10 @@ bool AABBCollider::CollidesWith(AABBCollider& other)
 		(abs(centerA.y - centerB.y) <= (halfExtentsA.y + halfExtentsB.y)) &&
 		(abs(centerA.z - centerB.z) <= (halfExtentsA.z + halfExtentsB.z));
 }
+
+#pragma endregion
+
+#pragma region Collision Normal
 
 Vector AABBCollider::GetCollisionNormal(const Collider& other)
 {
@@ -79,18 +90,23 @@ Vector AABBCollider::GetCollisionNormal(const Collider& other)
 	}
 	else if (auto otherSphere = dynamic_cast<const SphereCollider*>(&other))
 	{
-		// AABB to Sphere
-		auto closestPoint = Vector(
+		// Closest point on the AABB to the sphere
+		Vector closestPoint = Vector(
 			max(_minPoints.x, min(otherSphere->GetPosition().x, _minPoints.x + _halfExtents.x * 2.0f)),
 			max(_minPoints.y, min(otherSphere->GetPosition().y, _minPoints.y + _halfExtents.y * 2.0f)),
 			max(_minPoints.z, min(otherSphere->GetPosition().z, _minPoints.z + _halfExtents.z * 2.0f))
 		);
 
+		// Get the normal
 		normal = otherSphere->GetPosition() - closestPoint;
 	}
 
 	return normal.Normalise();
 }
+
+#pragma endregion
+
+#pragma region Update Method
 
 void AABBCollider::Update()
 {
@@ -98,8 +114,11 @@ void AABBCollider::Update()
 	_minPoints = _transform->GetPosition() + _minExtent;
 	_maxPoints = _minPoints + Vector(dx, dy, dz);
 
+	// Recalculate the half extents
 	dx = _maxPoints.x - _minPoints.x;
 	dy = _maxPoints.y - _minPoints.y;
 	dz = _maxPoints.z - _minPoints.z;
 	_halfExtents = Vector(dx / 2.0f, dy / 2.0f, dz / 2.0f);
 }
+
+#pragma endregion
