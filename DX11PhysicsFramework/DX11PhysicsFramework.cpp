@@ -585,7 +585,7 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 
 	_gameObjects.push_back(gameObject);
 
-	gameObject = new GameObject("Donut", "Resources\\OBJ\\donut.obj", shinyMaterial, StoneTextureRV, *_device,
+	gameObject = new GameObject("Sphere", "Resources\\OBJ\\Sphere.obj", shinyMaterial, StoneTextureRV, *_device,
 		Vector(-5.0f, 1.0f, 10.0f),
 		Vector(1.0f, 1.0f, 1.0f),
 		Vector(0.0f, 0.0f, 0.0f), 1.0f, false);
@@ -600,7 +600,7 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 
 	_gameObjects.push_back(gameObject);
 
-	gameObject = new GameObject("Donut", "Resources\\OBJ\\donut.obj", shinyMaterial, StoneTextureRV, *_device,
+	gameObject = new GameObject("Sphere", "Resources\\OBJ\\Sphere.obj", shinyMaterial, StoneTextureRV, *_device,
 		Vector(-9.0f, 1.0f, 10.0f),
 		Vector(1.0f, 1.0f, 1.0f),
 		Vector(0.0f, 0.0f, 0.0f), 1.0f, false);
@@ -616,6 +616,15 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 	_gameObjects.push_back(gameObject);
 
 	_gameObjectSize = _gameObjects.size();
+
+	for (auto i = 0; i < 100; i++)
+	{
+		gameObject = new GameObject("Particle", "Resources\\OBJ\\Sphere.obj", shinyMaterial, StoneTextureRV, *_device,
+			Vector(-2.0f, 3.0f, 10.0f),
+			Vector(0.2f, 0.2f, 0.2f), Vector(0.0f, 0.0f, 0.0f), 1.0f, true);
+
+		_particles.push_back(gameObject);
+	}
 
 	return S_OK;
 }
@@ -727,6 +736,11 @@ DX11PhysicsFramework::~DX11PhysicsFramework()
 		delete go;
 	}
 
+	for each(GameObject * pa in _particles)
+	{
+		delete pa;
+	}
+
 	if (_immediateContext)_immediateContext->Release();
 
 	if (_frameBufferView)_frameBufferView->Release();
@@ -808,6 +822,11 @@ void DX11PhysicsFramework::PhysicsUpdate() const
 	{
 		gameObject->Update(FPS60);
 	}
+
+	for (auto particle : _particles)
+	{
+		particle->Update(FPS60);
+	}
 }
 
 // This function killed me to figure out, but essentially it's a nested for loop that checks for collisions between all objects,
@@ -873,46 +892,81 @@ void DX11PhysicsFramework::DetectCollisions() const
 
 void DX11PhysicsFramework::GeneralUpdate(float deltaTime)
 {
-	_camera->HandleMovement(deltaTime);
-
-	for (int i = 0; i < _gameObjectSize; i++)
+	if (!_mainMenu)
 	{
-		if (GetAsyncKeyState('0' + i) & 0x0001)
+		_camera->HandleMovement(deltaTime);
+
+		for (int i = 0; i < _gameObjectSize; i++)
+		{
+			if (GetAsyncKeyState('0' + i) & 0x0001)
+			{
+				for (bool& j : _objectSelected) { j = false; }
+				_objectSelected[i] = true;
+				Debug::Debug_WriteString("Object " + std::to_string(i) + " Selected");
+			}
+		}
+
+		if (GetAsyncKeyState(VK_MULTIPLY) & 0x0001)
 		{
 			for (bool& j : _objectSelected) { j = false; }
-			_objectSelected[i] = true;
-			Debug::Debug_WriteString("Object " + std::to_string(i) + " Selected");
+			Debug::Debug_WriteString("Objects Deselected");
+		}
+
+		for (int i = 0; i < _gameObjectSize; i++)
+		{
+			if (_objectSelected[i])
+			{
+				BasicObjectMovement(deltaTime, i);
+				_gameObjects[i]->GetAppearance()->SetTextureRV(SelectedTexture);
+			}
+			else
+			{
+				if (_gameObjects[i]->GetType() == "Floor")
+				{
+					_gameObjects[i]->GetAppearance()->SetTextureRV(GroundTextureRV);
+				}
+				else
+				{
+					_gameObjects[i]->GetAppearance()->SetTextureRV(StoneTextureRV);
+				}
+			}
 		}
 	}
-
-	if (GetAsyncKeyState(VK_MULTIPLY) & 0x0001)
+	else
 	{
-		for (bool& j : _objectSelected) { j = false; }
-		Debug::Debug_WriteString("Objects Deselected");
+		static bool cameraSwitch = false;
+
+		if (!cameraSwitch)
+		{
+			_camera->AddToPosition(0.0001f, 0.0f, 0.0001f);
+
+			if (_camera->GetPosition().x > 8.0f)
+			{
+				_camera->SetPosition(_camera->m_startingPosition.x, _camera->m_startingPosition.y, _camera->m_startingPosition.z);
+				cameraSwitch = true;
+			}
+		}
+		else
+		{
+			_camera->AddToPosition(-0.0001f, 0.0f, 0.0001f);
+			if (_camera->GetPosition().x < -8.0f)
+			{
+				_camera->SetPosition(_camera->m_startingPosition.x, _camera->m_startingPosition.y, _camera->m_startingPosition.z);
+				cameraSwitch = false;
+			}
+		}
 	}
 
 	if (GetAsyncKeyState(VK_ESCAPE) & 0x0001)
 	{
-		PostQuitMessage(0);
-	}
-
-	for (int i = 0; i < _gameObjectSize; i++)
-	{
-		if (_objectSelected[i])
+		if (_mainMenu)
 		{
-			BasicObjectMovement(deltaTime, i);
-			_gameObjects[i]->GetAppearance()->SetTextureRV(SelectedTexture);
+			PostQuitMessage(0);
 		}
 		else
 		{
-			if (_gameObjects[i]->GetType() == "Floor")
-			{
-				_gameObjects[i]->GetAppearance()->SetTextureRV(GroundTextureRV);
-			}
-			else
-			{
-				_gameObjects[i]->GetAppearance()->SetTextureRV(StoneTextureRV);
-			}
+			_mainMenu = true;
+			_camera->SetPosition(_camera->m_startingPosition.x, _camera->m_startingPosition.y, _camera->m_startingPosition.z);
 		}
 	}
 }
@@ -1285,6 +1339,74 @@ void DX11PhysicsFramework::DrawMatrixInterpolationWindow()
 	ImGui::End();
 }
 
+void DX11PhysicsFramework::DrawParticleSystemWindow()
+{
+	// Particle System Window
+	ImGui::SetNextWindowPos(ImVec2(10, 850), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(450, 100), ImGuiCond_FirstUseEver);
+	ImGui::Begin("Particle System");
+	ImGui::Text("Use this Window To Control the Particle System!");
+	ImGui::Checkbox("Toggle Particle System", &_toggleParticleSystem);
+	ImGui::SliderFloat("Lifetime", &_particleTimeAlive, 5.0f, 50.0f);
+	for (auto particle : _particles)
+	{
+		particle->GetPhysicsModel()->SetResetTime(_particleTimeAlive);
+	}
+
+	ImGui::End();
+}
+
+void DX11PhysicsFramework::DrawMainMenuUI()
+{
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
+	ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(225, 150), ImGuiCond_FirstUseEver);
+
+	ImGui::Begin("Main Menu", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+
+	ImVec2 buttonSize = ImVec2(200, 50);
+
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 1.0f, 0.0f, 1.0f));
+
+	if (ImGui::Button("Start Simulation", buttonSize))
+	{
+		_mainMenu = false;
+		_camera->SetPosition(_camera->m_startingPosition.x, _camera->m_startingPosition.y, _camera->m_startingPosition.z);
+	}
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+	if (ImGui::Button("Exit", buttonSize))
+	{
+		PostQuitMessage(0);
+	}
+
+	ImGui::PopStyleColor();
+	ImGui::PopStyleColor();
+	ImGui::End();
+
+	ImGui::Render();
+	ImDrawData* draw_data = ImGui::GetDrawData();
+	ImGui_ImplDX11_RenderDrawData(draw_data);
+}
+
+void DX11PhysicsFramework::DrawBackToMainMenuWindow()
+{
+	ImGui::SetNextWindowPos(ImVec2(1670, 900), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(225, 90), ImGuiCond_FirstUseEver);
+	ImGui::Begin("Back To Main Menu", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
+	ImVec2 buttonSize = ImVec2(200, 50);
+	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
+	if (ImGui::Button("Back To Main Menu", buttonSize))
+	{
+		_mainMenu = true;
+		_camera->SetPosition(_camera->m_startingPosition.x, _camera->m_startingPosition.y, _camera->m_startingPosition.z);
+	}
+	ImGui::PopStyleColor();
+	ImGui::End();
+}
+
 void DX11PhysicsFramework::DrawObjectSelectWindow()
 {
 	// Object Selection Window
@@ -1373,6 +1495,10 @@ void DX11PhysicsFramework::DrawUI()
 	DrawCameraWindow();
 
 	DrawMatrixInterpolationWindow();
+
+	DrawParticleSystemWindow();
+
+	DrawBackToMainMenuWindow();
 
 	for (int i = 0; i < _gameObjectSize; i++)
 	{
@@ -1471,8 +1597,63 @@ void DX11PhysicsFramework::Draw(const double alphaScalar)
 		gameObject->GetAppearance()->Draw(_immediateContext);
 	}
 
-	DrawUI();
+	if (_toggleParticleSystem)
+	{
+		for (auto particle : _particles)
+		{
+			XMMATRIX currentWorld = particle->GetTransform()->GetWorldMatrix();
 
+			if (_gameobjectsMatrixInterpolation)
+			{
+				// Use alpha scalar to interpolate matrix to get a smoother movement
+				XMMATRIX previousWorld = particle->GetTransform()->GetPreviousWorldMatrix();
+				XMMATRIX predictedMatrix = alphaScalar * (currentWorld - previousWorld);
+				XMMATRIX interpolatedMatrix = previousWorld + predictedMatrix;
+
+				_cbData.World = XMMatrixTranspose(interpolatedMatrix);
+			}
+			else
+			{
+				_cbData.World = XMMatrixTranspose(currentWorld);
+			}
+
+			Material material = particle->GetAppearance()->GetMaterial();
+
+			// Copy material to shader
+			_cbData.surface.AmbientMtrl = material.ambient;
+			_cbData.surface.DiffuseMtrl = material.diffuse;
+			_cbData.surface.SpecularMtrl = material.specular;
+
+			// Set texture
+			if (particle->GetAppearance()->_hasTexture)
+			{
+				_immediateContext->PSSetShaderResources(0, 1, particle->GetAppearance()->GetTextureRV());
+				_cbData.HasTexture = 1.0f;
+			}
+			else
+			{
+				_cbData.HasTexture = 0.0f;
+			}
+
+			// Write constant buffer data onto GPU
+			D3D11_MAPPED_SUBRESOURCE mappedSubresource;
+			_immediateContext->Map(_constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
+			memcpy(mappedSubresource.pData, &_cbData, sizeof(_cbData));
+			_immediateContext->Unmap(_constantBuffer, 0);
+
+			// Draw object
+			particle->GetAppearance()->Draw(_immediateContext);
+		}
+	}
+
+	if (_mainMenu)
+	{
+		DrawMainMenuUI();
+	}
+	else
+	{
+		DrawUI();
+	}
 	// Present our back buffer to our front buffer
 	_swapChain->Present(0, DXGI_PRESENT_ALLOW_TEARING);
 }

@@ -51,6 +51,7 @@ class DX11PhysicsFramework
 
 	MeshData _objMeshData = {};
 	vector<GameObject*> _gameObjects = {};
+	vector<GameObject*> _particles = {};
 
 	Camera* _camera = nullptr;
 	nlohmann::json m_sceneCameraVariables = nullptr;
@@ -74,9 +75,13 @@ class DX11PhysicsFramework
 
 	float _broadPhaseDetectionRadius = 4.0f;
 	bool _toggleBroadPhase = true;
+	bool _toggleParticleSystem = false;
+	float _particleTimeAlive = 5.0f;
 
 	bool _gameobjectsMatrixInterpolation = true;
 	bool _cameraMatrixInterpolation = true;
+
+	bool _mainMenu = true;
 
 	HRESULT CreateWindowHandle(HINSTANCE hInstance, int nCmdShow);
 	HRESULT CreateD3DDevice();
@@ -105,6 +110,9 @@ public:
 	void DrawCameraWindow();
 	void DrawIntegrationWindow(int objectSelected) const;
 	void DrawMatrixInterpolationWindow();
+	void DrawParticleSystemWindow();
+	void DrawMainMenuUI();
+	void DrawBackToMainMenuWindow();
 	void DrawUI();
 	void Draw(double alphaScalar);
 

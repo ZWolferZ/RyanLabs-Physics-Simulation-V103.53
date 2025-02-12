@@ -24,4 +24,6 @@ public:
 	void SetInertiaTensor();
 
 	Vector CalculateAngularVelocity(Vector torque, float deltaTime) const;
+
+	void SetResetTime(float time) override {};
 };
