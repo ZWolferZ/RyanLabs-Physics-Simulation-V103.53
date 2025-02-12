@@ -1156,7 +1156,7 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 
 		ImGui::Separator();
 
-		ImGui::Text("Constant Acceleration Controls:");
+		ImGui::Text("Constant Acceleration Controls: (SYSTEM BROKE: DO NOT USE)");
 		ImGui::Checkbox("Switch On Constant Acceleration",
 			&_gameObjects[_objectSelected]->GetPhysicsModel()->_constantAcceleration);
 		if (ImGui::Button("Set Acceleration Forward (Z-)"))
