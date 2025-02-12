@@ -1,6 +1,11 @@
+#pragma region Includes
+// Include{s}
 #include "Appearance.h"
+#pragma endregion
 
-Appearance::Appearance(Geometry geometry, ID3D11ShaderResourceView* textureRV, Material material)
+#pragma region Constructors
+
+Appearance::Appearance(const Geometry& geometry, ID3D11ShaderResourceView* textureRV, const Material& material)
 {
 	_geometry = geometry;
 
@@ -10,7 +15,7 @@ Appearance::Appearance(Geometry geometry, ID3D11ShaderResourceView* textureRV, M
 }
 
 Appearance::Appearance(const string& meshpath, ID3D11Device& device, ID3D11ShaderResourceView* textureRV,
-	Material material)
+	const Material& material)
 {
 	LoadMesh(meshpath, device);
 
@@ -19,8 +24,13 @@ Appearance::Appearance(const string& meshpath, ID3D11Device& device, ID3D11Shade
 	_material = material;
 }
 
-void Appearance::LoadMesh(string meshpath, ID3D11Device& device)
+#pragma endregion
+
+#pragma region Mesh Loading
+
+void Appearance::LoadMesh(const string& meshpath, ID3D11Device& device)
 {
+	// Load the OBJ file into the geometry data
 	MeshData _objMeshData = OBJLoader::Load(meshpath.c_str(), &device);
 	_geometry.indexBuffer = _objMeshData.IndexBuffer;
 	_geometry.vertexBuffer = _objMeshData.VertexBuffer;
@@ -28,6 +38,10 @@ void Appearance::LoadMesh(string meshpath, ID3D11Device& device)
 	_geometry.vertexBufferOffset = 0;
 	_geometry.vertexBufferStride = sizeof(SimpleVertex);
 }
+
+#pragma endregion
+
+#pragma region Drawing
 
 void Appearance::Draw(ID3D11DeviceContext* pImmediateContext) const
 {
@@ -41,8 +55,13 @@ void Appearance::Draw(ID3D11DeviceContext* pImmediateContext) const
 	pImmediateContext->DrawIndexed(_geometry.numberOfIndices, 0, 0);
 }
 
+#pragma endregion
+
+#pragma region Texture Management
+
 void Appearance::SetTextureRV(ID3D11ShaderResourceView* textureRV)
 {
+	// I just use this to set the texture resource view back and forth between the selected texture and regular texture
 	if (textureRV == nullptr)
 	{
 		_textureRV = nullptr;
@@ -54,3 +73,5 @@ void Appearance::SetTextureRV(ID3D11ShaderResourceView* textureRV)
 		_hasTexture = true;
 	}
 }
+
+#pragma endregion

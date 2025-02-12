@@ -1,7 +1,13 @@
+#pragma region Includes
+// Include{s}
 #include "DX11PhysicsFramework.h"
 #include "SphereCollider.h"
 #include "AABBCollider.h"
+#pragma endregion
 
+// Not going to comment the framework stuff only mine.
+
+#pragma region DX11PhysicsFramework
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	if (ImGui::GetCurrentContext() != nullptr)
@@ -97,7 +103,7 @@ HRESULT DX11PhysicsFramework::CreateWindowHandle(HINSTANCE hInstance, int nCmdSh
 {
 	nCmdShow = 0;
 
-	auto windowName = L"RyanLabs Proprietary Real-Time Physics Framework";
+	auto windowName = L"RyanLabs Proprietary Real-Time Physics Framework"; // Okay this is just for branding purposes
 
 	WNDCLASSW wndClass = {};
 	wndClass.style = 0;
@@ -208,6 +214,7 @@ HRESULT DX11PhysicsFramework::CreateSwapChainAndFrameBuffer()
 	return hr;
 }
 
+// Just the ImGUI boilerplate
 void DX11PhysicsFramework::InitGUI() const
 {
 	IMGUI_CHECKVERSION();
@@ -218,6 +225,7 @@ void DX11PhysicsFramework::InitGUI() const
 	ImGui_ImplWin32_Init(GetWindowHandle());
 	ImGui_ImplDX11_Init(GetDevice(), GetDeviceContext());
 
+	// Need this line to stop the windows from remembering where they were last time
 	io.IniFilename = nullptr;
 }
 
@@ -532,6 +540,7 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 	noSpecMaterial.diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
 	noSpecMaterial.specular = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 
+	// Create the floor (THIS MUST BE THE FIRST IN THE GAME OBJECT VECTOR)
 	auto gameObject = new GameObject("Floor", planeGeometry, noSpecMaterial, GroundTextureRV,
 		Vector(0.0f, 0.0f, 0.0f),
 		Vector(15.0f, 15.0f, 15.0f), Vector(90.0f, 0.0f, 0.0f), 0.0f,
@@ -548,6 +557,7 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 
 	_gameObjects.push_back(gameObject);
 
+	// Create the cube objects
 	for (auto i = 0; i < 4; i++)
 	{
 		gameObject = new GameObject("Cube", cubeGeometry, shinyMaterial, StoneTextureRV,
@@ -557,8 +567,10 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 		Vector minPoints = gameObject->GetTransform()->GetPosition() - Vector(1.0f, 1.0f, 1.0f);
 		Vector maxPoints = gameObject->GetTransform()->GetPosition() + Vector(1.0f, 1.0f, 1.0f);
 
+		// Add a AABB Collider to the object
 		Collider* collider = new AABBCollider(gameObject->GetTransform(), minPoints, maxPoints);
 
+		// Set the collider to the object
 		gameObject->GetPhysicsModel()->SetCollider(collider);
 
 		gameObject->GetPhysicsModel()->_simulateGravity = true;
@@ -568,6 +580,7 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 		_gameObjects.push_back(gameObject);
 	}
 
+	// "I am Heavy Weapons cube" : https://www.youtube.com/watch?v=jHgZh4GV9G0
 	gameObject = new GameObject("HeavyCube", cubeGeometry, shinyMaterial, StoneTextureRV,
 		Vector(-2.0f + (4 * 2.5f), 1.0f, 10.0f),
 		Vector(1.0f, 1.0f, 1.0f), Vector(0.0f, 0.0f, 0.0f), 2.0f, false);
@@ -617,6 +630,7 @@ HRESULT DX11PhysicsFramework::InitRunTimeData()
 
 	_gameObjectSize = _gameObjects.size();
 
+	// Create the particle objects
 	for (auto i = 0; i < 100; i++)
 	{
 		gameObject = new GameObject("Particle", "Resources\\OBJ\\Sphere.obj", shinyMaterial, StoneTextureRV, *_device,
@@ -669,8 +683,63 @@ void DX11PhysicsFramework::LoadSceneCameraVariables()
 	file.close();
 }
 
+DX11PhysicsFramework::~DX11PhysicsFramework()
+{
+	delete _camera;
+	for each(GameObject * go in _gameObjects)
+	{
+		delete go;
+	}
+
+	for each(GameObject * pa in _particles)
+	{
+		delete pa;
+	}
+
+	if (_immediateContext)_immediateContext->Release();
+
+	if (_frameBufferView)_frameBufferView->Release();
+	if (_depthBufferView)_depthBufferView->Release();
+	if (_depthStencilBuffer)_depthStencilBuffer->Release();
+	if (_swapChain)_swapChain->Release();
+	if (CWcullMode)CWcullMode->Release();
+	if (CCWcullMode)CCWcullMode->Release();
+	if (_vertexShader)_vertexShader->Release();
+	if (_inputLayout)_inputLayout->Release();
+	if (_pixelShader)_pixelShader->Release();
+	if (_constantBuffer)_constantBuffer->Release();
+
+	if (_cubeVertexBuffer)_cubeVertexBuffer->Release();
+	if (_cubeIndexBuffer)_cubeIndexBuffer->Release();
+	if (_planeVertexBuffer)_planeVertexBuffer->Release();
+	if (_planeIndexBuffer)_planeIndexBuffer->Release();
+	if (_objMeshData.IndexBuffer) _objMeshData.IndexBuffer->Release();
+	if (_objMeshData.VertexBuffer)_objMeshData.VertexBuffer->Release();
+
+	if (DSLessEqual) DSLessEqual->Release();
+	if (RSCullNone) RSCullNone->Release();
+
+	if (_samplerLinear)_samplerLinear->Release();
+	if (StoneTextureRV)StoneTextureRV->Release();
+	if (GroundTextureRV)GroundTextureRV->Release();
+	if (SelectedTexture)SelectedTexture->Release();
+
+	if (_dxgiDevice)_dxgiDevice->Release();
+	if (_dxgiFactory)_dxgiFactory->Release();
+	if (_device)_device->Release();
+
+	ImGui_ImplDX11_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
+}
+
+#pragma endregion
+
+#pragma region Update Methods
 void DX11PhysicsFramework::BasicObjectMovement(float deltaTime, int _objectSelected) const
 {
+	// Controls the selected object with the numpad
+
 	if (GetAsyncKeyState(VK_NUMPAD5) & 0xFFFF)
 	{
 		_gameObjects[_objectSelected]->GetTransform()->Move(Vector(0.0f, 0.0f, -1.0f), deltaTime, _objectMoveSpeed);
@@ -728,56 +797,6 @@ void DX11PhysicsFramework::BasicObjectMovement(float deltaTime, int _objectSelec
 	}
 }
 
-DX11PhysicsFramework::~DX11PhysicsFramework()
-{
-	delete _camera;
-	for each(GameObject * go in _gameObjects)
-	{
-		delete go;
-	}
-
-	for each(GameObject * pa in _particles)
-	{
-		delete pa;
-	}
-
-	if (_immediateContext)_immediateContext->Release();
-
-	if (_frameBufferView)_frameBufferView->Release();
-	if (_depthBufferView)_depthBufferView->Release();
-	if (_depthStencilBuffer)_depthStencilBuffer->Release();
-	if (_swapChain)_swapChain->Release();
-	if (CWcullMode)CWcullMode->Release();
-	if (CCWcullMode)CCWcullMode->Release();
-	if (_vertexShader)_vertexShader->Release();
-	if (_inputLayout)_inputLayout->Release();
-	if (_pixelShader)_pixelShader->Release();
-	if (_constantBuffer)_constantBuffer->Release();
-
-	if (_cubeVertexBuffer)_cubeVertexBuffer->Release();
-	if (_cubeIndexBuffer)_cubeIndexBuffer->Release();
-	if (_planeVertexBuffer)_planeVertexBuffer->Release();
-	if (_planeIndexBuffer)_planeIndexBuffer->Release();
-	if (_objMeshData.IndexBuffer) _objMeshData.IndexBuffer->Release();
-	if (_objMeshData.VertexBuffer)_objMeshData.VertexBuffer->Release();
-
-	if (DSLessEqual) DSLessEqual->Release();
-	if (RSCullNone) RSCullNone->Release();
-
-	if (_samplerLinear)_samplerLinear->Release();
-	if (StoneTextureRV)StoneTextureRV->Release();
-	if (GroundTextureRV)GroundTextureRV->Release();
-	if (SelectedTexture)SelectedTexture->Release();
-
-	if (_dxgiDevice)_dxgiDevice->Release();
-	if (_dxgiFactory)_dxgiFactory->Release();
-	if (_device)_device->Release();
-
-	ImGui_ImplDX11_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
-}
-
 void DX11PhysicsFramework::Update()
 {
 	//Static initializes this value only once
@@ -793,11 +812,13 @@ void DX11PhysicsFramework::Update()
 
 	_accumulator += frame_timer.GetDeltaTime();
 
+	// Jimmy Magic
 #ifdef _DEBUG
 	if (_accumulator > 1.0f) // assume back from breakpoint
 		_accumulator = FPS60;
 #endif
 
+	// Fixed Physics Time Step
 	while (_accumulator >= FPS60)
 	{
 		// Update physics
@@ -809,6 +830,7 @@ void DX11PhysicsFramework::Update()
 	// Update the general game loop
 	GeneralUpdate(deltaTime);
 
+	// Alpha scaling for matrix interpolation
 	const double alpha = _accumulator / FPS60;
 
 	Draw(alpha);
@@ -816,6 +838,7 @@ void DX11PhysicsFramework::Update()
 
 void DX11PhysicsFramework::PhysicsUpdate() const
 {
+	// Collision Handle before updating
 	DetectCollisions();
 
 	for (auto gameObject : _gameObjects)
@@ -864,6 +887,8 @@ void DX11PhysicsFramework::DetectCollisions() const
 					if (-distance > _broadPhaseDetectionRadius) continue;
 				}
 			}
+
+			// Gross If statement to check if the objects are collideable and if they are colliding
 			if (_gameObjects[i]->GetPhysicsModel()->IsCollideable() &&
 				_gameObjects[j]->GetPhysicsModel()->IsCollideable() &&
 				_gameObjects[i]->GetPhysicsModel()->GetCollider()->CollidesWith(
@@ -876,6 +901,7 @@ void DX11PhysicsFramework::DetectCollisions() const
 				_gameObjects[i]->_objectHasCollided = true;
 				_gameObjects[j]->_objectHasCollided = true;
 
+				// Store the pair of objects that collided
 				collisions.push_back(std::make_pair(_gameObjects[i], _gameObjects[j]));
 			}
 		}
@@ -896,8 +922,10 @@ void DX11PhysicsFramework::GeneralUpdate(float deltaTime)
 {
 	if (!_mainMenu)
 	{
+		// Only allow camera movement if the main menu is not open
 		_camera->HandleMovement(deltaTime);
 
+		// Select the object with the number keys
 		for (int i = 0; i < _gameObjectSize; i++)
 		{
 			if (GetAsyncKeyState('0' + i) & 0x0001)
@@ -908,12 +936,14 @@ void DX11PhysicsFramework::GeneralUpdate(float deltaTime)
 			}
 		}
 
+		// Deselect all objects
 		if (GetAsyncKeyState(VK_MULTIPLY) & 0x0001)
 		{
 			for (bool& j : _objectSelected) { j = false; }
 			Debug::Debug_WriteString("Objects Deselected");
 		}
 
+		// Allow for object movement if an object is selected
 		for (int i = 0; i < _gameObjectSize; i++)
 		{
 			if (_objectSelected[i])
@@ -936,6 +966,8 @@ void DX11PhysicsFramework::GeneralUpdate(float deltaTime)
 	}
 	else
 	{
+		// This is for the main menu animation that flips the camera back and forth between two points
+
 		static bool cameraSwitch = false;
 
 		if (!cameraSwitch)
@@ -961,6 +993,7 @@ void DX11PhysicsFramework::GeneralUpdate(float deltaTime)
 		}
 	}
 
+	// If the simulation is running, go back to the main menu, else close the application
 	if (GetAsyncKeyState(VK_ESCAPE) & 0x0001)
 	{
 		if (_mainMenu)
@@ -975,6 +1008,11 @@ void DX11PhysicsFramework::GeneralUpdate(float deltaTime)
 		}
 	}
 }
+#pragma endregion
+
+#pragma region Draw Methods
+
+// I'm not going to in depth comment the IMGUI code It's pretty self-explanatory.
 
 void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int _objectSelected)
 {
@@ -1158,6 +1196,7 @@ void DX11PhysicsFramework::DrawObjectMovementControlWindow(float deltaTime, int 
 
 		ImGui::Separator();
 
+		// This is a broken feature, you can use it if you want but it's not going to work properly.
 		ImGui::Text("Constant Acceleration Controls: (SYSTEM BROKE: DO NOT USE)");
 		ImGui::Checkbox("Switch On Constant Acceleration",
 			&_gameObjects[_objectSelected]->GetPhysicsModel()->_constantAcceleration);
@@ -1323,6 +1362,7 @@ void DX11PhysicsFramework::DrawIntegrationWindow(int _objectSelected) const
 	const char* integrationMethods[] = { "Explicit Euler", "Semi-Implicit Euler", "Verlet", "Stormer-Verlet", "RK4" };
 	static int selectedMethod = 4; // Default is RK4
 
+	// Super based IMGUI combo box
 	if (ImGui::Combo("Integration Method", &selectedMethod, integrationMethods, IM_ARRAYSIZE(integrationMethods)))
 	{
 		_gameObjects[_objectSelected]->GetPhysicsModel()->SetIntegrationMethod(selectedMethod);
@@ -1355,6 +1395,7 @@ void DX11PhysicsFramework::DrawParticleSystemWindow()
 	const float lastParticleTimeAlive = _particleTimeAlive;
 	ImGui::SliderFloat("Lifetime", &_particleTimeAlive, 5.0f, 50.0f);
 
+	// Increases the lifetime of the particles if the lifetime is changed
 	if (lastParticleTimeAlive != _particleTimeAlive)
 	{
 		for (const auto particle : _particles)
@@ -1419,6 +1460,8 @@ void DX11PhysicsFramework::DrawParticleSystemWindow()
 
 void DX11PhysicsFramework::DrawMainMenuUI()
 {
+	// This is the main menu UI, it's pretty simple and just has two buttons to start the simulation or exit the application
+
 	ImGui_ImplDX11_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
@@ -1455,6 +1498,8 @@ void DX11PhysicsFramework::DrawMainMenuUI()
 
 void DX11PhysicsFramework::DrawBackToMainMenuWindow()
 {
+	// Just a quick button to go back to the main menu
+
 	ImGui::SetNextWindowPos(ImVec2(1670, 900), ImGuiCond_FirstUseEver);
 	ImGui::SetNextWindowSize(ImVec2(225, 90), ImGuiCond_FirstUseEver);
 	ImGui::Begin("Back To Main Menu", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
@@ -1522,6 +1567,7 @@ void DX11PhysicsFramework::DrawObjectSelectWindow()
 			}
 		}
 
+		// OpenGL Flashbacks
 		ImGui::PopStyleColor(3);
 	}
 
@@ -1552,6 +1598,8 @@ void DX11PhysicsFramework::DrawUI()
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
 
+	// Satisfying Function calls
+
 	DrawObjectSelectWindow();
 
 	DrawStatsWindow();
@@ -1564,6 +1612,7 @@ void DX11PhysicsFramework::DrawUI()
 
 	DrawBackToMainMenuWindow();
 
+	// Only draw the object movement control window if an object is selected
 	for (int i = 0; i < _gameObjectSize; i++)
 	{
 		if (_objectSelected[i])
@@ -1593,6 +1642,11 @@ void DX11PhysicsFramework::Draw(const double alphaScalar)
 	_immediateContext->VSSetConstantBuffers(0, 1, &_constantBuffer);
 	_immediateContext->PSSetConstantBuffers(0, 1, &_constantBuffer);
 	_immediateContext->PSSetSamplers(0, 1, &_samplerLinear);
+
+	// So here is the thing, the matrix interpolation should not work at all with this,
+	// adding matrix's is some mental shit which might work with the positional data but should not work with the rotational part of the matrix.
+
+	// But it does anyway, so I am calling it an extra feature.
 
 	XMMATRIX currentView = _camera->GetViewMatrix();
 
@@ -1661,6 +1715,7 @@ void DX11PhysicsFramework::Draw(const double alphaScalar)
 		gameObject->GetAppearance()->Draw(_immediateContext);
 	}
 
+	// Render all the particles
 	if (_toggleParticleSystem)
 	{
 		for (auto particle : _particles)
@@ -1710,6 +1765,7 @@ void DX11PhysicsFramework::Draw(const double alphaScalar)
 		}
 	}
 
+	// Render the UI or the main menu
 	if (_mainMenu)
 	{
 		DrawMainMenuUI();
@@ -1721,3 +1777,5 @@ void DX11PhysicsFramework::Draw(const double alphaScalar)
 	// Present our back buffer to our front buffer
 	_swapChain->Present(0, DXGI_PRESENT_ALLOW_TEARING);
 }
+
+#pragma endregion

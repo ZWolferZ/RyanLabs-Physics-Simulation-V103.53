@@ -16,3 +16,5 @@ Numpad 1 2 3 - Rotate Selected Object
 Numpad Plus Minus - Scale Selected Object
 
 Numpad * - Deselect Current Object
+
+Click On The UI!

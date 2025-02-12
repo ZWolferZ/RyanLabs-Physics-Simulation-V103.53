@@ -160,7 +160,7 @@ class DX11PhysicsFramework
 
 #pragma region Object Movement
 	/// <summary>
-	/// Handles basic object movement.
+	/// Handles basic object movement with the keyboard.
 	/// </summary>
 	/// <param name="deltaTime">Time elapsed since the last frame.</param>
 	/// <param name="objectSelected">Index of the selected object.</param>

@@ -1,6 +1,10 @@
+#pragma region Includes
+// Include{s}
 #include "PhysicsModel.h"
 #include "Collider.h"
+#pragma endregion
 
+#pragma region Constructors
 PhysicsModel::PhysicsModel(Transform* transform)
 {
 	_transform = transform;
@@ -11,7 +15,9 @@ PhysicsModel::PhysicsModel(Transform* transform, float mass)
 	_transform = transform;
 	_mass = mass;
 }
+#pragma endregion
 
+#pragma region Update Method
 void PhysicsModel::Update(float deltaTime)
 {
 	_mass = _transform->GetMass();
@@ -63,25 +69,22 @@ void PhysicsModel::Update(float deltaTime)
 		_acceleration = Vector(0.0f, 0.0f, 0.0f);
 	}
 
-	if (_velocity.Magnitude() < 0.035f)
+	if (_velocity.Magnitude() < 0.035f) // Just stop the object if they are slower than this cap
 	{
 		_velocity = Vector(0.0f, 0.0f, 0.0f);
 	}
 
-	if (_velocity.y < -9.81f)
+	if (_velocity.y < -9.81f) // Stop the object from exceeding gravity
 	{
 		_velocity = Vector(0.0f, -9.81f, 0.0f);
 	}
 }
+#pragma endregion
 
+#pragma region Getters
 Vector PhysicsModel::GetVelocity() const
 {
 	return _velocity;
-}
-
-Vector PhysicsModel::SetVelocity(const Vector& newVelocity)
-{
-	return _velocity = newVelocity;
 }
 
 Vector PhysicsModel::GetAcceleration() const
@@ -89,42 +92,9 @@ Vector PhysicsModel::GetAcceleration() const
 	return _acceleration;
 }
 
-Vector PhysicsModel::SetAcceleration(const Vector& newAcceleration)
+Vector PhysicsModel::SetVelocity(const Vector& newVelocity)
 {
-	return _acceleration = newAcceleration;
-}
-
-void PhysicsModel::AddForce(const Vector& force)
-{
-	_netForce = _netForce + force;
-}
-
-Vector PhysicsModel::GravityForce()
-{
-	Vector gravityForce = _gravity * _mass;
-
-	return gravityForce;
-}
-
-Vector PhysicsModel::Dragforce()
-{
-	float dragForce = 0.5f * _airCoefficient * _fluidDensity * _objectArea * _velocity.Magnitude() * _velocity.
-		Magnitude();
-
-	Vector drag = _velocity.Normalise() * -1.0f;
-
-	return drag *= dragForce;
-}
-
-Vector PhysicsModel::FrictionForce()
-{
-	float frictionForceMagnitude = _generalGroundCoefficient * _mass;
-
-	Vector friction = _velocity.Normalise() * -frictionForceMagnitude;
-
-	friction *= _velocity.Magnitude();
-
-	return friction;
+	return _velocity = newVelocity;
 }
 
 Vector PhysicsModel::GetIntegratedPosition(const float deltaTime) const
@@ -168,6 +138,14 @@ string PhysicsModel::GetIntegrationMethodName() const
 	}
 }
 
+#pragma endregion
+
+#pragma region Setters
+Vector PhysicsModel::SetAcceleration(const Vector& newAcceleration)
+{
+	return _acceleration = newAcceleration;
+}
+
 void PhysicsModel::SetIntegrationMethod(int method)
 {
 	switch (method)
@@ -185,7 +163,45 @@ void PhysicsModel::SetIntegrationMethod(int method)
 	default: break;
 	}
 }
+#pragma endregion
 
+#pragma region Force Methods
+void PhysicsModel::AddForce(const Vector& force)
+{
+	_netForce = _netForce + force;
+}
+
+Vector PhysicsModel::GravityForce()
+{
+	Vector gravityForce = _gravity * _mass;
+
+	return gravityForce;
+}
+
+Vector PhysicsModel::Dragforce()
+{
+	float dragForce = 0.5f * _airCoefficient * _fluidDensity * _objectArea * _velocity.Magnitude() * _velocity.
+		Magnitude();
+
+	Vector drag = _velocity.Normalise() * -1.0f;
+
+	return drag *= dragForce;
+}
+
+Vector PhysicsModel::FrictionForce()
+{
+	float frictionForceMagnitude = _generalGroundCoefficient * _mass;
+
+	Vector friction = _velocity.Normalise() * -frictionForceMagnitude;
+
+	friction *= _velocity.Magnitude();
+
+	return friction;
+}
+
+#pragma endregion
+
+#pragma region Calculatate Integration Methods
 Vector PhysicsModel::CalculateExplicitEuler(float deltaTime) const
 {
 	return _transform->GetPosition() + GetVelocity() * deltaTime;
@@ -231,3 +247,4 @@ Vector PhysicsModel::CalculateRK4(const float deltaTime) const
 
 	return (K1Position + (K2Position * 2.0f) + (K3Position * 2.0f) + K4Position) / 6.0f;
 }
+#pragma endregion

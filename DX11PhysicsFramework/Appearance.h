@@ -18,7 +18,7 @@ public:
 	/// <param name="geometry">The geometry data.</param>
 	/// <param name="textureRV">The texture resource view.</param>
 	/// <param name="material">The material properties.</param>
-	Appearance(Geometry geometry, ID3D11ShaderResourceView* textureRV, Material material);
+	Appearance(const Geometry& geometry, ID3D11ShaderResourceView* textureRV, const Material& material);
 
 	/// <summary>
 	/// Initializes a new instance of the Appearance class by loading a mesh from a file.
@@ -27,7 +27,7 @@ public:
 	/// <param name="device">The Direct3D device.</param>
 	/// <param name="textureRV">The texture resource view.</param>
 	/// <param name="material">The material properties.</param>
-	Appearance(const string& meshpath, ID3D11Device& device, ID3D11ShaderResourceView* textureRV, Material material);
+	Appearance(const string& meshpath, ID3D11Device& device, ID3D11ShaderResourceView* textureRV, const Material& material);
 #pragma endregion
 
 #pragma region Public Methods
@@ -36,7 +36,7 @@ public:
 	/// </summary>
 	/// <param name="meshpath">The path to the mesh file.</param>
 	/// <param name="device">The Direct3D device.</param>
-	void LoadMesh(string meshpath, ID3D11Device& device);
+	void LoadMesh(const string& meshpath, ID3D11Device& device);
 
 	/// <summary>
 	/// Draws the appearance using the specified device context.
