@@ -78,6 +78,10 @@ class DX11PhysicsFramework
 	bool _toggleParticleSystem = false;
 	float _particleTimeAlive = 5.0f;
 
+	bool _toggleParticleGravity = false;
+	bool _toggleParticleFriction = false;
+	bool _toggleParticleDrag = false;
+
 	bool _gameobjectsMatrixInterpolation = true;
 	bool _cameraMatrixInterpolation = true;
 

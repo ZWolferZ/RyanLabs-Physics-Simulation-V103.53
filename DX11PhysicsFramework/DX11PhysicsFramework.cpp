@@ -1343,14 +1343,70 @@ void DX11PhysicsFramework::DrawParticleSystemWindow()
 {
 	// Particle System Window
 	ImGui::SetNextWindowPos(ImVec2(10, 850), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(450, 100), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(450, 150), ImGuiCond_FirstUseEver);
 	ImGui::Begin("Particle System");
 	ImGui::Text("Use this Window To Control the Particle System!");
 	ImGui::Checkbox("Toggle Particle System", &_toggleParticleSystem);
+	const float lastParticleTimeAlive = _particleTimeAlive;
 	ImGui::SliderFloat("Lifetime", &_particleTimeAlive, 5.0f, 50.0f);
-	for (auto particle : _particles)
+
+	if (lastParticleTimeAlive != _particleTimeAlive)
 	{
-		particle->GetPhysicsModel()->SetResetTime(_particleTimeAlive);
+		for (const auto particle : _particles)
+		{
+			particle->GetPhysicsModel()->SetResetTime(_particleTimeAlive);
+		}
+	}
+
+	ImGui::Checkbox("Toggle Particle Gravity", &_toggleParticleGravity);
+
+	if (!_toggleParticleGravity)
+	{
+		for (const auto particle : _particles)
+		{
+			particle->GetPhysicsModel()->_simulateGravity = false;
+		}
+	}
+	else
+	{
+		for (const auto particle : _particles)
+		{
+			particle->GetPhysicsModel()->_simulateGravity = true;
+		}
+	}
+
+	ImGui::Checkbox("Toggle Particle Friction", &_toggleParticleFriction);
+
+	if (!_toggleParticleFriction)
+	{
+		for (const auto particle : _particles)
+		{
+			particle->GetPhysicsModel()->_simulateFriction = false;
+		}
+	}
+	else
+	{
+		for (const auto particle : _particles)
+		{
+			particle->GetPhysicsModel()->_simulateFriction = true;
+		}
+	}
+
+	ImGui::Checkbox("Toggle Particle Drag", &_toggleParticleDrag);
+
+	if (!_toggleParticleDrag)
+	{
+		for (const auto particle : _particles)
+		{
+			particle->GetPhysicsModel()->_simulateDrag = false;
+		}
+	}
+	else
+	{
+		for (const auto particle : _particles)
+		{
+			particle->GetPhysicsModel()->_simulateDrag = true;
+		}
 	}
 
 	ImGui::End();
