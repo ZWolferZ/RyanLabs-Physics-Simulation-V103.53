@@ -943,6 +943,7 @@ void DX11PhysicsFramework::GeneralUpdate(float deltaTime)
 			if (_camera->GetPosition().x > 8.0f)
 			{
 				_camera->SetPosition(_camera->m_startingPosition.x, _camera->m_startingPosition.y, _camera->m_startingPosition.z);
+				_camera->SetRotation(0, 0, 0);
 				cameraSwitch = true;
 			}
 		}
@@ -952,6 +953,7 @@ void DX11PhysicsFramework::GeneralUpdate(float deltaTime)
 			if (_camera->GetPosition().x < -8.0f)
 			{
 				_camera->SetPosition(_camera->m_startingPosition.x, _camera->m_startingPosition.y, _camera->m_startingPosition.z);
+				_camera->SetRotation(0, 0, 0);
 				cameraSwitch = false;
 			}
 		}
@@ -967,6 +969,7 @@ void DX11PhysicsFramework::GeneralUpdate(float deltaTime)
 		{
 			_mainMenu = true;
 			_camera->SetPosition(_camera->m_startingPosition.x, _camera->m_startingPosition.y, _camera->m_startingPosition.z);
+			_camera->SetRotation(0, 0, 0);
 		}
 	}
 }
@@ -1431,6 +1434,7 @@ void DX11PhysicsFramework::DrawMainMenuUI()
 	{
 		_mainMenu = false;
 		_camera->SetPosition(_camera->m_startingPosition.x, _camera->m_startingPosition.y, _camera->m_startingPosition.z);
+		_camera->SetRotation(0, 0, 0);
 	}
 	ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 0.0f, 0.0f, 1.0f));
 	if (ImGui::Button("Exit", buttonSize))
@@ -1458,6 +1462,7 @@ void DX11PhysicsFramework::DrawBackToMainMenuWindow()
 	{
 		_mainMenu = true;
 		_camera->SetPosition(_camera->m_startingPosition.x, _camera->m_startingPosition.y, _camera->m_startingPosition.z);
+		_camera->SetRotation(0, 0, 0);
 	}
 	ImGui::PopStyleColor();
 	ImGui::End();
@@ -1525,7 +1530,7 @@ void DX11PhysicsFramework::DrawStatsWindow() const
 {
 	// Statistics Window
 	ImGui::SetNextWindowPos(ImVec2(320, 10), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(300, 130), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(300, 140), ImGuiCond_FirstUseEver);
 
 	ImGui::Begin("App Statistics");
 	ImGui::Text("Application Statistics:");
@@ -1534,6 +1539,7 @@ void DX11PhysicsFramework::DrawStatsWindow() const
 	ImGui::Text("Application Runtime: %s", std::to_string(_runtimeTimer).c_str());
 
 	ImGui::Text("Total Objects: %d", _gameObjectSize);
+	ImGui::Text("Total Particles: %d", _particles.size());
 
 	ImGui::End();
 }

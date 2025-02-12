@@ -67,7 +67,7 @@ public:
 	void HandleCollision(const GameObject* gameObjectA, const GameObject* gameObjectB);
 #pragma endregion
 
-#pragma Info Getters
+#pragma region Info Getters
 	/// <summary>
 	/// Returns the collision normal of the collision
 	/// </summary>
